@@ -93,7 +93,7 @@
             <artifactId>cos_api</artifactId>
             <version>5.6.89</version>
         </dependency>
-        <!-- ElasticSearch -->
+        <!-- Elasticsearch -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
