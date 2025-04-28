@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: user-center
+  # 数据库配置
+  datasource:
+    driver-class-name: ${sky.datasource.driver-class-name}
+    url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}
+    username: ${sky.datasource.username}
+    password: ${sky.datasource.password}
+  session:
+    timeout: ${sky.jwt.admin-ttl}
+
+# 服务端口
+server:
+  port: 8080
+
+mybatis-plus:
+  configuration:
+    # 是否开启驼峰命名
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      logic-delete-field: isDelete   # 全局逻辑删除字段名
+      logic-delete-value: 1   # 逻辑已删除字段值
+      logic-not-delete-value: 0   # 逻辑未删除字段值
+
+sky:
+  jwt:
+    admin-secret-key: ${sky.jwt.admin-secret-key}
+    admin-token-name: ${sky.jwt.admin-token-name}
+
+# 接口文档
+knife4j:
+  enable: true
+  openapi:
+    title: 用户中心接口文档
+    group:
+      default:
+        group-name: 默认分组
+        api-rule: package
+        api-rule-resources:
+          - com.rngad33.controller
