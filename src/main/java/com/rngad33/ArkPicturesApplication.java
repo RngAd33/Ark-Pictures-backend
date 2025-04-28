@@ -1,4 +1,4 @@
-package com.rngad33.users;
+package com.rngad33;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
