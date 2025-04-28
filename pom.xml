@@ -68,7 +68,7 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- Redis -->
+        <!-- Redis 分布式缓存 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -77,7 +77,7 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
-        <!-- Caffeine -->
+        <!-- Caffeine 本地缓存 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
