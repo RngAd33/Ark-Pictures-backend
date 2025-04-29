@@ -2,7 +2,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: user-center
+    name: ark-picture
   # 数据库配置
   datasource:
     driver-class-name: ${sky.datasource.driver-class-name}
@@ -35,10 +35,19 @@ sky:
 knife4j:
   enable: true
   openapi:
-    title: 用户中心接口文档
+    title: 云图库接口文档
     group:
       default:
         group-name: 默认分组
         api-rule: package
         api-rule-resources:
-          - com.rngad33.controller
+          - com.rngad33.web.controller
+
+# 对象存储（需要从腾讯云获取）
+cos:
+  client:
+    host: ${sky.cos.client.host}
+    secretId: ${sky.cos.client.secretId}
+    secretKey: ${sky.cos.client.secretKey}
+    region: ${sky.cos.client.region}
+    bucket: ${sky.cos.client.bucket}
