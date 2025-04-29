@@ -6,7 +6,6 @@
     <artifactId>ark-pictures-backend</artifactId>
     <version>0.1</version>
     <name>Ark-Pictures</name>
-    <description>Ark-Pictures</description>
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,11 +14,12 @@
     </properties>
 
     <dependencies>
-        <!-- Spring-Boot -->
+        <!-- Spring-Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring-Web-Service -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
@@ -29,7 +29,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Spring task -->
+        <!-- Spring-task -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
