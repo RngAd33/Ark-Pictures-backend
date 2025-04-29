@@ -41,7 +41,6 @@
             <version>2.2.2</version>
         </dependency>
         <!-- MyBatis-Plus -->
-        <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
