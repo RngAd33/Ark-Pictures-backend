@@ -1,8 +1,6 @@
 package com.rngad33.web.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import java.util.Date;
 import lombok.Data;
 
@@ -11,8 +9,8 @@ import lombok.Data;
  *
  * @TableName picture
  */
-@TableName(value ="picture")
 @Data
+@TableName(value ="picture")
 public class Picture {
     /**
      * id
@@ -93,5 +91,12 @@ public class Picture {
     /**
      * 是否删除
      */
+    @TableLogic
     private Integer isDelete;
+
+    /**
+     * 序列化版本号
+     */
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }
