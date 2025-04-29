@@ -1,6 +1,6 @@
 package com.rngad33.web.service.impl;
 
-import com.rngad33.pictures.service.PictureService;
+import com.rngad33.web.service.PictureService;
 import org.springframework.stereotype.Service;
 
 /**
