@@ -39,7 +39,7 @@ public class Picture {
     private String category;
 
     /**
-     * 标签（JSON 数组）
+     * 标签（JSON数组）
      */
     private String tags;
 
@@ -99,4 +99,5 @@ public class Picture {
      */
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
 }
