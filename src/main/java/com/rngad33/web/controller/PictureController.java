@@ -21,8 +21,6 @@ public class PictureController {
     @Resource
     private PictureService pictureService;
 
-    private UserRoleEnum userRole;
-
     /**
      * 图片上传
      *
@@ -32,7 +30,8 @@ public class PictureController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
     public BaseResponse<String> uploadPicture(PictureUploadRequest pictureUploadRequest) {
-        return null;
+
+        return pictureService.uploadPicture(pictureUploadRequest);
     }
 
 }
