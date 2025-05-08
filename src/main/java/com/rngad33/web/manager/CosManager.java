@@ -3,6 +3,8 @@ package com.rngad33.web.manager;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
+import com.qcloud.cos.model.COSObject;
+import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.rngad33.web.config.CosClientConfig;
@@ -32,7 +34,7 @@ public class CosManager {
     /**
      * 文件上传
      *
-     * @param key
+     * @param key 唯一键
      * @param file
      * @return
      * @throws CosClientException
@@ -44,5 +46,18 @@ public class CosManager {
         return cosClient.putObject(putObjectRequest);
     }
 
+    /**
+     * 文件下载
+     *
+     * @param key 唯一键
+     * @return
+     * @throws CosClientException
+     * @throws CosServiceException
+     */
+    public COSObject getObject(String key)
+            throws CosClientException, CosServiceException {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
+        return cosClient.getObject(getObjectRequest);
+    }
 
 }
