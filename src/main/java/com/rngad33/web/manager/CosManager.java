@@ -7,6 +7,7 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.rngad33.web.config.CosClientConfig;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 
 /**
- * 文件传输
+ * 通用文件传输
  */
 @Component
 public class CosManager {
@@ -58,6 +59,28 @@ public class CosManager {
             throws CosClientException, CosServiceException {
         GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
         return cosClient.getObject(getObjectRequest);
+    }
+
+    /**
+     * 文件上传（附带信息）
+     * 使用前需要先开通腾讯云数据万象
+     *
+     * @param key
+     * @param file
+     * @return
+     * @throws CosClientException
+     * @throws CosServiceException
+     */
+    public PutObjectResult putPictureObject(String key, File file)
+            throws CosClientException, CosServiceException {
+        PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
+        // 处理图片
+        PicOperations picOperations = new PicOperations();
+        // - 返回原图信息
+        picOperations.setIsPicInfo(1);
+        // - 构造处理参数
+        putObjectRequest.setPicOperations(picOperations);
+        return cosClient.putObject(putObjectRequest);
     }
 
 }
