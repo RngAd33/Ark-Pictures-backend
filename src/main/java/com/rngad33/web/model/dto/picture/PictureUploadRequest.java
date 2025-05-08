@@ -1,13 +1,13 @@
-package com.rngad33.web.model.request;
+package com.rngad33.web.model.dto.picture;
 
 import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用户管理请求体
+ * 文件上传请求体
  */
 @Data
-public class UserManageRequest implements Serializable {
+public class PictureUploadRequest implements Serializable {
 
     private static final long serialVersionUID = 3191241716373120793L;
 

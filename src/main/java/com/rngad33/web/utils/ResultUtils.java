@@ -1,7 +1,7 @@
 package com.rngad33.web.utils;
 
 import com.rngad33.web.common.BaseResponse;
-import com.rngad33.web.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.ErrorCodeEnum;
 
 /**
  * 返回工具类

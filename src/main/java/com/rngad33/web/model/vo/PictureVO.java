@@ -1,19 +1,23 @@
-package com.rngad33.web.model;
+package com.rngad33.web.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.rngad33.web.model.Picture;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
- * 图片模型
- *
- * @TableName picture
+ * 图片封装类
  */
 @Data
-@TableName(value ="picture")
-public class Picture implements Serializable {
+public class PictureVO implements Serializable {
 
     /**
      * id
@@ -45,7 +49,7 @@ public class Picture implements Serializable {
     /**
      * 标签（JSON数组）
      */
-    private String tags;
+    private List<String> tags;
 
     /**
      * 图片体积
@@ -103,5 +107,36 @@ public class Picture implements Serializable {
      */
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 封装类转对象
+     *
+     * @param pictureVO
+     * @return
+     */
+    public static Picture voToObj(PictureVO pictureVO) {
+        if (pictureVO == null) {
+            return null;
+        }
+        Picture picture = new Picture();
+        picture.setTags(JSONUtil.toJsonStr(pictureVO.getTags()));
+        return picture;
+    }
+
+    /**
+     * 对象转封装类
+     *
+     * @param picture
+     * @return
+     */
+    public static PictureVO objToVo(Picture picture) {
+        if (picture == null) {
+            return null;
+        }
+        PictureVO pictureVO = new PictureVO();
+        BeanUtil.copyProperties(picture, pictureVO);
+        pictureVO.setTags(JSONUtil.toList(picture.getTags(), String.class));
+        return pictureVO;
+    }
 
 }

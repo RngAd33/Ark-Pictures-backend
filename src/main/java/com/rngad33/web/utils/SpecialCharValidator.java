@@ -1,6 +1,6 @@
 package com.rngad33.web.utils;
 
-import com.rngad33.web.enums.SpecialCharEnum;
+import com.rngad33.web.model.enums.SpecialCharEnum;
 
 /**
  * 特殊字符校验

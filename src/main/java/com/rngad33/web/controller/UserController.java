@@ -1,14 +1,14 @@
 package com.rngad33.web.controller;
 
 import com.rngad33.web.constant.UserConstant;
-import com.rngad33.web.model.request.UserLoginRequest;
-import com.rngad33.web.model.request.UserManageRequest;
-import com.rngad33.web.model.request.UserRegisterRequest;
+import com.rngad33.web.model.dto.user.UserLoginRequest;
+import com.rngad33.web.model.dto.user.UserManageRequest;
+import com.rngad33.web.model.dto.user.UserRegisterRequest;
 import com.rngad33.web.service.UserService;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.constant.ErrorConstant;
-import com.rngad33.web.enums.ErrorCodeEnum;
-import com.rngad33.web.enums.UserRoleEnum;
+import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.UserRoleEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.User;
 import com.rngad33.web.utils.ResultUtils;

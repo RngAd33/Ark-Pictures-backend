@@ -1,4 +1,4 @@
-package com.rngad33.web.model.request;
+package com.rngad33.web.model.dto.picture;
 
 import java.io.Serializable;
 

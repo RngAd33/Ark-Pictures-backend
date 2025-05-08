@@ -1,13 +1,13 @@
-package com.rngad33.web.model.request;
+package com.rngad33.web.model.dto.user;
 
 import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用户注册请求体
+ * 用户登录请求体
  */
 @Data
-public class UserRegisterRequest implements Serializable {
+public class UserLoginRequest implements Serializable {
 
     private static final long serialVersionUID = 3191241716373120793L;
 
