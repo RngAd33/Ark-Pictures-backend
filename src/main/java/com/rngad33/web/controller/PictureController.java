@@ -1,6 +1,8 @@
 package com.rngad33.web.controller;
 
 import com.qcloud.cos.model.COSObject;
+import com.qcloud.cos.model.COSObjectInputStream;
+import com.qcloud.cos.utils.IOUtils;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.constant.UserConstant;
@@ -43,7 +45,7 @@ public class PictureController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
-    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest) throws IOException {
+    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest) throws Exception {
         // 文件目录
         String fileName = multipartFile.getName();
         String filePath = String.format("/test/%s", fileName);
@@ -55,10 +57,11 @@ public class PictureController {
             cosManager.putObject(filePath, file);
             // 返回可访问地址
             return ResultUtils.success(filePath);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("file upload fail: " + filePath, e);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         } finally {
+            // 删除临时文件
             if (file != null) {
                 boolean del = file.delete();
                 if (!del) {
@@ -76,9 +79,28 @@ public class PictureController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/download")
-    public void downloadPicture(String filePath, HttpServletResponse response) {
-        // 文件对象
-        COSObject cosObject = cosManager.getObject(filePath);
+    public void downloadPicture(String filePath, HttpServletResponse response) throws Exception {
+        COSObjectInputStream cosObjectInput = null;
+        try {
+            // 文件下载
+            COSObject cosObject = cosManager.getObject(filePath);
+            cosObjectInput = cosObject.getObjectContent();
+            byte[] bytes = IOUtils.toByteArray(cosObjectInput);
+            // 设置响应头
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + filePath);
+            // 写入响应
+            response.getOutputStream().write(cosObjectInput.readAllBytes());
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            log.error("file download fail: " + filePath, e);
+            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+        } finally {
+            // 释放流
+            if (cosObjectInput != null) {
+                cosObjectInput.close();
+            }
+        }
     }
 
 }
