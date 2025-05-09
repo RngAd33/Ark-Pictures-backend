@@ -1,8 +1,13 @@
 package com.rngad33.web.service;
 
+import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.model.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.rngad33.web.model.User;
+import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.dto.picture.PictureUploadResult;
+import com.rngad33.web.model.vo.PictureVO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,18 +18,9 @@ public interface PictureService extends IService<Picture> {
     /**
      * 图片上传
      *
-     * @param multipartFile
-     * @return
+     * @param multipartFile 原始文件
+     * @return 访问地址
      */
-    String uploadPicture(String fileName, String filePath, MultipartFile multipartFile);
-
-    /**
-     * 图片上传（附带信息）
-     *
-     * @param multipartFile
-     * @param uploadPathPrefix
-     * @return
-     */
-    PictureUploadResult uploadPictureWithInfo(MultipartFile multipartFile, String uploadPathPrefix);
+    PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser);
 
 }

@@ -13,6 +13,7 @@ public enum ErrorCodeEnum {
     USER_TOO_MANY_TIMES("——！请求超时！——", 5000),
     USER_LOSE_ACTION("————！！操作失败！！————", 4048),
     USER_NOT_AUTH( "——！用户未授权！——", 4012),
+    NOT_PARAM("——！参数不存在！——", 4020),
     PARAM_ERROR("——！参数不合法！——", 4024),
     SYSTEM_ERROR("————！系统内部异常！————", 5000);
 

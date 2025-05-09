@@ -1,23 +1,22 @@
 package com.rngad33.web.controller;
 
-import com.qcloud.cos.model.COSObject;
-import com.qcloud.cos.model.COSObjectInputStream;
-import com.qcloud.cos.utils.IOUtils;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.constant.UserConstant;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
-import com.rngad33.web.exception.MyException;
-import com.rngad33.web.manager.CosManager;
+import com.rngad33.web.model.User;
+import com.rngad33.web.model.dto.picture.PictureUploadRequest;
+import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
+import com.rngad33.web.service.UserService;
 import com.rngad33.web.utils.ResultUtils;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 /**
  * 图片交互接口
@@ -28,60 +27,26 @@ import java.io.IOException;
 public class PictureController {
 
     @Resource
-    private PictureService pictureService;
+    private UserService userService;
 
     @Resource
-    private CosManager cosManager;
+    private PictureService pictureService;
 
     /**
      * 图片上传
      *
-     * @param multipartFile
-     * @return
-     * @throws IOException
+     * @param multipartFile 原始文件
+     * @return 访问地址
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
-    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile)
-            throws Exception {
-        // 文件目录
-        String fileName = multipartFile.getName();
-        String filePath = String.format("/test/%s", fileName);
-
-        String result = pictureService.uploadPicture(fileName, filePath, multipartFile);
-        return ResultUtils.success(result);
-    }
-
-    /**
-     * 图片下载
-     *
-     * @param filePath
-     * @param response
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/download")
-    public void downloadPicture(String filePath, HttpServletResponse response) throws Exception {
-        COSObjectInputStream cosObjectInput = null;
-        try {
-            // 文件下载
-            COSObject cosObject = cosManager.getObject(filePath);
-            cosObjectInput = cosObject.getObjectContent();
-            byte[] bytes = IOUtils.toByteArray(cosObjectInput);
-            // 设置响应头
-            response.setContentType("application/octet-stream;charset=UTF-8");
-            response.setHeader("Content-Disposition", "attachment;filename=" + filePath);
-            // 写入响应
-            response.getOutputStream().write(cosObjectInput.readAllBytes());
-            response.getOutputStream().flush();
-        } catch (Exception e) {
-            log.error("file download fail: " + filePath, e);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        } finally {
-            // 释放流
-            if (cosObjectInput != null) {
-                cosObjectInput.close();
-            }
-        }
+    public BaseResponse<PictureVO> uploadPicture(
+            @RequestPart("/pic") MultipartFile multipartFile,
+            PictureUploadRequest pictureUploadRequest,
+            HttpServletRequest request) {
+        User loginUser = userService.getCurrentUser(request);
+        PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
+        return ResultUtils.success(pictureVO);
     }
 
 }

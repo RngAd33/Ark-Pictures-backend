@@ -29,6 +29,8 @@ public interface ErrorConstant {
 
     String USER_HAVE_SPECIAL_CHAR_MESSAGE = "——！用户名或密码不能包含特殊字符！——";
 
+    String NOT_EXIST_PARAM = "——！参数不存在！——";
+
     String USER_LOSE_ACTION_MESSAGE = "——！操作失败！——";
 
 }
