@@ -1,13 +1,10 @@
 package com.rngad33.web.service;
 
-import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.model.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rngad33.web.model.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
-import com.rngad33.web.model.dto.picture.PictureUploadResult;
 import com.rngad33.web.model.vo.PictureVO;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
