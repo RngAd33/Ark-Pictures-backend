@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * 文件传输
+ * 图片传输
  */
 @Slf4j
 @Service

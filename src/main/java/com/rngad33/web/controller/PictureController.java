@@ -9,7 +9,6 @@ import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.CosManager;
-import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.utils.ResultUtils;
 import jakarta.annotation.Resource;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -36,43 +34,26 @@ public class PictureController {
     private CosManager cosManager;
 
     /**
-     * 文件上传
+     * 图片上传
      *
      * @param multipartFile
-     * @param pictureUploadRequest
      * @return
      * @throws IOException
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
-    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest) throws Exception {
+    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile)
+            throws Exception {
         // 文件目录
         String fileName = multipartFile.getName();
         String filePath = String.format("/test/%s", fileName);
-        File file = null;
-        try {
-            // 上传文件
-            file = File.createTempFile(filePath, null);
-            multipartFile.transferTo(file);
-            cosManager.putObject(filePath, file);
-            // 返回可访问地址
-            return ResultUtils.success(filePath);
-        } catch (Exception e) {
-            log.error("file upload fail: " + filePath, e);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        } finally {
-            // 删除临时文件
-            if (file != null) {
-                boolean del = file.delete();
-                if (!del) {
-                    log.error("file delete fail: " + filePath);
-                }
-            }
-        }
+
+        String result = pictureService.uploadPicture(fileName, filePath, multipartFile);
+        return ResultUtils.success(result);
     }
 
     /**
-     * 文件下载
+     * 图片下载
      *
      * @param filePath
      * @param response
