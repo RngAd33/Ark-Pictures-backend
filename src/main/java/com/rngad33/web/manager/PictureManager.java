@@ -1,12 +1,9 @@
 package com.rngad33.web.manager;
 
 import cn.hutool.core.io.FileUtil;
-import com.rngad33.web.config.CosClientConfig;
-import com.rngad33.web.exception.ThrowUtils;
+import com.rngad33.web.utils.ThrowUtils;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
