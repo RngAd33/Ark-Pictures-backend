@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,9 +48,9 @@ public class FileManager {
         validPicture(multipartFile);
         // 约定图片上传地址
         String uuid = RandomUtil.randomString(16);
-        String originalFileName = uploadPathPrefix + multipartFile.getOriginalFilename() + uuid;
+        String originalFileName = multipartFile.getOriginalFilename();
         // 自己拼接图片上传路径，不使用原始名称，保证安全性
-        String uploadFileName = String.format("%s_%s.%s", DateUtil.format(new DateTime(), "yyyyMMddHHmmss"), uuid,
+        String uploadFileName = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid,
                 FileUtil.getSuffix(originalFileName));
         String uploadFilePath = String.format("/%s/%s", uploadPathPrefix, uploadFileName);
 
@@ -101,7 +102,7 @@ public class FileManager {
     }
 
     /**
-     * 删除临时文件
+     * 清理临时文件
      *
      * @param file
      */
