@@ -29,6 +29,6 @@ public interface ErrorConstant {
 
     String USER_HAVE_SPECIAL_CHAR_MESSAGE = "——！用户名或密码不能包含特殊字符！——";
 
-    String USER_LOSE_ACTION_MESSAGE = "————！操作失败！————";
+    String USER_LOSE_ACTION_MESSAGE = "——！操作失败！——";
 
 }

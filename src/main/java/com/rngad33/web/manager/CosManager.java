@@ -62,7 +62,7 @@ public class CosManager {
     }
 
     /**
-     * 文件上传（附带信息）
+     * 文件上传（附带图片信息）
      * 使用前需要先开通腾讯云数据万象
      *
      * @param key
