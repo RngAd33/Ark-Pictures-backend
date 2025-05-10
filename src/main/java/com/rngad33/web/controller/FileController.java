@@ -67,7 +67,7 @@ public class FileController {
     }
 
     /**
-     * 图片下载
+     * 文件下载
      *
      * @param filePath
      * @param response
