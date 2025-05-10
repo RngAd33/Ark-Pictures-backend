@@ -38,8 +38,8 @@ public class FileManager {
     /**
      * 文件上传（附带信息）
      *
-     * @param multipartFile
-     * @param uploadPathPrefix
+     * @param multipartFile 原始文件
+     * @param uploadPathPrefix 路径前缀
      * @return
      */
     public PictureUploadResult uploadPictureWithInfo(MultipartFile multipartFile, String uploadPathPrefix) {
@@ -87,7 +87,7 @@ public class FileManager {
     /**
      * 文件校验
      *
-     * @param multipartFile
+     * @param multipartFile 原始文件
      */
     public void validPicture(MultipartFile multipartFile) {
         // - 文件是否存在
