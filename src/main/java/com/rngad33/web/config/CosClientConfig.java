@@ -44,7 +44,7 @@ public class CosClientConfig {
     private String bucket;
 
     /**
-     * 初始化
+     * 客户端初始化
      */
     @Bean
     public COSClient cosClient() {

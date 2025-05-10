@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 文件操作
+ * 通用文件操作
  */
 @Slf4j
 @Service
