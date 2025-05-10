@@ -28,6 +28,13 @@ public class FileServiceImpl implements FileService {
     @Resource
     private FileManager fileManager;
 
+    /**
+     * 文件上传
+     *
+     * @param multipartFile 上传的文件
+     * @return
+     * @throws IOException
+     */
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         String fileName = multipartFile.getName();
@@ -46,6 +53,13 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    /**
+     * 文件下载
+     *
+     * @param filePath 文件路径
+     * @param response HTTP响应
+     * @throws IOException
+     */
     @Override
     public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
         COSObjectInputStream cosObjectInput = null;

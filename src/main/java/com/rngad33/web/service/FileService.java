@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
 
     /**
-     * 上传文件
+     * 文件上传
      *
      * @param multipartFile 上传的文件
      * @return 文件路径
@@ -18,7 +18,7 @@ public interface FileService {
     String uploadFile(MultipartFile multipartFile) throws Exception;
 
     /**
-     * 下载文件
+     * 文件下载
      *
      * @param filePath 文件路径
      * @param response HTTP响应
