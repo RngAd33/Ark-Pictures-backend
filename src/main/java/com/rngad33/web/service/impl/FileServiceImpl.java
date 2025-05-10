@@ -38,7 +38,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         String fileName = multipartFile.getName();
-        String filePath = String.format("/test/%s", fileName);
+        String filePath = String.format("/Arknights/%s", fileName);
         File file = null;
         try {
             // 创建临时文件

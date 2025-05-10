@@ -5,22 +5,22 @@
 <mapper namespace="com.rngad33.web.mapper.PictureMapper">
 
     <resultMap id="BaseResultMap" type="com.rngad33.web.model.Picture">
-            <id property="id" column="id" />
-            <result property="url" column="url" />
-            <result property="name" column="name" />
-            <result property="introduction" column="introduction" />
-            <result property="category" column="category" />
-            <result property="tags" column="tags" />
-            <result property="picSize" column="picSize" />
-            <result property="picWidth" column="picWidth" />
-            <result property="picHeight" column="picHeight" />
-            <result property="picScale" column="picScale" />
-            <result property="picFormat" column="picFormat" />
-            <result property="userId" column="userId" />
-            <result property="createTime" column="createTime" />
-            <result property="editTime" column="editTime" />
-            <result property="updateTime" column="updateTime" />
-            <result property="isDelete" column="isDelete" />
+        <id property="id" column="id" />
+        <result property="url" column="url" />
+        <result property="name" column="name" />
+        <result property="introduction" column="introduction" />
+        <result property="category" column="category" />
+        <result property="tags" column="tags" />
+        <result property="picSize" column="picSize" />
+        <result property="picWidth" column="picWidth" />
+        <result property="picHeight" column="picHeight" />
+        <result property="picScale" column="picScale" />
+        <result property="picFormat" column="picFormat" />
+        <result property="userId" column="userId" />
+        <result property="createTime" column="createTime" />
+        <result property="editTime" column="editTime" />
+        <result property="updateTime" column="updateTime" />
+        <result property="isDelete" column="isDelete" />
     </resultMap>
 
     <sql id="Base_Column_List">

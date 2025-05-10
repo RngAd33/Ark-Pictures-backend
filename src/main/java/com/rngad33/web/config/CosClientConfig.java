@@ -24,12 +24,12 @@ public class CosClientConfig {
     private String host;
 
     /**
-     * id
+     * 身份id
      */
     private String secretId;
 
     /**
-     * 密钥
+     * 身份密钥
      */
     private String secretKey;
 
