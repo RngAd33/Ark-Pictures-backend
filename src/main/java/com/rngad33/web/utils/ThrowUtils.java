@@ -11,7 +11,7 @@ public class ThrowUtils {
     /**
      * 条件成立则抛异常
      *
-     * @param condition        条件
+     * @param condition 条件
      * @param runtimeException 异常
      */
     public static void throwIf(boolean condition, RuntimeException runtimeException) {

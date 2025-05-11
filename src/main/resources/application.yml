@@ -3,9 +3,9 @@ spring:
     active: dev
   application:
     name: ark-picture
-    servlet:
-      multipart:
-        max-file-size: ${sky.spring.servlet.multipart.max-file-size}
+  servlet:
+    multipart:
+      max-file-size: ${sky.spring.servlet.multipart.max-file-size}
 
   # 数据库配置
   datasource:
