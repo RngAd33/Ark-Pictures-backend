@@ -13,8 +13,8 @@ public interface AESConstant {
 
     String TRANSFORMATION = "AES/CBC/PKCS5Padding";
 
-    String KEY_FILE_PATH = System.getProperty("user.dir") + File.separator + "src/main/java/com/yupi/usercenter/model/temp/aes_key.bin";
+    String KEY_FILE_PATH = System.getProperty("user.dir") + File.separator + "src/main/java/com/rngad33/web/model/temp/aes_key.bin";
 
-    String IV_FILE_PATH = System.getProperty("user.dir") + File.separator + "src/main/java/com/yupi/usercenter/model/temp/aes_iv.bin";
+    String IV_FILE_PATH = System.getProperty("user.dir") + File.separator + "src/main/java/com/rngad33/web/model/temp/aes_iv.bin";
 
 }

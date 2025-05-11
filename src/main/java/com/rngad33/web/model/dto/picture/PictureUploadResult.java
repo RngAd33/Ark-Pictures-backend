@@ -2,16 +2,19 @@ package com.rngad33.web.model.dto.picture;
 
 import lombok.Data;
 
+/**
+ * 文件上传结果对象
+ */
 @Data
 public class PictureUploadResult {
 
     /**
-     * 图片地址
+     * 地址
      */
     private String url;
 
     /**
-     * 图片名称
+     * 名称
      */
     private String picName;
 
@@ -21,22 +24,22 @@ public class PictureUploadResult {
     private Long picSize;
 
     /**
-     * 图片宽度
+     * 宽度
      */
     private int picWidth;
 
     /**
-     * 图片高度
+     * 高度
      */
     private int picHeight;
 
     /**
-     * 图片宽高比
+     * 宽高比
      */
     private Double picScale;
 
     /**
-     * 图片格式
+     * 格式
      */
     private String picFormat;
 
