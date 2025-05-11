@@ -39,7 +39,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      */
     @Override
     public PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser) {
-        // 校验参数
+        // 校验是否登录
         ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_AUTH);
         // 判断是新增还是删除
         Long pictureId = null;

@@ -59,7 +59,7 @@ public class FileManager {
             file = File.createTempFile(uploadFilePath, null);
             multipartFile.transferTo(file);
             PutObjectResult putObjectResult = cosManager.putObject(uploadFilePath, file);
-            // 获取图片信息
+            // 获取图片信息对象
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
             // 计算宽高比
             int width = imageInfo.getWidth();
