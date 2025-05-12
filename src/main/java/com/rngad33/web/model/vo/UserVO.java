@@ -1,18 +1,22 @@
-package com.rngad33.web.model;
+package com.rngad33.web.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.rngad33.web.model.User;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户模型
- *
- * @TableName user
+ * 用户封装类
  */
 @Data
-@TableName(value = "user")
-public class User implements Serializable {
+public class UserVO implements Serializable {
 
     /**
      * 用户 id（主要服务于Mapper）
@@ -87,10 +91,35 @@ public class User implements Serializable {
     @TableLogic
     private Integer isDelete;
 
-    /**
-     * 序列化版本号
-     */
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 封装类转对象
+     *
+     * @param userVO
+     * @return
+     */
+    public static User voToObj(UserVO userVO) {
+        User user = new User();
+        BeanUtil.copyProperties(userVO, user);
+        return user;
+    }
+
+    /**
+     * 对象转封装类
+     * 获得脱敏后的用户信息
+     *
+     * @param user
+     * @return
+     */
+    public static UserVO objToVo(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        BeanUtil.copyProperties(user, userVO);
+        return userVO;
+    }
 
 }
