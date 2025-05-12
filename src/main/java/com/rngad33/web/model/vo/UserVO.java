@@ -19,10 +19,8 @@ import java.util.Date;
 public class UserVO implements Serializable {
 
     /**
-     * 用户 id（主要服务于Mapper）
-     * 当前策略为主键自增
+     * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -85,13 +83,6 @@ public class UserVO implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除？ 0-未删，1-已删
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     /**

@@ -10,6 +10,7 @@ import com.rngad33.web.model.Picture;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +22,7 @@ public class PictureVO implements Serializable {
 
     /**
      * id
-     * 当前策略为随机长id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -97,15 +96,15 @@ public class PictureVO implements Serializable {
     private Date updateTime;
 
     /**
-     * 是否删除
+     * 创建人信息
      */
-    @TableLogic
-    private Integer isDelete;
+    private UserVO user;
 
     /**
-     * 序列化版本号
+     * 权限列表
      */
-    @TableField(exist = false)
+    private List<String> permissionList = new ArrayList<>();
+
     private static final long serialVersionUID = 1L;
 
     /**
