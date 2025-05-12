@@ -20,15 +20,9 @@ import java.io.File;
 @Component
 public class CosManager {
 
-    /**
-     * 配置
-     */
     @Resource
     private CosClientConfig cosClientConfig;
 
-    /**
-     * 客户端
-     */
     @Resource
     private COSClient cosClient;
 
