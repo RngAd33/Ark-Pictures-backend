@@ -30,7 +30,7 @@ public class CosManager {
      * 文件上传
      *
      * @param key 唯一键
-     * @param file
+     * @param file 文件
      * @return
      * @throws CosClientException
      * @throws CosServiceException
@@ -59,8 +59,8 @@ public class CosManager {
      * 文件上传（附带图片信息）
      * 使用前需要先开通腾讯云数据万象
      *
-     * @param key
-     * @param file
+     * @param key 唯一键
+     * @param file 文件
      * @return
      * @throws CosClientException
      * @throws CosServiceException

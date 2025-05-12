@@ -5,18 +5,17 @@ import com.rngad33.web.manager.FileManager;
 import com.rngad33.web.model.Picture;
 import com.rngad33.web.model.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
-import com.rngad33.web.model.dto.picture.PictureUploadResult;
+import com.rngad33.web.model.dto.file.PictureUploadResult;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.mapper.PictureMapper;
 import com.rngad33.web.utils.ThrowUtils;
+import java.util.Date;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
 
 /**
  * 图片业务实现
@@ -35,7 +34,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      * 图片上传
      *
      * @param multipartFile 原始文件
-     * @return
+     * @return 图片封装类
      */
     @Override
     public PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser) {

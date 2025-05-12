@@ -4,13 +4,16 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 文件上传请求体
+ * 图片上传请求体
  */
 @Data
 public class PictureUploadRequest implements Serializable {
 
-    private static final long serialVersionUID = 3191241716373120793L;
-
+    /**
+     * id
+     */
     private Long id;
+
+    private static final long serialVersionUID = 3191241716373120793L;
 
 }
