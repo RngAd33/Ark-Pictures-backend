@@ -4,7 +4,7 @@ import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
 
 /**
- * 异常处理工具类
+ * 异常抛出工具类
  */
 public class ThrowUtils {
 

@@ -36,7 +36,7 @@ public class FileManager {
     private CosClientConfig cosClientConfig;
 
     /**
-     * 文件上传（附带信息）
+     * 图片上传（附带信息）
      *
      * @param multipartFile 原始文件
      * @param uploadPathPrefix 路径前缀
@@ -91,13 +91,13 @@ public class FileManager {
      */
     public void validPicture(MultipartFile multipartFile) {
         // - 文件是否存在
-        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAM_ERROR, "文件不能为空！");
+        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
         // - 校验文件大小
-        ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 5, ErrorCodeEnum.PARAM_ERROR, "文件大小不能超过5M！");
+        ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 5, ErrorCodeEnum.PARAM_ERROR, "图片大小不能超过5M！");
         // - 校验文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         final List<String> SUFFIX_ALLOW = Arrays.asList("png", "jpg", "jpeg", "gif", "webp");
-        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAM_ERROR, "不支持的文件格式！");
+        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAM_ERROR, "不支持的图片格式！");
     }
 
     /**
