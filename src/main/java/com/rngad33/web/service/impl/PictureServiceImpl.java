@@ -53,7 +53,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             ThrowUtils.throwIf(!exist, ErrorCodeEnum.NOT_PARAM);
         }
         // 上传图片，按照用户id划分目录
-        String uploadFilePrefix = String.format("public/$s", loginUser.getId());
+        String uploadFilePrefix = String.format("public/%s", loginUser.getId());
         PictureUploadResult pictureUploadResult = fileManager.uploadPictureWithInfo(multipartFile, uploadFilePrefix);
         // 构造要入库的图片信息
         Picture picture = new Picture();
