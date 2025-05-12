@@ -1,6 +1,8 @@
 package com.rngad33.web.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rngad33.web.model.dto.picture.PictureQueryRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rngad33.web.model.entity.User;
@@ -21,6 +23,14 @@ public interface PictureService extends IService<Picture> {
      * @return 访问地址
      */
     PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser);
+
+    /**
+     * 获取查询条件
+     *
+     * @param pictureQueryRequest
+     * @return
+     */
+    QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest);
 
     /**
      * 校验图片信息
