@@ -2,16 +2,19 @@ package com.rngad33.web.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.common.DeleteRequest;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.model.dto.picture.PictureEditRequest;
+import com.rngad33.web.model.dto.picture.PictureQueryRequest;
 import com.rngad33.web.model.dto.picture.PictureUpdateRequest;
+import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
-import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
@@ -23,6 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
 
 /**
  * 图片交互接口
@@ -56,6 +61,43 @@ public class PictureController {
         User loginUser = userService.getCurrentUser(request);
         PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
+    }
+
+    /**
+     * 图片编辑
+     *
+     * @param pictureEditRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/edit")
+    public BaseResponse<Boolean> editPicture(@RequestBody PictureEditRequest pictureEditRequest,
+            HttpServletRequest request) {
+        if (pictureEditRequest == null || pictureEditRequest.getId() <= 0) {
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+        }
+        // 由实体类转换为DTO
+        Picture picture = new Picture();
+        BeanUtil.copyProperties(pictureEditRequest, picture);
+        // 将list转换为json字符串
+        picture.setTags(JSONUtil.toJsonStr(pictureEditRequest.getTags()));
+        // 设置编辑时间
+        picture.setEditTime(new Date());
+        // 数据校验
+        pictureService.validPicture(picture);
+        User loginUser = userService.getCurrentUser(request);
+        // 判断原图是否存在
+        Long id = pictureEditRequest.getId();
+        Picture oldPicture = pictureService.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        // 仅本人或管理员可删除
+        if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
+            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+        }
+        // 操作数据库
+        boolean result = pictureService.updateById(picture);
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        return ResultUtils.success(true);
     }
 
     /**
@@ -94,7 +136,8 @@ public class PictureController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/update")
-    public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest,
+                                               HttpServletRequest request) {
         if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
@@ -113,6 +156,78 @@ public class PictureController {
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 根据id获取图片（管理员）
+     *
+     * @param id
+     * @param request
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @GetMapping("/get")
+    public BaseResponse<Picture> getPictureById(Long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
+        // 查询数据库
+        Picture picture = pictureService.getById(id);
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM);
+        // 获取封装类
+        return ResultUtils.success(picture);
+    }
+
+    /**
+     * 根据id获取图片（用户）
+     *
+     * @param id
+     * @param request
+     * @return
+     */
+    @GetMapping("/get/vo")
+    public BaseResponse<PictureVO> getPictureVOById(Long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
+        // 查询数据库
+        Picture picture = pictureService.getById(id);
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM);
+        // 获取封装类
+        return ResultUtils.success(PictureVO.objToVo(picture));
+    }
+
+    /**
+     * 分页获取图片列表（仅管理员可用）
+     *
+     * @param pictureQueryRequest
+     * @return
+     */
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // 查询数据库
+        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                pictureService.getQueryWrapper(pictureQueryRequest));
+        return ResultUtils.success(picturePage);
+    }
+
+    /**
+     * 分页获取图片列表（用户）
+     *
+     * @param pictureQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("list/page/vo")
+    public BaseResponse<Page<PictureVO>> listPictureVOByPage(PictureQueryRequest pictureQueryRequest,
+                                                             HttpServletRequest request) {
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 16, ErrorCodeEnum.PARAM_ERROR);
+        // 查询数据库
+        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                pictureService.getQueryWrapper(pictureQueryRequest));
+        return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
     }
 
 }
