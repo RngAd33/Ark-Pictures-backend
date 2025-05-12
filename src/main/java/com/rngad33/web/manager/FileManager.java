@@ -58,7 +58,7 @@ public class FileManager {
             // 上传文件
             file = File.createTempFile(uploadFilePath, null);
             multipartFile.transferTo(file);
-            PutObjectResult putObjectResult = cosManager.putObject(uploadFilePath, file);
+            PutObjectResult putObjectResult = cosManager.putPictureObject(uploadFilePath, file);
             // 获取图片信息对象
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
             // 计算宽高比
