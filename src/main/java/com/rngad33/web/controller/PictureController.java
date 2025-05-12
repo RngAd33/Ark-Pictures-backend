@@ -244,5 +244,4 @@ public class PictureController {
         return ResultUtils.success(pictureTagCategory);
     }
 
-
 }
