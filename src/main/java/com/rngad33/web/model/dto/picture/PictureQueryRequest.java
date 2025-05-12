@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.picture;
 
+import com.rngad33.web.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,9 +10,9 @@ import java.util.List;
 /**
  * 图片查询请求体
  */
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class PictureQueryRequest implements Serializable {
+public class PictureQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
