@@ -160,7 +160,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Long id = picture.getId();
         String url = picture.getUrl();
         String introduction =picture.getIntroduction();
-        ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAM_ERROR, "用户id为空");
+        ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAM_ERROR, "id为空！");
         if (StrUtil.isNotBlank(url)) {
             ThrowUtils.throwIf(url.length() > 1024, ErrorCodeEnum.PARAM_ERROR, "url过长！");
         }
@@ -205,7 +205,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             return pictureVOPage;
         }
         // 对象列表 => 封装对象列表
-        List<PictureVO> pictureVOList = pictureList.stream().map(PictureVO::objToVo).collect(Collectors.toList());
+        List<PictureVO> pictureVOList = pictureList.stream()
+                .map(PictureVO::objToVo)
+                .collect(Collectors.toList());
         // 1. 关联查询用户信息
         Set<Long> userIdSet = pictureList.stream().map(Picture::getUserId).collect(Collectors.toSet());
         // n -> usern
