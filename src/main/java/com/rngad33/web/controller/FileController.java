@@ -54,7 +54,7 @@ public class FileController {
         try {
             fileService.downloadFile(filePath, response);
         } catch (Exception e) {
-            log.error("file download fail: " + filePath, e);
+            log.error("file download fail: {}", filePath, e);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         }
     }
