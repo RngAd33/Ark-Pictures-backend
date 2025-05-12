@@ -9,10 +9,7 @@ import com.rngad33.web.common.DeleteRequest;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
-import com.rngad33.web.model.dto.picture.PictureEditRequest;
-import com.rngad33.web.model.dto.picture.PictureQueryRequest;
-import com.rngad33.web.model.dto.picture.PictureUpdateRequest;
-import com.rngad33.web.model.dto.picture.PictureUploadRequest;
+import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
@@ -27,7 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 图片交互接口
@@ -229,5 +228,21 @@ public class PictureController {
                 pictureService.getQueryWrapper(pictureQueryRequest));
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
     }
+
+    /**
+     * 获取预置标签分类
+     *
+     * @return
+     */
+    @GetMapping("/tag_category")
+    public BaseResponse<PictureTagCategory> listPictureTagCategory() {
+        PictureTagCategory pictureTagCategory = new PictureTagCategory();
+        List<String> tagList = Arrays.asList("热门", "明日方舟", "原神", "碧蓝航线", "艺术", "校园", "风景", "简历", "创意");
+        List<String> categoryList = Arrays.asList("高清壁纸", "弔图", "表情包", "头像系列", "海报");
+        pictureTagCategory.setTagList(tagList);
+        pictureTagCategory.setCategoryList(categoryList);
+        return ResultUtils.success(pictureTagCategory);
+    }
+
 
 }
