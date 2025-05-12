@@ -32,7 +32,7 @@ public class FileController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
-    public BaseResponse<String> uploadPicture(@RequestPart("/file") MultipartFile multipartFile) {
+    public BaseResponse<String> uploadFile(@RequestPart("/file") MultipartFile multipartFile) {
         try {
             String filePath = fileService.uploadFile(multipartFile);
             return ResultUtils.success(filePath);
@@ -50,7 +50,7 @@ public class FileController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/download")
-    public void downloadPicture(String filePath, HttpServletResponse response) {
+    public void downloadFile(String filePath, HttpServletResponse response) {
         try {
             fileService.downloadFile(filePath, response);
         } catch (Exception e) {
