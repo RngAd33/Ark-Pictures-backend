@@ -1,11 +1,14 @@
 package com.rngad33.web.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.common.DeleteRequest;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.model.dto.picture.PictureUpdateRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
@@ -18,10 +21,7 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -66,7 +66,7 @@ public class PictureController {
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deletePicture(DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
@@ -79,6 +79,36 @@ public class PictureController {
         if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
             throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
         }
+        // 操作数据库
+        boolean result = pictureService.removeById(id);
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 图片更新（仅管理员）
+     *
+     * @param pictureUpdateRequest
+     * @param request
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/update")
+    public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest, HttpServletRequest request) {
+        if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+        }
+        // 由实体类转换为DTO
+        Picture picture = new Picture();
+        BeanUtil.copyProperties(pictureUpdateRequest, picture);
+        // 将list转换为json字符串
+        picture.setTags(JSONUtil.toJsonStr(pictureUpdateRequest.getTags()));
+        // 数据校验
+        pictureService.validPicture(picture);
+        // 判断原图是否存在
+        Long id = pictureUpdateRequest.getId();
+        Picture oldPicture = pictureService.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
