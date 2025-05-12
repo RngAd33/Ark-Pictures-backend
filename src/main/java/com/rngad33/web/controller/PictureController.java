@@ -72,6 +72,7 @@ public class PictureController {
         }
         Long id = deleteRequest.getId();
         User loginUser = userService.getCurrentUser(request);
+        // 判断原图是否存在
         Picture oldPicture = pictureService.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
         // 仅本人或管理员可删除
