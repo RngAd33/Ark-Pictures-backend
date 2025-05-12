@@ -1,6 +1,8 @@
 package com.rngad33.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.manager.FileManager;
@@ -85,8 +87,28 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             picture.setEditTime(new Date());
         }
         boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
-        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "——！上传失败！——");
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "上传失败！");
         return PictureVO.objToVo(picture);
+    }
+
+    /**
+     * 校验图片信息
+     *
+     * @param picture
+     */
+    @Override
+    public void validPicture(Picture picture) {
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
+        Long id = picture.getId();
+        String url = picture.getUrl();
+        String introduction =picture.getIntroduction();
+        ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAM_ERROR, "用户id为空");
+        if (StrUtil.isNotBlank(url)) {
+            ThrowUtils.throwIf(url.length() > 1024, ErrorCodeEnum.PARAM_ERROR, "url过长！");
+        }
+        if (StrUtil.isNotBlank(introduction)) {
+            ThrowUtils.throwIf(introduction.length() > 800, ErrorCodeEnum.PARAM_ERROR, "简介过长！");
+        }
     }
 
     /**
@@ -128,6 +150,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         List<PictureVO> pictureVOList = pictureList.stream().map(PictureVO::objToVo).collect(Collectors.toList());
         // 1. 关联查询用户信息
         Set<Long> userIdSet = pictureList.stream().map(Picture::getUserId).collect(Collectors.toSet());
+        // n -> usern
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
                 .collect(Collectors.groupingBy(User::getId));
         // 2. 填充信息
