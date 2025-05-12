@@ -193,7 +193,7 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表（仅管理员可用）
+     * 分页获取图片列表（管理员）
      *
      * @param pictureQueryRequest
      * @return
