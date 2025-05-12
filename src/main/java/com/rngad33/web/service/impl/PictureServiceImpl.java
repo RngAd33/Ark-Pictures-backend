@@ -72,7 +72,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             picture.setEditTime(new Date());
         }
         boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
-        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "——！图片上传失败！——");
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "——！上传失败！——");
         return PictureVO.objToVo(picture);
     }
 
