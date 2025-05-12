@@ -8,7 +8,7 @@ import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.service.UserService;
-import com.rngad33.web.utils.ResultUtils;
+import com.rngad33.web.common.ResultUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

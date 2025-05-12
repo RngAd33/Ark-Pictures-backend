@@ -11,7 +11,7 @@ import com.rngad33.web.model.enums.ErrorCodeEnum;
 import com.rngad33.web.model.enums.UserRoleEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.User;
-import com.rngad33.web.utils.ResultUtils;
+import com.rngad33.web.common.ResultUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;

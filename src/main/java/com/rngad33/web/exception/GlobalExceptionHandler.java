@@ -1,6 +1,6 @@
 package com.rngad33.web.exception;
 
-import com.rngad33.web.utils.ResultUtils;
+import com.rngad33.web.common.ResultUtils;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.model.enums.ErrorCodeEnum;
 import lombok.extern.slf4j.Slf4j;
