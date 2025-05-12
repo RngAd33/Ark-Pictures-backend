@@ -223,7 +223,7 @@ public class PictureController {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 16, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
