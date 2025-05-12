@@ -6,12 +6,14 @@ import com.rngad33.web.model.dto.user.UserManageRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.UserRoleEnum;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 /**
  * 通用用户操作
  */
+@Service
 public class UserManager {
 
     /**
