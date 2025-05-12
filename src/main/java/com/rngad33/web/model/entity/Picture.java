@@ -1,4 +1,4 @@
-package com.rngad33.web.model;
+package com.rngad33.web.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 

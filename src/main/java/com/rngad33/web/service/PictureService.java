@@ -1,9 +1,9 @@
 package com.rngad33.web.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rngad33.web.model.Picture;
+import com.rngad33.web.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.rngad33.web.model.User;
+import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.vo.PictureVO;
 import jakarta.servlet.http.HttpServletRequest;

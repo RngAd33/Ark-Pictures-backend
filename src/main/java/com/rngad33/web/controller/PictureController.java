@@ -3,7 +3,7 @@ package com.rngad33.web.controller;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.constant.UserConstant;
-import com.rngad33.web.model.User;
+import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
