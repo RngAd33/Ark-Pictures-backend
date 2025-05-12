@@ -2,13 +2,19 @@ package com.rngad33.web.controller;
 
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
+import com.rngad33.web.common.DeleteRequest;
 import com.rngad33.web.constant.UserConstant;
+import com.rngad33.web.exception.MyException;
+import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
+import com.rngad33.web.model.enums.ErrorCodeEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.service.UserService;
 import com.rngad33.web.common.ResultUtils;
+import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +36,9 @@ public class PictureController {
     private UserService userService;
 
     @Resource
+    private UserManager userManager;
+
+    @Resource
     private PictureService pictureService;
 
     /**
@@ -47,6 +56,32 @@ public class PictureController {
         User loginUser = userService.getCurrentUser(request);
         PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
+    }
+
+    /**
+     * 图片删除
+     *
+     * @param deleteRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> deletePicture(DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+        }
+        Long id = deleteRequest.getId();
+        User loginUser = userService.getCurrentUser(request);
+        Picture oldPicture = pictureService.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        // 仅本人或管理员可删除
+        if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
+            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+        }
+        // 操作数据库
+        boolean result = pictureService.removeById(id);
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        return ResultUtils.success(true);
     }
 
 }
