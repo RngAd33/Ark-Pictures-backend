@@ -2,11 +2,13 @@ package com.rngad33.web.model.dto.picture;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 图片审核请求体
  */
 @Data
-public class PictureReviewRequest {
+public class PictureReviewRequest implements Serializable {
 
     /**
      * id
