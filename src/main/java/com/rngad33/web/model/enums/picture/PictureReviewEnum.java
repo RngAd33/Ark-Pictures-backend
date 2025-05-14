@@ -9,8 +9,8 @@ import lombok.Getter;
 public enum PictureReviewEnum {
 
     REVIEWING("审核中", 0),
-    PASS("已过审", 1),
-    FAIL("未过审", 2);
+    PASS("已通过", 1),
+    FAIL("已驳回", 2);
 
     private final String status;
     private final Integer code;
