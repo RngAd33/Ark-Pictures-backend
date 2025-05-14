@@ -16,7 +16,7 @@ import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.dto.picture.PictureQueryRequest;
 import com.rngad33.web.model.dto.file.PictureUploadResult;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
-import com.rngad33.web.model.enums.picture.PictureReviewEnum;
+import com.rngad33.web.model.enums.picture.PictureReviewStatusEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.model.vo.UserVO;
 import com.rngad33.web.service.PictureService;
@@ -243,8 +243,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Long id = pictureReviewRequest.getId();
         Integer reviewStatus = pictureReviewRequest.getReviewStatus();
         String reviewMessage = pictureReviewRequest.getReviewMessage();
-        PictureReviewEnum pictureReviewEnum = PictureReviewEnum.getEnumByValue(reviewStatus);
-        if (id == null || pictureReviewEnum == null || PictureReviewEnum.REVIEWING.equals(pictureReviewEnum)) {
+        PictureReviewStatusEnum pictureReviewStatusEnum = PictureReviewStatusEnum.getEnumByValue(reviewStatus);
+        if (id == null || pictureReviewStatusEnum == null || PictureReviewStatusEnum.REVIEWING.equals(pictureReviewStatusEnum)) {
             throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         // 2. 判断图片是否存在
