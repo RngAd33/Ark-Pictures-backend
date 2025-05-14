@@ -4,7 +4,7 @@ import com.rngad33.web.constant.ErrorConstant;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.model.dto.user.UserManageRequest;
 import com.rngad33.web.model.entity.User;
-import com.rngad33.web.model.enums.UserRoleEnum;
+import com.rngad33.web.model.enums.user.UserRoleEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
