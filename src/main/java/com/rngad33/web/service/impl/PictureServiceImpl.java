@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.manager.FileManager;
+import com.rngad33.web.model.dto.picture.PictureReviewRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
@@ -224,6 +225,16 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         });
         pictureVOPage.setRecords(pictureVOList);
         return pictureVOPage;
+    }
+
+    /**
+     * 图片审核
+     *
+     * @param pictureReviewRequest
+     * @param loginUser
+     */
+    public void reviewPicture(PictureReviewRequest pictureReviewRequest, User loginUser) {
+
     }
 
 }
