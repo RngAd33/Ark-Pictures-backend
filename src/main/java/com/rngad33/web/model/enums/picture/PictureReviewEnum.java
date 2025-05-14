@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum PictureReviewEnum {
 
-    VIEWING("审核中", 0),
+    REVIEWING("审核中", 0),
     PASS("已过审", 1),
     FAIL("未过审", 2);
 
