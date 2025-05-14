@@ -1,11 +1,13 @@
 package com.rngad33.web.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.FileManager;
 import com.rngad33.web.model.dto.picture.PictureReviewRequest;
 import com.rngad33.web.model.entity.Picture;
@@ -237,20 +239,28 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public void reviewPicture(PictureReviewRequest pictureReviewRequest, User loginUser) {
         // 1. 校验参数
-        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.NOT_PARAM);
         Long id = pictureReviewRequest.getId();
         Integer reviewStatus = pictureReviewRequest.getReviewStatus();
         String reviewMessage = pictureReviewRequest.getReviewMessage();
         PictureReviewEnum pictureReviewEnum = PictureReviewEnum.getEnumByValue(reviewStatus);
         if (id == null || pictureReviewEnum == null || PictureReviewEnum.REVIEWING.equals(pictureReviewEnum)) {
-
+            throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         // 2. 判断图片是否存在
-
+        Picture oldPicture = this.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
         // 3. 检查审核状态是否重复
-
+        if (oldPicture.getReviewStatus().equals(reviewStatus)) {
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+        }
         // 4. 操作数据库
-
+        Picture uploadPicture = new Picture();
+        BeanUtil.copyProperties(pictureReviewRequest, uploadPicture);
+        uploadPicture.setReviewId(loginUser.getId());
+        uploadPicture.setReviewTime(new Date());
+        boolean result = this.updateById(uploadPicture);
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
     }
 
 }
