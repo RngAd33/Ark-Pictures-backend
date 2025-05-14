@@ -249,6 +249,7 @@ public class PictureController {
      *
      * @param pictureReviewRequest
      * @param request
+     * @return
      */
     @PostMapping("/review")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
