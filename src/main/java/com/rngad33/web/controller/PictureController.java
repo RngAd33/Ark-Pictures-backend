@@ -244,4 +244,19 @@ public class PictureController {
         return ResultUtils.success(pictureTagCategory);
     }
 
+    /**
+     * 图片审核（仅管理员）
+     *
+     * @param pictureReviewRequest
+     * @param request
+     */
+    @PostMapping("/review")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        User loginUser = userService.getCurrentUser(request);
+        pictureService.reviewPicture(pictureReviewRequest, loginUser);
+        return ResultUtils.success(true);
+    }
+
 }
