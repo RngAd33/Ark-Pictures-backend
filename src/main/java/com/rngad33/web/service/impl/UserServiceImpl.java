@@ -6,7 +6,7 @@ import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.service.UserService;
 import com.rngad33.web.constant.AESConstant;
 import com.rngad33.web.constant.ErrorConstant;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.enums.user.UserStatusEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.mapper.UserMapper;

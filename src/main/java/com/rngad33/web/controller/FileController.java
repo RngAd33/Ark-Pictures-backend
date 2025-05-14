@@ -3,7 +3,7 @@ package com.rngad33.web.controller;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.constant.UserConstant;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.service.FileService;
 import com.rngad33.web.common.ResultUtils;

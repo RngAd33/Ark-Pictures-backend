@@ -1,6 +1,6 @@
 package com.rngad33.web.common;
 
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 
 /**
  * 返回工具类

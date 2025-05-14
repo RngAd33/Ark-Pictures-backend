@@ -1,6 +1,6 @@
 package com.rngad33.web.exception;
 
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import lombok.Getter;
 
 /**

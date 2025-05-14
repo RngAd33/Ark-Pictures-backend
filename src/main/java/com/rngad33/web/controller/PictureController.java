@@ -12,7 +12,7 @@ import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.service.UserService;

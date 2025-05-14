@@ -1,7 +1,7 @@
 package com.rngad33.web.utils;
 
 import com.rngad33.web.exception.MyException;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 
 /**
  * 异常抛出工具类

@@ -6,7 +6,7 @@ import com.rngad33.web.model.dto.user.UserManageRequest;
 import com.rngad33.web.model.dto.user.UserRegisterRequest;
 import com.rngad33.web.service.UserService;
 import com.rngad33.web.common.BaseResponse;
-import com.rngad33.web.model.enums.ErrorCodeEnum;
+import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.common.ResultUtils;
