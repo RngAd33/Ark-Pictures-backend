@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.FileManager;
+import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.model.dto.picture.PictureReviewRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
@@ -45,6 +46,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     private FileManager fileManager;
 
     @Resource
+    private UserManager userManager;
+
+    @Resource
     private UserService userService;
 
     /**
@@ -64,10 +68,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         }
         // 如果是更新，判断图片是否存在
         if (pictureId != null) {
-            boolean exist = this.lambdaQuery()
-                    .eq(Picture::getId, pictureId)
-                    .exists();
-            ThrowUtils.throwIf(!exist, ErrorCodeEnum.NOT_PARAM, "图片不存在！");
+            Picture oldPicture = this.getById(pictureId);
+            ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "图片不存在！");
+            // 仅本人或管理员有权编辑图片
+            if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
+                throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+            }
         }
         // 上传图片，按照用户id划分目录
         String uploadFilePrefix = String.format("public/%s", loginUser.getId());
