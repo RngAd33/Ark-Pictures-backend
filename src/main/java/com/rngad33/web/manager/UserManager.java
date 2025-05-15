@@ -17,7 +17,7 @@ import java.util.Objects;
 public class UserManager {
 
     /**
-     * 反向鉴权
+     * 反向鉴权（面向请求）
      *
      * @param request http请求
      * @return 是否（TF）为管理员
@@ -33,7 +33,7 @@ public class UserManager {
     }
 
     /**
-     * 反向鉴权
+     * 反向鉴权（面向用户）
      *
      * @param user 用户
      * @return 是否（TF）为管理员
