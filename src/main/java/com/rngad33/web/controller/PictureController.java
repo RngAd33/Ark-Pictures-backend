@@ -77,7 +77,7 @@ public class PictureController {
         // 判断原图是否存在
         Long id = pictureEditRequest.getId();
         Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "原图不存在！");
         // 仅本人或管理员可编辑
         User loginUser = userService.getCurrentUser(request);
         if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
@@ -116,7 +116,7 @@ public class PictureController {
         User loginUser = userService.getCurrentUser(request);
         // 判断原图是否存在
         Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "原图不存在！");
         // 仅本人或管理员可删除
         if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
             throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
@@ -141,6 +141,10 @@ public class PictureController {
         if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
+        // 判断原图是否存在
+        Long id = pictureUpdateRequest.getId();
+        Picture oldPicture = pictureService.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
         // 由实体类转换为DTO
         Picture picture = new Picture();
         BeanUtil.copyProperties(pictureUpdateRequest, picture);
@@ -148,10 +152,6 @@ public class PictureController {
         picture.setTags(JSONUtil.toJsonStr(pictureUpdateRequest.getTags()));
         // 数据校验
         pictureService.validPicture(picture);
-        // 判断原图是否存在
-        Long id = pictureUpdateRequest.getId();
-        Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
         // 补充审核参数
         User loginUser = userService.getCurrentUser(request);
         userManager.fillReviewParams(picture, loginUser);
