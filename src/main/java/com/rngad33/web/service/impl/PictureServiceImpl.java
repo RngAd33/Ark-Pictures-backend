@@ -42,9 +42,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
 
     @Resource
-    private PictureMapper pictureMapper;
-
-    @Resource
     private FileManager fileManager;
 
     @Resource
