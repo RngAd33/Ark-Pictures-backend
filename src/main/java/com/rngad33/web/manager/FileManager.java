@@ -10,6 +10,8 @@ import com.rngad33.web.config.CosClientConfig;
 import com.rngad33.web.constant.ErrorConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.dto.file.PictureUploadResult;
+import com.rngad33.web.model.entity.Picture;
+import com.rngad33.web.model.entity.User;
 import com.rngad33.web.utils.ThrowUtils;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import jakarta.annotation.Resource;
