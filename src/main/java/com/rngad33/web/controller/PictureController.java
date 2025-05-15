@@ -193,7 +193,7 @@ public class PictureController {
         Picture picture = pictureService.getById(id);
         ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM);
         // 获取封装类
-        return ResultUtils.success(PictureVO.objToVo(picture));
+        return ResultUtils.success(pictureService.getPictureVO(picture, request));
     }
 
     /**
