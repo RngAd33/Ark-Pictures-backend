@@ -74,24 +74,26 @@ public class PictureController {
         if (pictureEditRequest == null || pictureEditRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
+        // 判断原图是否存在
+        Long id = pictureEditRequest.getId();
+        Picture oldPicture = pictureService.getById(id);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        // 仅本人或管理员可编辑
+        User loginUser = userService.getCurrentUser(request);
+        if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
+            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+        }
         // 由实体类转换为DTO
         Picture picture = new Picture();
         BeanUtil.copyProperties(pictureEditRequest, picture);
         // 将list转换为json字符串
         picture.setTags(JSONUtil.toJsonStr(pictureEditRequest.getTags()));
-        // 设置编辑时间
-        picture.setEditTime(new Date());
         // 数据校验
         pictureService.validPicture(picture);
-        User loginUser = userService.getCurrentUser(request);
-        // 判断原图是否存在
-        Long id = pictureEditRequest.getId();
-        Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
-        // 仅本人或管理员可删除
-        if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
-            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
-        }
+        // 设置编辑时间
+        picture.setEditTime(new Date());
+        // 补充审核参数
+        userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         boolean result = pictureService.updateById(picture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
@@ -150,6 +152,9 @@ public class PictureController {
         Long id = pictureUpdateRequest.getId();
         Picture oldPicture = pictureService.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        // 补充审核参数
+        User loginUser = userService.getCurrentUser(request);
+        userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
