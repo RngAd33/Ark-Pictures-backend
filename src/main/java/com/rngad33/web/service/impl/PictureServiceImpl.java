@@ -257,7 +257,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 4. 操作数据库
         Picture uploadPicture = new Picture();
         BeanUtil.copyProperties(pictureReviewRequest, uploadPicture);
-        uploadPicture.setReviewId(loginUser.getId());
+        uploadPicture.setReviewerId(loginUser.getId());
         uploadPicture.setReviewTime(new Date());
         boolean result = this.updateById(uploadPicture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
