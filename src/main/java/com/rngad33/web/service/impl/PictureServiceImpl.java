@@ -67,7 +67,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             boolean exist = this.lambdaQuery()
                     .eq(Picture::getId, pictureId)
                     .exists();
-            ThrowUtils.throwIf(!exist, ErrorCodeEnum.NOT_PARAM);
+            ThrowUtils.throwIf(!exist, ErrorCodeEnum.NOT_PARAM, "图片不存在！");
         }
         // 上传图片，按照用户id划分目录
         String uploadFilePrefix = String.format("public/%s", loginUser.getId());

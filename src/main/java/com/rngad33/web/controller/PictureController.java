@@ -51,7 +51,6 @@ public class PictureController {
      * @param multipartFile 原始文件
      * @return 访问地址
      */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
     public BaseResponse<PictureVO> uploadPicture(
             @RequestPart("/pic") MultipartFile multipartFile,
