@@ -59,7 +59,7 @@ public interface PictureService extends IService<Picture> {
     Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request);
 
     /**
-     * 图片审核
+     * 图片审核（仅管理员）
      *
      * @param pictureReviewRequest
      * @param loginUser

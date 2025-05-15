@@ -231,7 +231,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     /**
-     * 图片审核
+     * 图片审核（仅管理员）
      *
      * @param pictureReviewRequest
      * @param loginUser
