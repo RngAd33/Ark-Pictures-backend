@@ -13,6 +13,7 @@ import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
+import com.rngad33.web.model.enums.picture.PictureReviewStatusEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.service.UserService;
@@ -210,6 +211,7 @@ public class PictureController {
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
+        // 获取封装类
         return ResultUtils.success(picturePage);
     }
 
@@ -227,9 +229,12 @@ public class PictureController {
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
+        // 普通用户默认只能看到已过审的图片
+        pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
+        // 获取封装类
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
     }
 
