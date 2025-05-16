@@ -65,7 +65,7 @@ public class UserManager {
     }
 
     /**
-     * 审核参数填充
+     * 补充审核参数
      *
      * @param picture
      * @param loginUser
