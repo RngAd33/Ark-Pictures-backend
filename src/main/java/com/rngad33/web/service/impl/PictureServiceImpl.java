@@ -88,6 +88,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setPicScale(pictureUploadResult.getPicScale());
         picture.setPicFormat(pictureUploadResult.getPicFormat());
         picture.setUserId(loginUser.getId());
+        // 补充审核参数
+        userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         if (pictureId != null) {
             // 更新，补充信息
@@ -244,7 +246,6 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.NOT_PARAM);
         Long id = pictureReviewRequest.getId();
         Integer reviewStatus = pictureReviewRequest.getReviewStatus();
-        String reviewMessage = pictureReviewRequest.getReviewMessage();
         PictureReviewStatusEnum pictureReviewStatusEnum = PictureReviewStatusEnum.getEnumByValue(reviewStatus);
         if (id == null || pictureReviewStatusEnum == null || PictureReviewStatusEnum.REVIEWING.equals(pictureReviewStatusEnum)) {
             throw new MyException(ErrorCodeEnum.NOT_PARAM);
