@@ -9,7 +9,7 @@ import cn.hutool.http.Method;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.utils.ThrowUtils;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * 图片上传模板实现类（基于URL）
  */
+@Service
 public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
 
     /**
