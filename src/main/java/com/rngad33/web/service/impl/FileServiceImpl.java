@@ -32,7 +32,7 @@ public class FileServiceImpl implements FileService {
      * 文件上传
      *
      * @param multipartFile 上传的文件
-     * @return
+     * @return 文件路径
      * @throws IOException
      */
     @Override
@@ -68,11 +68,9 @@ public class FileServiceImpl implements FileService {
             COSObject cosObject = cosManager.getObject(filePath);
             cosObjectInput = cosObject.getObjectContent();
             byte[] bytes = IOUtils.toByteArray(cosObjectInput);
-
             // 设置响应头
             response.setContentType("application/octet-stream;charset=UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + filePath);
-
             // 写入响应
             response.getOutputStream().write(bytes);
             response.getOutputStream().flush();
