@@ -58,20 +58,7 @@ public abstract class PictureUploadTemplate {
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadFilePath, file);
             // 获取图片信息对象
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
-            // 计算宽高比
-            int width = imageInfo.getWidth();
-            int height = imageInfo.getHeight();
-            double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
-            // 封装返回结果
-            PictureUploadResult pictureUploadResult = new PictureUploadResult();
-            pictureUploadResult.setUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
-            pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
-            pictureUploadResult.setPicSize(FileUtil.size(file));
-            pictureUploadResult.setPicWidth(imageInfo.getWidth());
-            pictureUploadResult.setPicHeight(imageInfo.getHeight());
-            pictureUploadResult.setPicScale(scale);
-            pictureUploadResult.setPicFormat(imageInfo.getFormat());
-            return pictureUploadResult;
+            return buildResult(imageInfo, uploadFilePath, originalFileName, file);
         } catch (Exception e) {
             log.error(ErrorConstant.USER_LOSE_ACTION_MESSAGE + uploadFilePath, e);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
@@ -79,6 +66,31 @@ public abstract class PictureUploadTemplate {
             // 清理临时文件
             deleteTempFile(file);
         }
+    }
+
+    /**
+     * 封装返回结果
+     *
+     * @param imageInfo
+     * @param uploadFilePath
+     * @param originalFileName
+     * @param file
+     * @return
+     */
+    private PictureUploadResult buildResult(ImageInfo imageInfo, String uploadFilePath, String originalFileName, File file) {
+        PictureUploadResult pictureUploadResult = new PictureUploadResult();
+        int width = imageInfo.getWidth();
+        int height = imageInfo.getHeight();
+        double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
+        pictureUploadResult = new PictureUploadResult();
+        pictureUploadResult.setUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
+        pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
+        pictureUploadResult.setPicSize(FileUtil.size(file));
+        pictureUploadResult.setPicWidth(imageInfo.getWidth());
+        pictureUploadResult.setPicHeight(imageInfo.getHeight());
+        pictureUploadResult.setPicScale(scale);
+        pictureUploadResult.setPicFormat(imageInfo.getFormat());
+        return pictureUploadResult;
     }
 
     /**
