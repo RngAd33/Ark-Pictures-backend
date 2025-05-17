@@ -20,10 +20,10 @@ public interface PictureService extends IService<Picture> {
     /**
      * 图片上传
      *
-     * @param multipartFile 原始文件
+     * @param inputSource 文件输入源
      * @return 访问地址
      */
-    PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser);
+    PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser);
 
     /**
      * 获取查询条件

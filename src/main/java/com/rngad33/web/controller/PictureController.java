@@ -49,16 +49,16 @@ public class PictureController {
     /**
      * 图片上传
      *
-     * @param multipartFile 原始文件
+     * @param inputSource 文件输入源
      * @return 访问地址
      */
     @PostMapping("/upload")
     public BaseResponse<PictureVO> uploadPicture(
-            @RequestPart("/pic") MultipartFile multipartFile,
+            @RequestPart("/pic") Object inputSource,
             PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
         User loginUser = userService.getCurrentUser(request);
-        PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
+        PictureVO pictureVO = pictureService.uploadPicture(inputSource, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
     }
 

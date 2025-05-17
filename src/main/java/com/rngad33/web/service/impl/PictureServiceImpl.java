@@ -10,6 +10,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.FileManager;
 import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.manager.upload.PictureUploadTemplate;
+import com.rngad33.web.manager.upload.PictureUploadTemplateImplByFile;
+import com.rngad33.web.manager.upload.PictureUploadTemplateImplByUrl;
 import com.rngad33.web.model.dto.file.PictureUploadResult;
 import com.rngad33.web.model.dto.picture.PictureReviewRequest;
 import com.rngad33.web.model.dto.picture.PictureQueryRequest;
@@ -51,14 +54,20 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Resource
     private UserService userService;
 
+    @Resource
+    private PictureUploadTemplateImplByFile pictureUploadTemplateImplByFile;
+
+    @Resource
+    private PictureUploadTemplateImplByUrl pictureUploadTemplateImplByUrl;
+
     /**
      * 图片上传
      *
-     * @param multipartFile 原始文件
+     * @param inputSource 文件输入源
      * @return 图片封装类
      */
     @Override
-    public PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser) {
+    public PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser) {
         // 校验是否登录
         ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_AUTH);
         // 判断是新增还是删除
@@ -75,9 +84,15 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
             }
         }
-        // 上传图片，按照用户id划分目录
+        // 按照用户id划分目录
         String uploadFilePrefix = String.format("public/%s", loginUser.getId());
-        PictureUploadResult pictureUploadResult = fileManager.uploadPictureWithInfo(multipartFile, uploadFilePrefix);
+        // - 根据文件输入源的类型判断使用哪种方法上传文件
+        PictureUploadTemplate pictureUploadTemplate = pictureUploadTemplateImplByFile;
+        if (inputSource instanceof String) {
+            pictureUploadTemplate = pictureUploadTemplateImplByUrl;
+        }
+        // 上传图片
+        PictureUploadResult pictureUploadResult = pictureUploadTemplate.uploadPicture(inputSource, uploadFilePrefix);
         // 构造要入库的图片信息
         Picture picture = new Picture();
         picture.setUrl(pictureUploadResult.getUrl());

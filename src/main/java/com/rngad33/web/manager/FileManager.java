@@ -27,10 +27,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 通用文件操作
+ * 通用文件操作（已废弃）
  */
 @Slf4j
 @Service
+@Deprecated
 public class FileManager {
 
     @Resource
