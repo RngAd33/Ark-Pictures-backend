@@ -40,8 +40,6 @@ public class FileManager {
 
     @Resource
     private CosClientConfig cosClientConfig;
-    @Autowired
-    private HttpSession httpSession;
 
     /**
      * 图片上传（附带信息）
