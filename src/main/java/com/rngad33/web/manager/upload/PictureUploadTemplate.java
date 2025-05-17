@@ -31,7 +31,7 @@ public abstract class PictureUploadTemplate {
     protected CosClientConfig cosClientConfig;
 
     /**
-     * 定义上传流程
+     * 模板方法：定义上传流程
      *
      * @param inputSource
      * @param uploadPathPrefix
