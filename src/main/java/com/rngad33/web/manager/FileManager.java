@@ -100,7 +100,7 @@ public class FileManager {
      * @return
      */
     public PictureUploadResult uploadPictureByUrl(String fileUrl, String uploadPathPrefix) {
-        // todo 校验图片
+        // 校验图片
         validPicture(fileUrl);
         // 约定图片上传地址
         String uuid = RandomUtil.randomString(16);
