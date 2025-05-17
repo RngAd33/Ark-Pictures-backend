@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * 图片上传上传抽象类
+ * 图片上传模板抽象类
  */
 @Slf4j
 public abstract class PictureUploadTemplate {
@@ -50,14 +50,15 @@ public abstract class PictureUploadTemplate {
 
         File file = null;
         try {
-            // 上传文件
+            // 创建临时文件
             file = File.createTempFile(uploadFilePath, null);
             // 处理文件来源
             processFile(inputSource, file);
-
+            // 上传图片到对象存储
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadFilePath, file);
             // 获取图片信息对象
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
+            // 封装返回结果
             return buildResult(imageInfo, uploadFilePath, originalFileName, file);
         } catch (Exception e) {
             log.error(ErrorConstant.USER_LOSE_ACTION_MESSAGE + uploadFilePath, e);
@@ -71,7 +72,7 @@ public abstract class PictureUploadTemplate {
     /**
      * 封装返回结果
      *
-     * @param imageInfo
+     * @param imageInfo 对象存储返回的图片信息
      * @param uploadFilePath
      * @param originalFileName
      * @param file
