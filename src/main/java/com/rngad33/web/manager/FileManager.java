@@ -172,9 +172,10 @@ public class FileManager {
         // 校验url协议
         ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
                 ErrorCodeEnum.PARAM_ERROR, "仅支持HTTP或HTTPS协议！");
-        // 发送HEAD请求，验证文件是否存在
+
         HttpResponse response = null;
         try {
+            // 发送HEAD请求，验证文件是否存在
             response = HttpUtil.createRequest(Method.HEAD, fileUrl)
                     .execute();
             if (response.getStatus() != HttpStatus.HTTP_OK) {

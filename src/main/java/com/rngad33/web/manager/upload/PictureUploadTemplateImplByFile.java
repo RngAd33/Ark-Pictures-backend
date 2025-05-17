@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 图片上传模板实现类
+ * 图片上传模板实现类（基于文件）
  */
 @Service
-public class PictureUploadTemplateImpl extends PictureUploadTemplate {
+public class PictureUploadTemplateImplByFile extends PictureUploadTemplate {
 
     /**
      * 校验输入源（本地文件或 URL）
