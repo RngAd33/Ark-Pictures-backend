@@ -3,6 +3,8 @@ package com.rngad33.web.service;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 /**
  * 文件服务接口
  */
@@ -25,5 +27,12 @@ public interface FileService {
      * @throws Exception 下载异常
      */
     void downloadFile(String filePath, HttpServletResponse response) throws Exception;
+
+    /**
+     * 清理临时文件
+     *
+     * @param file
+     */
+    void deleteTempFile(File file);
 
 }

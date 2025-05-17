@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.exception.MyException;
-import com.rngad33.web.manager.FileManager;
 import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.manager.upload.PictureUploadTemplate;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByFile;
@@ -36,7 +35,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 图片业务实现
@@ -44,9 +42,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
-
-    @Resource
-    private FileManager fileManager;
 
     @Resource
     private UserManager userManager;

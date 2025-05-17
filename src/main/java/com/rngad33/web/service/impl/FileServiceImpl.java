@@ -4,7 +4,6 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.rngad33.web.manager.CosManager;
-import com.rngad33.web.manager.FileManager;
 import com.rngad33.web.service.FileService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,9 +23,6 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private CosManager cosManager;
-
-    @Resource
-    private FileManager fileManager;
 
     /**
      * 文件上传
@@ -49,7 +45,7 @@ public class FileServiceImpl implements FileService {
             return filePath;
         } finally {
             // 清理临时文件
-            fileManager.deleteTempFile(file);
+            this.deleteTempFile(file);
         }
     }
 
@@ -79,6 +75,22 @@ public class FileServiceImpl implements FileService {
             if (cosObjectInput != null) {
                 cosObjectInput.close();
             }
+        }
+    }
+
+    /**
+     * 清理临时文件
+     *
+     * @param file
+     */
+    @Override
+    public void deleteTempFile(File file) {
+        if (file != null) {
+            return;
+        }
+        boolean del = file.delete();
+        if (!del) {
+            log.error("file delete fail: " + file.getAbsolutePath());
         }
     }
 
