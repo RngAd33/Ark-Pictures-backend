@@ -33,8 +33,8 @@ public abstract class PictureUploadTemplate {
     /**
      * 模板方法：定义上传流程
      *
-     * @param inputSource
-     * @param uploadPathPrefix
+     * @param inputSource 文件或url
+     * @param uploadPathPrefix 路径前缀
      * @return
      */
     public final PictureUploadResult uploadPicture(Object inputSource, String uploadPathPrefix) {
@@ -70,6 +70,28 @@ public abstract class PictureUploadTemplate {
     }
 
     /**
+     * 校验输入源（本地文件或 URL）
+     *
+     * @param inputSource
+     */
+    protected abstract void validPicture(Object inputSource);
+
+    /**
+     * 获取输入源的原始文件名
+     *
+     * @param inputSource
+     */
+    protected abstract String getOriginFilename(Object inputSource);
+
+    /**
+     * 处理输入源并生成本地临时文件
+     *
+     * @param inputSource
+     * @param file
+     */
+    protected abstract void processFile(Object inputSource, File file) throws Exception;
+
+    /**
      * 封装返回结果
      *
      * @param imageInfo 对象存储返回的图片信息
@@ -92,28 +114,6 @@ public abstract class PictureUploadTemplate {
         pictureUploadResult.setPicFormat(imageInfo.getFormat());
         return pictureUploadResult;
     }
-
-    /**
-     * 校验输入源（本地文件或 URL）
-     *
-     * @param inputSource
-     */
-    protected abstract void validPicture(Object inputSource);
-
-    /**
-     * 获取输入源的原始文件名
-     *
-     * @param inputSource
-     */
-    protected abstract String getOriginFilename(Object inputSource);
-
-    /**
-     * 处理输入源并生成本地临时文件
-     *
-     * @param inputSource
-     * @param file
-     */
-    protected abstract void processFile(Object inputSource, File file) throws Exception;
 
     /**
      * 清理临时文件
