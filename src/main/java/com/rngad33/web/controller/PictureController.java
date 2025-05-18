@@ -23,6 +23,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -48,16 +49,28 @@ public class PictureController {
     /**
      * 图片上传
      *
-     * @param inputSource 文件输入源
+     * @param multipartFile 当前文件
      * @return 访问地址
      */
     @PostMapping("/upload")
-    public BaseResponse<PictureVO> uploadPicture(
-            @RequestPart("/pic") Object inputSource,
-            PictureUploadRequest pictureUploadRequest,
+    public BaseResponse<PictureVO> uploadPicture(@RequestPart("pic") MultipartFile multipartFile,
+            PictureUploadRequest pictureUploadRequest, HttpServletRequest request) {
+        User loginUser = userService.getCurrentUser(request);
+        PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
+        return ResultUtils.success(pictureVO);
+    }
+
+    /**
+     * 图片上传
+     *
+     * @return 访问地址
+     */
+    @PostMapping("/upload/url")
+    public BaseResponse<PictureVO> uploadPicture(@RequestBody PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
         User loginUser = userService.getCurrentUser(request);
-        PictureVO pictureVO = pictureService.uploadPicture(inputSource, pictureUploadRequest, loginUser);
+        String fileUrl = pictureUploadRequest.getFileUrl();
+        PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
     }
 
