@@ -50,6 +50,7 @@ public class PictureController {
      * 图片上传（基于文件）
      *
      * @param multipartFile 当前文件
+     * @param pictureUploadRequest 图片上传请求
      * @return 访问地址
      */
     @PostMapping("/upload")
@@ -63,6 +64,7 @@ public class PictureController {
     /**
      * 图片上传（基于url）
      *
+     * @param pictureUploadRequest 图片上传请求
      * @return 访问地址
      */
     @PostMapping("/upload/url")
