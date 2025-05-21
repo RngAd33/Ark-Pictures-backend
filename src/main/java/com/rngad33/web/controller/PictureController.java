@@ -217,8 +217,8 @@ public class PictureController {
      * @param pictureQueryRequest
      * @return
      */
-    @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/list/page")
     public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
@@ -274,8 +274,8 @@ public class PictureController {
      * @param request
      * @return
      */
-    @PostMapping("/review")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/review")
     public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
         User loginUser = userService.getCurrentUser(request);
