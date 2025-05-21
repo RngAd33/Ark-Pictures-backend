@@ -47,7 +47,7 @@ public class PictureController {
     private PictureService pictureService;
 
     /**
-     * 图片上传
+     * 图片上传（基于文件）
      *
      * @param multipartFile 当前文件
      * @return 访问地址
@@ -61,7 +61,7 @@ public class PictureController {
     }
 
     /**
-     * 图片上传
+     * 图片上传（基于url）
      *
      * @return 访问地址
      */
