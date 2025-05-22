@@ -5,10 +5,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 批量导入图片请求
+ * 批量导入图片请求体
  */
 @Data
-public class PictureUploadByBatchRquest implements Serializable  {
+public class PictureUploadByBatchRequest implements Serializable  {
 
     /**
      * 搜索词
