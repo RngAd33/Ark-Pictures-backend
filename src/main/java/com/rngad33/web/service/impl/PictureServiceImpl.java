@@ -319,6 +319,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Element div = document.getElementsByClass("dgControl").first();   // 外层元素
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取元素失败！");
         Elements imgElementList = div.select("img.mimg");
+        int uploadCount = 0;
         // 遍历元素，依次上传
         for (Element imgElement : imgElementList) {
             String fileUrl = imgElement.attr("src");
@@ -334,9 +335,19 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             // 上传图片
             PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
             pictureUploadRequest.setFileUrl(fileUrl);
-            this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
+            try {
+                PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
+                log.info(">>>已上传图片：{}", pictureVO.getId());
+                uploadCount++;
+            } catch (Exception e) {
+                log.error("——！图片上传失败！——", e);
+                continue;
+            }
+            if (uploadCount >= count) {
+                break;
+            }
         }
-        return 0;
+        return uploadCount;
     }
 
 }
