@@ -65,7 +65,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     /**
      * 图片上传
      *
-     * @param inputSource 文件输入源
+     * @param inputSource 文件输入源（文件 / url）
+     * @param pictureUploadRequest 上传请求
      * @return 图片封装类
      */
     @Override
@@ -322,11 +323,19 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         for (Element imgElement : imgElementList) {
             String fileUrl = imgElement.attr("src");
             if (StrUtil.isNotBlank(fileUrl)) {
-                log.info("——！当前链接为空，已跳过！——");
+                log.info("——！当前链接为空，已跳过{}！——", fileUrl);
+                continue;
             }
+            // 处理图片地址，防止转义或者对象存储冲突
+            int questionIndex = fileUrl.indexOf("?");
+            if (questionIndex > -1) {
+                fileUrl = fileUrl.substring(0, questionIndex);
+            }
+            // 上传图片
+            PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
+            pictureUploadRequest.setFileUrl(fileUrl);
+            this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
         }
-        // 上传图片
-
         return 0;
     }
 
