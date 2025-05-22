@@ -287,7 +287,7 @@ public class PictureController {
     }
 
     /**
-     * 批量上传图片（管理员）
+     * 批量上传图片（仅管理员）
      *
      * @param pictureUploadByBatchRequest
      * @param request
