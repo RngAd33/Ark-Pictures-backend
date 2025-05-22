@@ -16,6 +16,7 @@ import com.rngad33.web.manager.upload.PictureUploadTemplateImplByUrl;
 import com.rngad33.web.model.dto.file.PictureUploadResult;
 import com.rngad33.web.model.dto.picture.PictureReviewRequest;
 import com.rngad33.web.model.dto.picture.PictureQueryRequest;
+import com.rngad33.web.model.dto.picture.PictureUploadByBatchRequest;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
@@ -29,8 +30,13 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -283,6 +289,45 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         uploadPicture.setReviewTime(new Date());
         boolean result = this.updateById(uploadPicture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+    }
+
+    /**
+     * 图片批量上传（仅管理员）
+     *
+     * @param pictureUploadByBatchRequest
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
+        // 校验参数
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAM);
+        String searchText = pictureUploadByBatchRequest.getSearchText();
+        Integer count = pictureUploadByBatchRequest.getCount();
+        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
+        // 抓取内容
+        String fetchUrl = String.format("https://www.bing.com/images/async?q=%s&mmasync=1", searchText);
+        Document document;
+        try {
+            document = Jsoup.connect(fetchUrl).get();
+        } catch (IOException e) {
+            log.error("————！抓取页面失败！————", e);
+            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+        }
+        // 解析内容
+        Element div = document.getElementsByClass("dgControl").first();   // 外层元素
+        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取元素失败！");
+        Elements imgElementList = div.select("img.mimg");
+        // 遍历元素，依次上传
+        for (Element imgElement : imgElementList) {
+            String fileUrl = imgElement.attr("src");
+            if (StrUtil.isNotBlank(fileUrl)) {
+                log.info("——！当前链接为空，已跳过！——");
+            }
+        }
+        // 上传图片
+
+        return 0;
     }
 
 }
