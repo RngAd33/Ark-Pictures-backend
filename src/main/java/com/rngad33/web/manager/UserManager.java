@@ -72,10 +72,9 @@ public class UserManager {
      */
     public void fillReviewParams(Picture picture, User loginUser) {
         if (isNotAdmin(loginUser)) {
-            // 非管理员，创建和编辑都要重新审核
+            // 非管理员创建和编辑都要重新审核
             picture.setReviewStatus(PictureReviewStatusEnum.REVIEWING.getCode());
         } else {
-            // 管理员，自动过审
             picture.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
             picture.setReviewerId(loginUser.getId());
             picture.setReviewTime(new Date());
