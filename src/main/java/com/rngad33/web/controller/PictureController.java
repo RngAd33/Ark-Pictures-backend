@@ -286,4 +286,21 @@ public class PictureController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 批量上传图片（管理员）
+     *
+     * @param pictureUploadByBatchRequest
+     * @param request
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/upload/batch")
+    public BaseResponse<Integer> uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest,
+                                                      HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        User loginUser = userService.getCurrentUser(request);
+        int uploadCount = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
+        return ResultUtils.success(uploadCount);
+    }
+
 }
