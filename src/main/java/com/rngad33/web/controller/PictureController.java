@@ -56,6 +56,9 @@ public class PictureController {
     @PostMapping("/upload")
     public BaseResponse<PictureVO> uploadPicture(@RequestPart("pic") MultipartFile multipartFile,
             PictureUploadRequest pictureUploadRequest, HttpServletRequest request) {
+        if (pictureUploadRequest == null || multipartFile.isEmpty()) {
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+        }
         User loginUser = userService.getCurrentUser(request);
         PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
@@ -70,6 +73,7 @@ public class PictureController {
     @PostMapping("/upload/url")
     public BaseResponse<PictureVO> uploadPicture(@RequestBody PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAM_ERROR);
         User loginUser = userService.getCurrentUser(request);
         String fileUrl = pictureUploadRequest.getFileUrl();
         PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
