@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 批量导入图片请求体
  */
 @Data
-public class PictureUploadByBatchRequest implements Serializable  {
+public class PictureUploadByBatchRequest implements Serializable {
 
     /**
      * 搜索词
