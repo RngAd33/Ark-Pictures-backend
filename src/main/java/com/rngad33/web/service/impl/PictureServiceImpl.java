@@ -249,7 +249,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 .collect(Collectors.toList());
         // 1. 关联查询用户信息
         Set<Long> userIdSet = pictureList.stream().map(Picture::getUserId).collect(Collectors.toSet());
-        // n -> usern
+        // n -> userN
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
                 .collect(Collectors.groupingBy(User::getId));
         // 2. 填充信息
@@ -345,7 +345,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             // 上传图片
             PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
             pictureUploadRequest.setFileUrl(fileUrl);
-            pictureUploadRequest.setName(namePrefix + (uploadCount + 1));
+            pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
             try {
                 PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
                 log.info(">>>已上传图片：{}", pictureVO.getId());
