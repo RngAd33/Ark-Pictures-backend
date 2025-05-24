@@ -11,14 +11,14 @@ import java.io.Serializable;
 public class PictureUploadByBatchRequest implements Serializable {
 
     /**
-     * 搜索词
-     */
-    private String searchText;
-
-    /**
      * 抓取数量
      */
     private Integer count = 10;
+
+    /**
+     * 搜索词
+     */
+    private String searchText;
 
     /**
      * 图片名称前缀

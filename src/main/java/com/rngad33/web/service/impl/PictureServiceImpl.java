@@ -333,8 +333,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 遍历元素，依次上传
         for (Element imgElement : imgElementList) {
             String fileUrl = imgElement.attr("src");
-            if (StrUtil.isNotBlank(fileUrl)) {
-                log.info("——！当前链接为空，已跳过{}！——", fileUrl);
+            if (StrUtil.isBlank(fileUrl)) {
+                log.info("——！当前链接为空，已跳过：{}！——", fileUrl);
                 continue;
             }
             // 处理图片地址，防止转义或者对象存储冲突
@@ -351,7 +351,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 log.info(">>>已上传图片：{}", pictureVO.getId());
                 uploadCount++;
             } catch (Exception e) {
-                log.error("——！图片上传失败！——", e);
+                log.error("————！图片上传失败！————", e);
                 continue;
             }
             if (uploadCount >= count) {

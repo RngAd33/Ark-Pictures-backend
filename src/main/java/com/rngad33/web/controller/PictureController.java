@@ -184,12 +184,11 @@ public class PictureController {
      * 根据id获取图片（管理员）
      *
      * @param id
-     * @param request
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/getPI")
-    public BaseResponse<Picture> getPictureById(Long id, HttpServletRequest request) {
+    public BaseResponse<Picture> getPictureById(Long id) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
@@ -241,7 +240,7 @@ public class PictureController {
      * @return
      */
     @PostMapping("/list/page/vo")
-    public BaseResponse<Page<PictureVO>> listPictureVOByPage(PictureQueryRequest pictureQueryRequest,
+    public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
@@ -299,7 +298,7 @@ public class PictureController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload/batch")
-    public BaseResponse<Integer> uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest,
+    public BaseResponse<Integer> uploadPictureByBatch(@RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest,
                                                       HttpServletRequest request) {
         ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAM_ERROR);
         User loginUser = userService.getCurrentUser(request);
