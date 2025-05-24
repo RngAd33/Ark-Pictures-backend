@@ -240,7 +240,7 @@ public class PictureController {
      * @param request
      * @return
      */
-    @PostMapping("list/page/vo")
+    @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
         long current = pictureQueryRequest.getCurrent();
