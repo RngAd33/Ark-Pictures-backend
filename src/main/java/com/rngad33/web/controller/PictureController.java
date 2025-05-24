@@ -188,7 +188,7 @@ public class PictureController {
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/getId")
+    @GetMapping("/getPI")
     public BaseResponse<Picture> getPictureById(Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
@@ -205,7 +205,7 @@ public class PictureController {
      * @param request
      * @return
      */
-    @GetMapping("/getId/vo")
+    @GetMapping("/getPI/vo")
     public BaseResponse<PictureVO> getPictureVOById(Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
