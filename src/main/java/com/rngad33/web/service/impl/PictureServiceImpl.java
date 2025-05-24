@@ -97,9 +97,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 上传图片
         PictureUploadResult pictureUploadResult = pictureUploadTemplate.uploadPicture(inputSource, uploadFilePrefix);
         // 构造要入库的图片信息
+        // - 支持外层传递图片名称
+        String picName = pictureUploadResult.getPicName();
+        if (pictureUploadRequest != null && StrUtil.isNotBlank(pictureUploadRequest.getName())) {
+            picName = pictureUploadRequest.getName();
+        }
         Picture picture = new Picture();
         picture.setUrl(pictureUploadResult.getUrl());
-        picture.setName(pictureUploadResult.getPicName());
+        picture.setName(picName);
         picture.setPicSize(pictureUploadResult.getPicSize());
         picture.setPicWidth(pictureUploadResult.getPicWidth());
         picture.setPicHeight(pictureUploadResult.getPicHeight());
@@ -305,6 +310,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAM);
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
+        // 名称前缀默认为搜索词
+        String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
+        if (StrUtil.isBlank(namePrefix)) {
+            namePrefix = searchText;
+        }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
         // 抓取内容
         String fetchUrl = String.format("https://www.bing.com/images/async?q=%s&mmasync=1", searchText);
@@ -335,6 +345,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             // 上传图片
             PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
             pictureUploadRequest.setFileUrl(fileUrl);
+            pictureUploadRequest.setName(namePrefix + (uploadCount + 1));
             try {
                 PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
                 log.info(">>>已上传图片：{}", pictureVO.getId());
