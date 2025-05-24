@@ -26,4 +26,5 @@ public class PictureUploadByBatchRequest implements Serializable  {
     private String namePrefix;
 
     private static final long serialVersionUID = 3191241716373120793L;
+
 }
