@@ -71,7 +71,7 @@ public class PictureController {
      * @return 访问地址
      */
     @PostMapping("/upload/url")
-    public BaseResponse<PictureVO> uploadPicture(@RequestBody PictureUploadRequest pictureUploadRequest,
+    public BaseResponse<PictureVO> uploadPictureByUrl(@RequestBody PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
         ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAM_ERROR);
         User loginUser = userService.getCurrentUser(request);
@@ -188,7 +188,7 @@ public class PictureController {
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/get")
+    @GetMapping("/getId")
     public BaseResponse<Picture> getPictureById(Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
@@ -205,7 +205,7 @@ public class PictureController {
      * @param request
      * @return
      */
-    @GetMapping("/get/vo")
+    @GetMapping("/getId/vo")
     public BaseResponse<PictureVO> getPictureVOById(Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
         // 查询数据库
