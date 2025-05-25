@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 通用文件操作（已废弃）
+ * 通用文件操作（已废弃，改用抽象模板方法）
  */
 @Slf4j
 @Service
