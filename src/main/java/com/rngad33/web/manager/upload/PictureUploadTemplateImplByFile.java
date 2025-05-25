@@ -28,8 +28,8 @@ public class PictureUploadTemplateImplByFile extends PictureUploadTemplate {
         // - 文件是否存在
         ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
         // - 校验文件大小
-        ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 10,
-                ErrorCodeEnum.PARAM_ERROR, "图片大小不能超过10M！");
+        ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 12,
+                ErrorCodeEnum.PARAM_ERROR, "图片大小不能超过12M！");
         // - 校验文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         final List<String> SUFFIX_ALLOW = Arrays.asList("png", "jpg", "jpeg", "gif", "webp");

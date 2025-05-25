@@ -348,7 +348,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
             try {
                 PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
-                log.info(">>>已上传图片：{}", pictureVO.getId());
+                // log.info(">>>已上传图片：{}", pictureVO.getId());
+                log.info(">>>已上传图片：{}", pictureVO.getUrl());
                 uploadCount++;
             } catch (Exception e) {
                 log.error("————！图片上传失败！————", e);
