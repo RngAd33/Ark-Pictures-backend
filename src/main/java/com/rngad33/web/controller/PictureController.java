@@ -60,6 +60,7 @@ public class PictureController {
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
         User loginUser = userService.getCurrentUser(request);
+        // 登录态校验在Service层
         PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
     }
