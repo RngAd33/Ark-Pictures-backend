@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rngad33</groupId>
     <artifactId>ark-pictures-backend</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <name>Ark-Pictures</name>
     <properties>
         <java.version>21</java.version>
@@ -174,7 +174,6 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.rngad33.ArkPicturesApplication</mainClass>
-                    <skip>true</skip>
                 </configuration>
                 <executions>
                     <execution>
