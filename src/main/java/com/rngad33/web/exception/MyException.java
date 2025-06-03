@@ -19,37 +19,32 @@ public class MyException extends RuntimeException {
      */
     private final String msg;
 
+    /**
+     * 具体描述（可选）
+     */
+    private final String des;
 
     /**
-     * 手动传参
+     * 半自动传参（有描述）
      *
-     * @param msg
-     * @param code
+     * @param errorCode
+     * @param des 具体描述
      */
-    public MyException(String msg, int code) {
-        this.msg = msg;
-        this.code = code;
+    public MyException(ErrorCodeEnum errorCode, String des) {
+        this.code = errorCode.getCode();
+        this.msg = errorCode.getMsg();
+        this.des = des;
     }
 
     /**
-     * 自动传参
+     * 自动传参（无描述）
      *
      * @param errorCode
      */
     public MyException(ErrorCodeEnum errorCode) {
+        this.code = errorCode.getCode();
         this.msg = errorCode.getMsg();
-        this.code = errorCode.getCode();
-    }
-
-    /**
-     * 半自动传参
-     *
-     * @param msg 自定义错误消息
-     * @param errorCode
-     */
-    public MyException(String msg, ErrorCodeEnum errorCode) {
-        this.msg = msg;
-        this.code = errorCode.getCode();
+        this.des = null;
     }
 
 }
