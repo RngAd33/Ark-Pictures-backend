@@ -25,7 +25,20 @@ public class MyException extends RuntimeException {
     private final String des;
 
     /**
-     * 半自动传参（有描述）
+     * 手动传参
+     *
+     * @param code
+     * @param msg
+     * @param des
+     */
+    public MyException(int code, String msg, String des) {
+        this.code = code;
+        this.msg = msg;
+        this.des = des;
+    }
+
+    /**
+     * 半自动传参（自行输入描述）
      *
      * @param errorCode
      * @param des 具体描述
