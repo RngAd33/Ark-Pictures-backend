@@ -18,12 +18,13 @@ public enum ErrorCodeEnum {
     PARAM_ERROR("——！参数不合法！——", 4024),
     SYSTEM_ERROR("————！系统内部异常！————", 5000);
 
-    private final String msg;
-
     private final int code;
 
+    private final String msg;
+
     ErrorCodeEnum(String msg, int code) {
-        this.msg = msg;
         this.code = code;
+        this.msg = msg;
     }
+
 }

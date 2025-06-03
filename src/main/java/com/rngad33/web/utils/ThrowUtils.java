@@ -38,7 +38,7 @@ public class ThrowUtils {
      * @param message 错误信息
      */
     public static void throwIf(boolean condition, ErrorCodeEnum errorCode, String message) {
-        throwIf(condition, new MyException(message, errorCode));
+        throwIf(condition, new MyException(errorCode, message));
     }
 
 }
