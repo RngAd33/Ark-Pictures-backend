@@ -13,7 +13,6 @@ import com.rngad33.web.common.ResultUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -151,23 +150,6 @@ public class UserController {
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         }
         Integer result = userService.userOrBan(id, request);
-        return ResultUtils.success(result);
-    }
-
-    /**
-     * 用户注销（暂时仅管理员）
-     *
-     * @param userManageRequest 用户管理请求体
-     * @return 状态码
-     */
-    @Transactional
-    @PostMapping("/admin/logoff")
-    public BaseResponse<Integer> userLogoff(@RequestBody UserManageRequest userManageRequest, HttpServletRequest request) {
-        Long id = userManager.getId(userManageRequest, request);
-        if (id == null) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        }
-        Integer result = userService.userLogoff(id, request);
         return ResultUtils.success(result);
     }
 

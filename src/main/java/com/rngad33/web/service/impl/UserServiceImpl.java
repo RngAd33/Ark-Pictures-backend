@@ -15,14 +15,15 @@ import com.rngad33.web.utils.AESUtils;
 import com.rngad33.web.utils.SpecialCharValidator;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 业务实现
@@ -254,25 +255,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         } else {
             log.info("用户已解封");
         }
-        return 0;
-    }
-
-    /**
-     * 用户注销（当前仅管理员，从数据库中彻底删除账户）
-     *
-     * @param id 待注销用户id
-     * @return 状态码
-     */
-    @Override
-    public Integer userLogoff(Long id, HttpServletRequest request) {
-        // 1. 查询用户是否存在
-        User user = userMapper.selectById(id);
-        if (user == null) {
-            log.error(ErrorConstant.USER_NOT_EXIST_MESSAGE);
-            return -1;
-        }
-        // 2. 从数据库中删除账户
-        // todo 前往Mapper自定义sql语句，或者合并到删除板块
         return 0;
     }
 

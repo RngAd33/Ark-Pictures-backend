@@ -62,12 +62,4 @@ public interface UserService extends IService<User> {
      */
     Integer userOrBan(Long id, HttpServletRequest request);
 
-    /**
-     * 用户注销
-     *
-     * @param id 待注销用户id
-     * @return 注销结果
-     */
-    Integer userLogoff(Long id, HttpServletRequest request);
-
 }
