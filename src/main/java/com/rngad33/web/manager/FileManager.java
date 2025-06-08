@@ -168,7 +168,7 @@ public class FileManager {
         try {
             new URL(fileUrl);
         } catch (MalformedURLException e) {
-            throw new MyException("url格式不正确！", ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR, "url格式不正确！");
         }
         // 校验url协议
         ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
@@ -200,7 +200,7 @@ public class FileManager {
                     final long LIMIT = 10 * 1024 * 1024L;   // 限制文件大小
                     ThrowUtils.throwIf(contentLength > LIMIT, ErrorCodeEnum.PARAM_ERROR, "文件大小不能超过10M");
                 } catch (NumberFormatException e) {
-                    throw new MyException("文件大小错误！", ErrorCodeEnum.PARAM_ERROR);
+                    throw new MyException(ErrorCodeEnum.PARAM_ERROR, "文件大小错误！");
                 }
             }
         } finally {
