@@ -35,7 +35,7 @@ public abstract class PictureUploadTemplate {
      *
      * @param inputSource 文件或url
      * @param uploadPathPrefix 路径前缀
-     * @return
+     * @return 上传结果
      */
     public final PictureUploadResult uploadPicture(Object inputSource, String uploadPathPrefix) {
         // 校验图片
@@ -97,8 +97,8 @@ public abstract class PictureUploadTemplate {
      * @param imageInfo 对象存储返回的图片信息
      * @param uploadFilePath
      * @param originalFileName
-     * @param file
-     * @return
+     * @param file 临时文件
+     * @return 上传结果封装
      */
     private PictureUploadResult buildResult(ImageInfo imageInfo, String uploadFilePath, String originalFileName, File file) {
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
@@ -118,7 +118,7 @@ public abstract class PictureUploadTemplate {
     /**
      * 清理临时文件
      *
-     * @param file
+     * @param file 临时文件
      */
     public void deleteTempFile(File file) {
         if (file != null) {

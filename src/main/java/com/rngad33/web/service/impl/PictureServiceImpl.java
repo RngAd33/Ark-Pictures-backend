@@ -298,11 +298,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     /**
-     * 图片批量上传（仅管理员）
+     * 抓取图片批量上传（仅管理员）
      *
-     * @param pictureUploadByBatchRequest
-     * @param loginUser
-     * @return
+     * @param pictureUploadByBatchRequest 批量上传请求体
+     * @param loginUser 当前用户
+     * @return 实际上传数量
      */
     @Override
     public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
