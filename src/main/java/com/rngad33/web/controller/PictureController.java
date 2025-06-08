@@ -265,7 +265,7 @@ public class PictureController {
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays
-                .asList("每日推荐", "明日方舟", "原神", "碧蓝航线", "东方Project", "Bilibili", "风景", "Volcaloid", "misc");
+                .asList("明日方舟", "终末地", "泡姆泡姆", "异世界风景", "纳斯特港");
         List<String> categoryList = Arrays
                 .asList("电脑壁纸", "手机壁纸", "名梗弔图", "表情包", "头像系列", "MISC");
         pictureTagCategory.setTagList(tagList);
