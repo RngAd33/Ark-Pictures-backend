@@ -1,3 +1,7 @@
+# 服务端口
+server:
+  port: 8080
+
 spring:
   profiles:
     active: dev
@@ -6,7 +10,6 @@ spring:
   servlet:
     multipart:
       max-file-size: ${sky.spring.servlet.multipart.max-file-size}
-
   # 数据库配置
   datasource:
     driver-class-name: ${sky.datasource.driver-class-name}
@@ -15,10 +18,13 @@ spring:
     password: ${sky.datasource.password}
   session:
     timeout: ${sky.jwt.admin-ttl}
-
-# 服务端口
-server:
-  port: 8080
+  # Redis配置
+  data:
+    redis:
+      database: ${sky.spring.redis.database}
+      host: ${sky.spring.redis.host}
+      port: ${sky.spring.redis.port}
+      timeout: ${sky.spring.redis.timeout}
 
 mybatis-plus:
   configuration:
