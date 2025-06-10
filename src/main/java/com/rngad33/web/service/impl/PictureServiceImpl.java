@@ -82,14 +82,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         if (pictureId != null) {
             Picture oldPicture = this.getById(pictureId);
             ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "图片不存在！");
-            // 仅本人或管理员有权编辑图片
+            // - 仅本人或管理员有权编辑图片
             if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
                 throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
             }
         }
         // 按照用户id划分目录
         String uploadFilePrefix = String.format("public/%s", loginUser.getId());
-        // - 根据文件输入源的类型判断使用哪种方法上传文件
+        // - 根据文件输入源的类型，判断使用哪种方法上传文件
         PictureUploadTemplate pictureUploadTemplate = pictureUploadTemplateImplByFile;
         if (inputSource instanceof String) {
             pictureUploadTemplate = pictureUploadTemplateImplByUrl;
@@ -115,7 +115,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         if (pictureId != null) {
-            // 更新，补充信息
+            // - 更新，补充信息
             picture.setId(pictureId);
             picture.setEditTime(new Date());
         }
