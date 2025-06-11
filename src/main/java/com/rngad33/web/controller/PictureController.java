@@ -1,6 +1,8 @@
 package com.rngad33.web.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rngad33.web.annotation.AuthCheck;
@@ -22,12 +24,16 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 图片交互接口
@@ -45,6 +51,9 @@ public class PictureController {
 
     @Resource
     private PictureService pictureService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 图片上传（基于文件）
@@ -216,25 +225,7 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表（管理员）
-     *
-     * @param pictureQueryRequest
-     * @return
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/list/page")
-    public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
-        long current = pictureQueryRequest.getCurrent();
-        long size = pictureQueryRequest.getPageSize();
-        // 查询数据库
-        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
-                pictureService.getQueryWrapper(pictureQueryRequest));
-        // 获取封装类
-        return ResultUtils.success(picturePage);
-    }
-
-    /**
-     * 分页获取图片列表（用户）
+     * 分页获取图片列表（用户，无缓存）
      *
      * @param pictureQueryRequest
      * @param request
@@ -254,6 +245,66 @@ public class PictureController {
                 pictureService.getQueryWrapper(pictureQueryRequest));
         // 获取封装类
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
+    }
+
+    /**
+     * 分页获取图片列表（用户，有缓存）
+     *
+     * @param pictureQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page/vo/cache")
+    public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
+                                                             HttpServletRequest request) {
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
+        // 普通用户默认只能看到已过审的图片
+        pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
+        // 优先查询缓存
+        // - 构建key
+        String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
+        String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
+        String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
+        // - 操作Redis获取缓存数据
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        String cachedValue = opsForValue.get(redisKey);
+        if (cachedValue != null) {
+            // - 缓存命中，缓存查询结果
+            Page<PictureVO> cachedPage = JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
+            return ResultUtils.success(cachedPage);
+        }
+        // 没查到就查询数据库
+        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                pictureService.getQueryWrapper(pictureQueryRequest));
+        Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
+        // 写入Redis缓存
+        String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
+        // 设置缓存有效期
+        int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
+        opsForValue.set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
+        // 获取封装类
+        return ResultUtils.success(pictureVOPage);
+    }
+
+    /**
+     * 分页获取图片列表（管理员，无缓存）
+     *
+     * @param pictureQueryRequest
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/list/page")
+    public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // 查询数据库
+        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                pictureService.getQueryWrapper(pictureQueryRequest));
+        // 获取封装类
+        return ResultUtils.success(picturePage);
     }
 
     /**

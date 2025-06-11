@@ -1,6 +1,17 @@
 # 方舟云图
 
-## 基于SpringBoot的智能图片分享平台
+## 基于Vue + SpringBoot的智能图片分享平台（粥厨狂喜！）
+## 站长会不定期投放精选图片，也欢迎大家使用并分享自己的图片
 
-站长不定期放出精选图片，欢迎大家使用，分享自己的图片
+## Q：这个项目用到了哪些技术选型？
+## A：前端部分：
+###  Vue框架
+## 后端部分：
+### SpringBoot 框架
+### MyBatis + MyBatisPlus 框架
+### Redis + Caffeine 缓存框架
+### Disruptor 无锁并发框架
+### JUnit 单元测试
+### Swagger + Knife4j 接口文档
+
 项目施工中，敬请期待！
