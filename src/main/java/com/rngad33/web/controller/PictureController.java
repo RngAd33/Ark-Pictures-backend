@@ -280,12 +280,12 @@ public class PictureController {
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
         Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
-        // 写入Redis缓存
+        // - 写入Redis缓存
         String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
-        // 设置缓存有效期
+        // - 设置缓存有效期
         int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
         opsForValue.set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
-        // 获取封装类
+        // - 返回封装类
         return ResultUtils.success(pictureVOPage);
     }
 
