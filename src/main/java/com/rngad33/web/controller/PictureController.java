@@ -263,7 +263,7 @@ public class PictureController {
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
-        // 优先查询缓存
+        // 优先查询缓存，没查到就查询数据库
         // - 构建key
         String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
         String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
@@ -276,7 +276,7 @@ public class PictureController {
             Page<PictureVO> cachedPage = JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
             return ResultUtils.success(cachedPage);
         }
-        // 没查到就查询数据库
+        // - 缓存未命中，查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
         Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
