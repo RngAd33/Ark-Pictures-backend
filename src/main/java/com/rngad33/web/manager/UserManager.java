@@ -20,6 +20,36 @@ import java.util.Objects;
 public class UserManager {
 
     /**
+     * 正向鉴权（面向请求）
+     *
+     * @param request http请求
+     * @return 是否（TF）为管理员
+     */
+    public boolean isAdmin(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        User user = (User) userObj;
+        if (user == null || !Objects.equals(user.getRole(), UserRoleEnum.ADMIN_ROLE.getCode())) {
+            System.out.println(ErrorConstant.USER_NOT_AUTH_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 正向鉴权（面向用户）
+     *
+     * @param user 用户
+     * @return 是否（TF）为管理员
+     */
+    public boolean isAdmin(User user) {
+        if (user == null || !Objects.equals(user.getRole(), UserRoleEnum.ADMIN_ROLE.getCode())) {
+            System.out.println(ErrorConstant.USER_NOT_AUTH_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 反向鉴权（面向请求）
      *
      * @param request http请求
