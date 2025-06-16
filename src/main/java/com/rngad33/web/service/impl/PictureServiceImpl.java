@@ -372,7 +372,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     /**
-     * 分页获取图片列表（用户，有缓存）
+     * 分页获取图片列表（有缓存）
      *
      * @param pictureQueryRequest
      * @param request
