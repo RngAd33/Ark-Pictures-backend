@@ -52,8 +52,7 @@ public class PictureController {
     @Resource
     private PictureService pictureService;
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    // private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 图片上传（基于文件）
@@ -234,6 +233,7 @@ public class PictureController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
+        // 获取查询参数
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
@@ -257,36 +257,14 @@ public class PictureController {
     @PostMapping("/list/page/vo/cache")
     public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
-        long current = pictureQueryRequest.getCurrent();
+        // 获取查询参数
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
-        // 优先查询缓存，没查到就查询数据库
-        // - 构建key
-        String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
-        String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
-        String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
-        // - 操作Redis获取缓存数据
-        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
-        String cachedValue = opsForValue.get(redisKey);
-        if (cachedValue != null) {
-            // - 缓存命中，缓存查询结果
-            Page<PictureVO> cachedPage = JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
-            return ResultUtils.success(cachedPage);
-        }
-        // - 缓存未命中，查询数据库
-        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
-                pictureService.getQueryWrapper(pictureQueryRequest));
-        Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
-        // - 序列化，写入Redis缓存
-        String cacheValue = JSONUtil.toJsonStr(pictureVOPage);
-        // - 设置缓存有效期
-        int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
-        opsForValue.set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
         // - 返回封装类
-        return ResultUtils.success(pictureVOPage);
+        return ResultUtils.success(pictureService.listPictureVOByPageWithCache(pictureQueryRequest, request));
     }
 
     /**

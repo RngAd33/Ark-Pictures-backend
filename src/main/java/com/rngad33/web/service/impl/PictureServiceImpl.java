@@ -3,10 +3,13 @@ package com.rngad33.web.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rngad33.web.common.ResultUtils;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.mapper.PictureMapper;
 import com.rngad33.web.manager.UserManager;
@@ -34,13 +37,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +68,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Resource
     private PictureUploadTemplateImplByUrl pictureUploadTemplateImplByUrl;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 图片上传
@@ -360,6 +370,41 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             }
         }
         return uploadCount;
+    }
+
+    /**
+     * 分页获取图片列表（用户，有缓存）
+     *
+     * @param pictureQueryRequest
+     * @param request
+     * @return
+     */
+    public Page<PictureVO> listPictureVOByPageWithCache(PictureQueryRequest pictureQueryRequest, HttpServletRequest request) {
+        // 优先查询缓存，没查到就查询数据库
+        // - 获取查询参数
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // - 构建key
+        String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
+        String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
+        String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
+        // - 操作Redis获取缓存数据
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        String cachedValue = opsForValue.get(redisKey);
+        if (cachedValue != null) {
+            // - 缓存命中，缓存查询结果
+            return JSONUtil.toBean(cachedValue, Page.class);
+        }
+        // - 缓存未命中，查询数据库
+        Page<Picture> picturePage = this.page(new Page<>(current, size),
+                this.getQueryWrapper(pictureQueryRequest));
+        Page<PictureVO> pictureVOPage = this.getPictureVOPage(picturePage, request);
+        // - 序列化，写入Redis缓存
+        String cacheValue = JSONUtil.toJsonStr(pictureVOPage);
+        // - 设置缓存有效期
+        int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
+        opsForValue.set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
+        return pictureVOPage;
     }
 
 }
