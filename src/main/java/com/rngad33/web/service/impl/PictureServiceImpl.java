@@ -9,7 +9,6 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rngad33.web.common.ResultUtils;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.mapper.PictureMapper;
 import com.rngad33.web.manager.UserManager;
