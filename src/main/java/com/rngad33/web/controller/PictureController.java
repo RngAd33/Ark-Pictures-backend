@@ -59,15 +59,6 @@ public class PictureController {
     private CacheTemplateByCaffeine cacheTemplateByCaffeine;
 
     /**
-     * 本地缓存构造
-     */
-    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
-            .initialCapacity(1024)
-            .maximumSize(10_000L)   // 最多缓存1000条数据
-            .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
-            .build();
-
-    /**
      * 图片上传（基于文件）
      *
      * @param multipartFile 当前文件
@@ -276,10 +267,9 @@ public class PictureController {
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
-        // 默认使用Redis缓存
-        CacheTemplate cacheTemplate = cacheTemplateByRedis;
+        // 默认使用本地缓存
+        CacheTemplate cacheTemplate = cacheTemplateByCaffeine;
         // - 返回封装类
-        // return ResultUtils.success(pictureService.listPictureVOByPageWithCache(pictureQueryRequest, request));
         return ResultUtils.success(cacheTemplate.listPictureVOByPageWithCache(pictureQueryRequest, request));
     }
 

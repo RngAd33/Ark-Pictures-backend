@@ -2,9 +2,7 @@ package com.rngad33.web.manager.cache;
 
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.util.concurrent.TimeUnit;
 
