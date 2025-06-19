@@ -371,13 +371,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         return uploadCount;
     }
 
-    /**
-     * 分页获取图片列表（有缓存）
+    /*
+     * 分页获取图片列表（有缓存）（已废弃，改用模板方法）
      *
      * @param pictureQueryRequest
      * @param request
      * @return
-     */
+
     public Page<PictureVO> listPictureVOByPageWithCache(PictureQueryRequest pictureQueryRequest, HttpServletRequest request) {
         // 优先查询缓存，没查到就查询数据库
         // - 获取查询参数
@@ -405,5 +405,6 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         opsForValue.set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
         return pictureVOPage;
     }
+    */
 
 }

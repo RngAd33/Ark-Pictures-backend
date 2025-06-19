@@ -31,7 +31,7 @@ public abstract class PictureUploadTemplate {
     protected CosClientConfig cosClientConfig;
 
     /**
-     * 模板方法：定义上传流程
+     * 定义上传流程
      *
      * @param inputSource 文件或url
      * @param uploadPathPrefix 路径前缀
@@ -100,7 +100,8 @@ public abstract class PictureUploadTemplate {
      * @param file 临时文件
      * @return 上传结果封装
      */
-    private PictureUploadResult buildResult(ImageInfo imageInfo, String uploadFilePath, String originalFileName, File file) {
+    private PictureUploadResult buildResult(ImageInfo imageInfo,
+                                            String uploadFilePath, String originalFileName, File file) {
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
         int width = imageInfo.getWidth();
         int height = imageInfo.getHeight();

@@ -1,10 +1,10 @@
 package com.rngad33.web.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.common.DeleteRequest;
@@ -12,6 +12,9 @@ import com.rngad33.web.common.ResultUtils;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.manager.cache.CacheTemplate;
+import com.rngad33.web.manager.cache.CacheTemplateByRedis;
+import com.rngad33.web.manager.cache.CacheTemplateByCaffeine;
 import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
@@ -24,16 +27,13 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 图片交互接口
@@ -52,7 +52,20 @@ public class PictureController {
     @Resource
     private PictureService pictureService;
 
-    // private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private CacheTemplateByRedis cacheTemplateByRedis;
+
+    @Resource
+    private CacheTemplateByCaffeine cacheTemplateByCaffeine;
+
+    /**
+     * 本地缓存构造
+     */
+    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
+            .initialCapacity(1024)
+            .maximumSize(10_000L)   // 最多缓存1000条数据
+            .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
+            .build();
 
     /**
      * 图片上传（基于文件）
@@ -263,8 +276,11 @@ public class PictureController {
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
+        // 默认使用Redis缓存
+        CacheTemplate cacheTemplate = cacheTemplateByRedis;
         // - 返回封装类
-        return ResultUtils.success(pictureService.listPictureVOByPageWithCache(pictureQueryRequest, request));
+        // return ResultUtils.success(pictureService.listPictureVOByPageWithCache(pictureQueryRequest, request));
+        return ResultUtils.success(cacheTemplate.listPictureVOByPageWithCache(pictureQueryRequest, request));
     }
 
     /**
@@ -294,7 +310,7 @@ public class PictureController {
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays
-                .asList("首页推荐", "明日方舟", "终末地", "泡姆泡姆", "异世界风景", "纳斯特港");
+                .asList("每日推荐", "明日方舟", "终末地", "泡姆泡姆", "异世界风景", "纳斯特港");
         List<String> categoryList = Arrays
                 .asList("电脑壁纸", "手机壁纸", "名梗弔图", "表情包", "头像系列", "MISC");
         pictureTagCategory.setTagList(tagList);
