@@ -269,6 +269,7 @@ public class PictureController {
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 默认使用本地缓存
         CacheTemplate cacheTemplate = cacheTemplateByCaffeine;
+        // CacheTemplate cacheTemplate = cacheTemplateByRedis;
         // todo 设置判断条件
         /*
         if (cacheTemplate.) {
