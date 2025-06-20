@@ -15,6 +15,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,26 +50,39 @@ public class MyCacheManager {
             // - 本地缓存未命中，查询Redis缓存
             cachedValue = getCachedFromRedis(caffeineKey);
             if (cachedValue == null) {
-                // - 两种缓存均未命中，查询数据库并写入缓存
-                Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
-                        pictureService.getQueryWrapper(pictureQueryRequest));
-                Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
-                String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
-                // 设置Redis缓存有效期
-                int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
-                // 写入二级缓存
-                this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
-                this.setCacheToCaffeine(caffeineKey, cacheValue);
-                // 返回数据库查询结果
-                return pictureVOPage;
+                // 为当前redisKey获取或创建一个细粒度锁对象
+                Object lock = keyLocks.computeIfAbsent(redisKey, k -> new Object());
+                // 双检锁
+                synchronized (lock) {
+                    cachedValue = getCachedFromRedis(caffeineKey);
+                    if (cachedValue == null) {
+                        // - 两种缓存均未命中，查询数据库
+                        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                                pictureService.getQueryWrapper(pictureQueryRequest));
+                        Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
+                        String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
+                        // 设置Redis缓存有效期
+                        int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
+                        // 写入二级缓存
+                        this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
+                        this.setCacheToCaffeine(caffeineKey, cacheValue);
+                        // 返回数据库查询结果
+                        return pictureVOPage;
+                    }
+                }
             } else {
-                // Redis缓存命中，写入本地缓存
+                // - Redis缓存命中，写入本地缓存
                 this.setCacheToCaffeine(caffeineKey, cachedValue);
             }
         }
         // 二级缓存命中，返回缓存查询结果
         return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
     }
+
+    /**
+     * 细粒度锁构造
+     */
+    private final Map<String, Object> keyLocks = new ConcurrentHashMap<>();
 
     /**
      * 本地缓存构造
@@ -77,16 +92,6 @@ public class MyCacheManager {
             .maximumSize(10_000L)   // 最多缓存1000条数据
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
-
-    /**
-     * 从本地缓存中获取缓存数据
-     *
-     * @param caffeineKey
-     * @return cachedValue
-     */
-    private String getCachedFromCaffeine(String caffeineKey) {
-        return LOCAL_CACHE.getIfPresent(caffeineKey);
-    }
 
     /**
      * 从Redis缓存中获取缓存数据
@@ -99,13 +104,23 @@ public class MyCacheManager {
     }
 
     /**
+     * 从本地缓存中获取缓存数据
+     *
+     * @param caffeineKey
+     * @return cachedValue
+     */
+    private String getCachedFromCaffeine(String caffeineKey) {
+        return LOCAL_CACHE.getIfPresent(caffeineKey);
+    }
+
+    /**
      * 将数据写入Redis缓存
      *
      * @param redisKey
      * @param cacheValue
      * @param cacheExpireTime
      */
-    public void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
+    private void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
         stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
     }
 
@@ -115,7 +130,7 @@ public class MyCacheManager {
      * @param caffeineKey
      * @param cacheValue
      */
-    public void setCacheToCaffeine(String caffeineKey, String cacheValue) {
+    private void setCacheToCaffeine(String caffeineKey, String cacheValue) {
         LOCAL_CACHE.put(caffeineKey, cacheValue);
     }
 
