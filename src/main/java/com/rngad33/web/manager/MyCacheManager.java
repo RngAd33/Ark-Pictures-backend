@@ -32,6 +32,20 @@ public class MyCacheManager {
     private PictureService pictureService;
 
     /**
+     * 细粒度锁构造
+     */
+    private final Map<String, Object> keyLocks = new ConcurrentHashMap<>();
+
+    /**
+     * 本地缓存构造
+     */
+    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
+            .initialCapacity(1024)
+            .maximumSize(10_000L)   // 最多缓存1000条数据
+            .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
+            .build();
+
+    /**
      * 数据查询
      *
      * @param pictureQueryRequest
@@ -78,20 +92,6 @@ public class MyCacheManager {
         // 二级缓存命中，返回缓存查询结果
         return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
     }
-
-    /**
-     * 细粒度锁构造
-     */
-    private final Map<String, Object> keyLocks = new ConcurrentHashMap<>();
-
-    /**
-     * 本地缓存构造
-     */
-    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
-            .initialCapacity(1024)
-            .maximumSize(10_000L)   // 最多缓存1000条数据
-            .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
-            .build();
 
     /**
      * 从Redis缓存中获取缓存数据
