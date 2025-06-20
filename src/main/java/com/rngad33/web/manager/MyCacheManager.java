@@ -103,10 +103,10 @@ public class MyCacheManager {
      * @param cacheExpireTime Redis有效期
      */
     public void setCaches(String caffeineKey, String redisKey, String cacheValue, int cacheExpireTime) {
-        // 写入Redis缓存
-        stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
         // 写入本地缓存
         LOCAL_CACHE.put(caffeineKey, cacheValue);
+        // 写入Redis缓存
+        stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
     }
 
 }
