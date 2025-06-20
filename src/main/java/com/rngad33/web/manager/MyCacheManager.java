@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 通用缓存读写方法
+ * 通用二级缓存读写策略
  */
 @Service
 public class MyCacheManager {
@@ -53,10 +53,12 @@ public class MyCacheManager {
                         pictureService.getQueryWrapper(pictureQueryRequest));
                 Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
                 String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
-                // - 设置缓存有效期
+                // 设置缓存有效期
                 int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
                 // 写入二级缓存
                 this.setCaches(caffeineKey, redisKey, cacheValue, cacheExpireTime);
+                // 返回查询数据
+                return pictureVOPage;
             }
         }
         // 缓存命中，返回查询结果

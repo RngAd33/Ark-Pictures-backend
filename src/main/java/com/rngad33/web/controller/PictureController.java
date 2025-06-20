@@ -267,7 +267,7 @@ public class PictureController {
         String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
         String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
         String caffeineKey = String.format("listPictureVOByPage:%s", hashKey);
-        // 执行二级缓存查询（本地缓存优先，没查到就查Redis，还没查到再查数据库）
+        // 执行通用二级缓存查询策略（本地缓存优先，没查到就查Redis，还没查到再查数据库）
         Page<PictureVO> pictureVOPage = myCacheManager.cacheQuery(pictureQueryRequest, redisKey, caffeineKey,
                 current, size, request);
         // 查询结束，返回封装类
