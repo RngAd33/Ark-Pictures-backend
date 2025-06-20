@@ -30,7 +30,7 @@ public class MyCacheManager {
     private PictureService pictureService;
 
     /**
-     * 缓存查询
+     * 数据查询
      *
      * @param pictureQueryRequest
      * @param redisKey
