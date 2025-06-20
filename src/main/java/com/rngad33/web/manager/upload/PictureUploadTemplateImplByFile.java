@@ -17,7 +17,7 @@ import java.util.List;
 public class PictureUploadTemplateImplByFile extends PictureUploadTemplate {
 
     /**
-     * 校验输入源（本地文件或 URL）
+     * 校验输入源
      *
      * @param inputSource
      */

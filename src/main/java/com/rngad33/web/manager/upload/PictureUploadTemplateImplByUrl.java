@@ -24,7 +24,7 @@ import java.util.List;
 public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
 
     /**
-     * 校验输入源（本地文件或 URL）
+     * 校验输入源
      *
      * @param inputSource
      */
@@ -88,8 +88,7 @@ public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
      */
     @Override
     protected String getOriginFilename(Object inputSource) {
-        String fileUrl = (String) inputSource;
-        return FileUtil.mainName(fileUrl);
+        return (String) inputSource;
     }
 
     /**

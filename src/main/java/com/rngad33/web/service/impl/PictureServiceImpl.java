@@ -111,14 +111,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setPicScale(pictureUploadResult.getPicScale());
         picture.setPicFormat(pictureUploadResult.getPicFormat());
         picture.setUserId(loginUser.getId());
-        // 补充审核参数
-        userManager.fillReviewParams(picture, loginUser);
-        // 操作数据库
+        // 更新，补充信息
+        userManager.fillReviewParams(picture, loginUser);   // 审核参数
         if (pictureId != null) {
-            // - 更新，补充信息
             picture.setId(pictureId);
             picture.setEditTime(new Date());
         }
+        // 操作数据库
         boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "上传失败！");
         return PictureVO.objToVo(picture);
@@ -317,18 +316,24 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             namePrefix = searchText;
         }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
-        // 抓取内容
-        Document document;
+        // 抓取图片
         String fetchUrl = String.format("https://www.bing.com/images/async?q=%s&mmasync=1", searchText);
-        try {
-            document = Jsoup.connect(fetchUrl).get();
-        } catch (IOException e) {
-            log.error("————！抓取页面失败！————", e);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        }
+        Document document = null;
+        int loseCount = 0;
+        do {
+            try {
+                document = Jsoup.connect(fetchUrl).get();
+                loseCount = 0;
+            } catch (IOException e) {
+                log.error("——！抓取器联网失败，正在尝试重新连接！——");
+                loseCount++;
+                ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.NOT_PARAM, "抓取器联网多次失败，进程已终止！");
+            }
+        } while (document == null);
         // 解析内容
         Element div = document.getElementsByClass("dgControl").first();   // 外层元素
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取元素失败！");
+        log.info("抓取器联网成功，开始抓取图片>>>");
         Elements imgElementList = div.select("img.mimg");
         int uploadCount = 0;
         // 遍历元素，依次上传
@@ -349,11 +354,10 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
             try {
                 PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
-                log.info(">>>已上传图片：{}", pictureVO.getUrl());
-                // log.info(">>>已上传图片：{}", pictureVO.getId());
+                log.info(">>>已上传图片：{}", pictureVO.getId());
                 uploadCount++;
             } catch (Exception e) {
-                log.error("————！图片上传失败！————", e);
+                log.error("——！图片上传失败，正在尝试重新抓取！——");
                 continue;
             }
             if (uploadCount >= count) {
