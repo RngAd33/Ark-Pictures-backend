@@ -67,21 +67,12 @@ public interface PictureService extends IService<Picture> {
     void reviewPicture(PictureReviewRequest pictureReviewRequest, User loginUser);
 
     /**
-     * 图片批量上传（仅管理员）
+     * 抓取图片批量上传（仅管理员）
      *
      * @param pictureUploadByBatchRequest
      * @param loginUser
      * @return
      */
     Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser);
-
-    /*
-     * 分页获取图片列表（有缓存）
-     *
-     * @param pictureQueryRequest
-     * @param request
-     * @return
-    Page<PictureVO> listPictureVOByPageWithCache(PictureQueryRequest pictureQueryRequest, HttpServletRequest request);
-     */
 
 }

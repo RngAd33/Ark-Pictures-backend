@@ -1,5 +1,6 @@
 package com.rngad33.web.manager;
 
+import cn.hutool.core.io.FileUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
@@ -65,14 +66,17 @@ public class CosManager {
      * @throws CosClientException
      * @throws CosServiceException
      */
-    public PutObjectResult putPictureObject(String key, File file)
-            throws CosClientException, CosServiceException {
+    public PutObjectResult putPictureObject(String key, File file) throws CosClientException, CosServiceException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
         // 处理图片
         PicOperations picOperations = new PicOperations();
-        // - 返回原图信息
+        // 返回原图信息
         picOperations.setIsPicInfo(1);
-        // - 构造处理参数
+        // 图片压缩(->.webp)
+        String webpKey = FileUtil.mainName(key) + ".webp";
+        String jpegKey = FileUtil.mainName(key) + ".jpg";
+        // picOperations.setRules();
+        // 构造处理参数
         putObjectRequest.setPicOperations(picOperations);
         return cosClient.putObject(putObjectRequest);
     }

@@ -329,7 +329,7 @@ public class PictureController {
     }
 
     /**
-     * 批量抓取上传图片（仅管理员）
+     * 抓取图片批量上传（仅管理员）
      *
      * @param pictureUploadByBatchRequest
      * @param request
