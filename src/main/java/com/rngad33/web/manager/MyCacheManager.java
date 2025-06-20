@@ -53,7 +53,7 @@ public class MyCacheManager {
                         pictureService.getQueryWrapper(pictureQueryRequest));
                 Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
                 String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
-                // 设置缓存有效期
+                // 设置Redis缓存有效期
                 int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
                 // 写入二级缓存
                 this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
@@ -103,7 +103,7 @@ public class MyCacheManager {
      *
      * @param redisKey
      * @param cacheValue
-     * @param cacheExpireTime Redis有效期
+     * @param cacheExpireTime
      */
     public void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
         stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
