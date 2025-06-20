@@ -1,7 +1,6 @@
 package com.rngad33.web.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rngad33.web.annotation.AuthCheck;
