@@ -14,6 +14,8 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 通用文件传输
@@ -72,11 +74,16 @@ public class CosManager {
         PicOperations picOperations = new PicOperations();
         // 返回原图信息
         picOperations.setIsPicInfo(1);
-        // 图片压缩(->.webp)
+        List<PicOperations.Rule> rules = new ArrayList<>();
+        // 图片压缩(*.* -> *.webp)
         String webpKey = FileUtil.mainName(key) + ".webp";
-        String jpegKey = FileUtil.mainName(key) + ".jpg";
-        // picOperations.setRules();
+        PicOperations.Rule compressRule = new PicOperations.Rule();
+        compressRule.setBucket(cosClientConfig.getBucket());
+        compressRule.setFileId(webpKey);
+        compressRule.setRule("imageMogr2/format/webp");
+        rules.add(compressRule);
         // 构造处理参数
+        picOperations.setRules(rules);
         putObjectRequest.setPicOperations(picOperations);
         return cosClient.putObject(putObjectRequest);
     }
