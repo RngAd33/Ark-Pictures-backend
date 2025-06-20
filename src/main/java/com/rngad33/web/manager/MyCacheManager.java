@@ -1,0 +1,110 @@
+package com.rngad33.web.manager;
+
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.rngad33.web.model.dto.picture.PictureQueryRequest;
+import com.rngad33.web.model.entity.Picture;
+import com.rngad33.web.model.vo.PictureVO;
+import com.rngad33.web.service.PictureService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 通用缓存读写方法
+ */
+@Service
+public class MyCacheManager {
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private PictureService pictureService;
+
+    /**
+     * 缓存查询
+     *
+     * @param pictureQueryRequest
+     * @param redisKey
+     * @param caffeineKey
+     * @param current
+     * @param size
+     * @param request
+     * @return
+     */
+    public Page<PictureVO> cacheQuery(PictureQueryRequest pictureQueryRequest, String redisKey, String caffeineKey,
+                                      long current, long size, HttpServletRequest request) {
+        // 优先查询本地缓存
+        String cachedValue = getCachedFromCaffeine(redisKey);
+        if (cachedValue == null) {
+            // - 缓存未命中，查询Redis缓存
+            cachedValue = getCachedFromRedis(caffeineKey);
+            if (cachedValue == null) {
+                // - 两次缓存均未命中，查询数据库并写入缓存
+                Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                        pictureService.getQueryWrapper(pictureQueryRequest));
+                Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
+                String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
+                // - 设置缓存有效期
+                int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
+                // 写入二级缓存
+                this.setCaches(caffeineKey, redisKey, cacheValue, cacheExpireTime);
+            }
+        }
+        // 缓存命中，返回查询结果
+        return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
+    }
+
+    /**
+     * 本地缓存构造
+     */
+    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
+            .initialCapacity(1024)
+            .maximumSize(10_000L)   // 最多缓存1000条数据
+            .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
+            .build();
+
+    /**
+     * 从本地缓存中获取缓存数据
+     *
+     * @param caffeineKey
+     * @return cachedValue
+     */
+    private String getCachedFromCaffeine(String caffeineKey) {
+        return LOCAL_CACHE.getIfPresent(caffeineKey);
+    }
+
+    /**
+     * 从Redis缓存中获取缓存数据
+     *
+     * @param redisKey
+     * @return cachedValue
+     */
+    private String getCachedFromRedis(String redisKey) {
+        return stringRedisTemplate.opsForValue().get(redisKey);
+    }
+
+    /**
+     * 将数据写入二级缓存
+     *
+     * @param caffeineKey
+     * @param redisKey
+     * @param cacheValue
+     * @param cacheExpireTime Redis有效期
+     */
+    public void setCaches(String caffeineKey, String redisKey, String cacheValue, int cacheExpireTime) {
+        // 写入Redis缓存
+        stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
+        // 写入本地缓存
+        LOCAL_CACHE.put(caffeineKey, cacheValue);
+    }
+
+}

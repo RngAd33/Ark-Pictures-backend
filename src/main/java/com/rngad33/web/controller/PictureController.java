@@ -1,20 +1,17 @@
 package com.rngad33.web.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.common.DeleteRequest;
 import com.rngad33.web.common.ResultUtils;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
+import com.rngad33.web.manager.MyCacheManager;
 import com.rngad33.web.manager.UserManager;
-import com.rngad33.web.manager.cache.CacheTemplate;
-import com.rngad33.web.manager.cache.CacheTemplateByRedis;
-import com.rngad33.web.manager.cache.CacheTemplateByCaffeine;
 import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
@@ -27,10 +24,10 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,13 +47,10 @@ public class PictureController {
     private UserManager userManager;
 
     @Resource
+    private MyCacheManager myCacheManager;
+
+    @Resource
     private PictureService pictureService;
-
-    @Resource
-    private CacheTemplateByRedis cacheTemplateByRedis;
-
-    @Resource
-    private CacheTemplateByCaffeine cacheTemplateByCaffeine;
 
     /**
      * 图片上传（基于文件）
@@ -259,29 +253,29 @@ public class PictureController {
      * @return
      */
     @PostMapping("/list/page/vo/cache")
-    public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
-                                                             HttpServletRequest request) {
+    public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(
+            @RequestBody PictureQueryRequest pictureQueryRequest, HttpServletRequest request) {
         // 获取查询参数
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
-        // 默认使用本地缓存
-        CacheTemplate cacheTemplate = cacheTemplateByCaffeine;
-        // CacheTemplate cacheTemplate = cacheTemplateByRedis;
-        // todo 设置判断条件
-        /*
-        if (cacheTemplate.) {
-            cacheTemplate = cacheTemplateByRedis;
-        }
-        */
-        // - 返回封装类
-        return ResultUtils.success(cacheTemplate.listPictureVOByPageWithCache(pictureQueryRequest, request));
+        // 构建key
+        String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
+        String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
+        String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
+        String caffeineKey = String.format("listPictureVOByPage:%s", hashKey);
+        // 执行二级缓存查询（本地缓存优先，没查到就查Redis，还没查到再查数据库）
+        Page<PictureVO> pictureVOPage = myCacheManager.cacheQuery(pictureQueryRequest, redisKey, caffeineKey,
+                current, size, request);
+        // 查询结束，返回封装类
+        return ResultUtils.success(pictureVOPage);
     }
 
     /**
-     * 分页获取图片列表（管理员，无缓存）
+     * 分页获取图片列表（管理员，一般无需缓存）
      *
      * @param pictureQueryRequest
      * @return
@@ -307,10 +301,13 @@ public class PictureController {
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays
-                .asList("每日推荐", "明日方舟", "终末地", "泡姆泡姆", "异世界风景", "纳斯特港");
+                .asList("每日推荐", "明日方舟", "终末地", "泡姆泡姆", "纳斯特港");
+        List<String> nastList = Arrays
+                .asList("碧蓝航线", "异世界风景", "东方Project", "原神", "VOLCALOID", "MISC");
         List<String> categoryList = Arrays
-                .asList("电脑壁纸", "手机壁纸", "名梗弔图", "表情包", "头像系列", "MISC");
+                .asList("电脑壁纸", "手机壁纸", "名梗弔图", "表情包", "头像系列");
         pictureTagCategory.setTagList(tagList);
+        pictureTagCategory.setNastList(nastList);
         pictureTagCategory.setCategoryList(categoryList);
         return ResultUtils.success(pictureTagCategory);
     }
