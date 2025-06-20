@@ -45,10 +45,10 @@ public class MyCacheManager {
         // 优先查询本地缓存
         String cachedValue = getCachedFromCaffeine(redisKey);
         if (cachedValue == null) {
-            // - 缓存未命中，查询Redis缓存
+            // - 本地缓存未命中，查询Redis缓存
             cachedValue = getCachedFromRedis(caffeineKey);
             if (cachedValue == null) {
-                // - 两次缓存均未命中，查询数据库并写入缓存
+                // - 两种缓存均未命中，查询数据库并写入缓存
                 Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                         pictureService.getQueryWrapper(pictureQueryRequest));
                 Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
@@ -56,12 +56,16 @@ public class MyCacheManager {
                 // 设置缓存有效期
                 int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
                 // 写入二级缓存
-                this.setCaches(caffeineKey, redisKey, cacheValue, cacheExpireTime);
-                // 返回查询数据
+                this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
+                this.setCacheToCaffeine(caffeineKey, cacheValue);
+                // 返回数据库查询结果
                 return pictureVOPage;
+            } else {
+                // Redis缓存命中，写入本地缓存
+                this.setCacheToCaffeine(caffeineKey, cachedValue);
             }
         }
-        // 缓存命中，返回查询结果
+        // 二级缓存命中，返回缓存查询结果
         return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
     }
 
@@ -95,18 +99,24 @@ public class MyCacheManager {
     }
 
     /**
-     * 将数据写入二级缓存
+     * 将数据写入Redis缓存
      *
-     * @param caffeineKey
      * @param redisKey
      * @param cacheValue
      * @param cacheExpireTime Redis有效期
      */
-    public void setCaches(String caffeineKey, String redisKey, String cacheValue, int cacheExpireTime) {
-        // 写入本地缓存
-        LOCAL_CACHE.put(caffeineKey, cacheValue);
-        // 写入Redis缓存
+    public void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
         stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 将数据写入本地缓存
+     *
+     * @param caffeineKey
+     * @param cacheValue
+     */
+    public void setCacheToCaffeine(String caffeineKey, String cacheValue) {
+        LOCAL_CACHE.put(caffeineKey, cacheValue);
     }
 
 }
