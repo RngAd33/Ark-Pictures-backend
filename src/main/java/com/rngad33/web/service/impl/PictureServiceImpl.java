@@ -328,7 +328,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             } catch (IOException e) {
                 log.error("——！抓取器联网失败，正在尝试重新连接！——");
                 loseCount++;
-                ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.NOT_PARAM, "抓取器联网多次失败，进程已终止！");
+                ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
             }
         } while (document == null);
         // 解析内容

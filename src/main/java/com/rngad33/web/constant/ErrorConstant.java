@@ -21,13 +21,9 @@ public interface ErrorConstant {
 
     String USER_NOT_EXIST_OR_PASSWORD_ERROR_RETRY_MESSAGE = "——！用户不存在或密码错误，请重试！——";
 
-    String USER_TOO_MANY_TIMES_MESSAGE = "——！请求超时！——";
-
     String USER_HAVE_NULL_CHAR_MESSAGE = "——！字段不能为空！——";
 
     String USER_HAVE_SPECIAL_CHAR_MESSAGE = "——！用户名或密码不能包含特殊字符！——";
-
-    String NOT_EXIST_PARAM = "——！参数不存在！——";
 
     String USER_LOSE_ACTION_MESSAGE = "——！操作失败！——";
 
