@@ -9,14 +9,13 @@ import com.rngad33.web.model.dto.picture.PictureQueryRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
+import com.rngad33.web.utils.LockUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,11 +29,6 @@ public class MyCacheManager {
 
     @Resource
     private PictureService pictureService;
-
-    /**
-     * 细粒度锁构造
-     */
-    private final Map<String, Object> KEY_LOCKS = new ConcurrentHashMap<>();
 
     /**
      * 本地缓存构造
@@ -63,11 +57,10 @@ public class MyCacheManager {
         if (cachedValue == null) {
             // - 本地缓存未命中，查询Redis缓存
             cachedValue = getCachedFromRedis(caffeineKey);
+            // 设置双检锁
             if (cachedValue == null) {
-                // 为当前redisKey获取或创建一个细粒度锁对象
-                Object lock = KEY_LOCKS.computeIfAbsent(redisKey, k -> new Object());
-                // 双检锁
-                synchronized (lock) {
+                // Object lock = LockUtils.KEY_LOCKS.computeIfAbsent(redisKey, k -> new Object());
+                synchronized (LockUtils.getKeyLock(redisKey)) {
                     cachedValue = getCachedFromRedis(caffeineKey);
                     if (cachedValue == null) {
                         // - 两种缓存均未命中，查询数据库

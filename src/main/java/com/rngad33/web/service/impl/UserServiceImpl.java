@@ -6,12 +6,14 @@ import com.rngad33.web.constant.AESConstant;
 import com.rngad33.web.constant.ErrorConstant;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
+import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.mapper.UserMapper;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.enums.user.UserStatusEnum;
 import com.rngad33.web.service.UserService;
 import com.rngad33.web.utils.AESUtils;
+import com.rngad33.web.utils.LockUtils;
 import com.rngad33.web.utils.SpecialCharValidator;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private UserManager userManager;
+
     /**
      * 用户注册
      *
@@ -45,7 +49,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return 新账户id
      */
     @Override
-    public Long userRegister(String userName, String userPassword, String checkPassword, String planetCode) throws Exception {
+    public Long userRegister(String userName, String userPassword, String checkPassword, String planetCode)
+            throws Exception {
         // 1. 信息校验
         log.info("正在执行信息校验……");
         // - 字段不能为空
@@ -74,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 单机锁
-        synchronized (userName.intern()) {
+        synchronized (LockUtils.getKeyLock(userName)) {
             // 2. 账户信息查重
             log.info("正在执行信息查重……");
             // - 名称查重
@@ -146,27 +151,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String encryptedPassword = AESUtils.doEncrypt(userPassword);
 
         // 3. 连接数据库，核对用户信息
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userName", userName);
-        queryWrapper.eq("userPassword", encryptedPassword);
-        User user = userMapper.selectOne(queryWrapper);
-        // - 判断用户信息是否有误
-        if (user == null) {
-            log.error(ErrorConstant.USER_NOT_EXIST_OR_PASSWORD_ERROR_RETRY_MESSAGE);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        }
-        // - 判断账户是否被封禁
-        if (Objects.equals(user.getUserStatus(), UserStatusEnum.BAN_STATUS.getValue())) {
-            log.error(ErrorConstant.USER_ALREADY_BAN_MESSAGE);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
-        }
+        User user;
+        synchronized (LockUtils.getKeyLock(userName)) {
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("userName", userName);
+            queryWrapper.eq("userPassword", encryptedPassword);
+            user = userMapper.selectOne(queryWrapper);
+            // - 判断用户信息是否有误
+            if (user == null) {
+                log.error(ErrorConstant.USER_NOT_EXIST_OR_PASSWORD_ERROR_RETRY_MESSAGE);
+                throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            }
+            // - 判断账户是否被封禁
+            if (Objects.equals(user.getUserStatus(), UserStatusEnum.BAN_STATUS.getValue())) {
+                log.error(ErrorConstant.USER_ALREADY_BAN_MESSAGE);
+                throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            }
+            // 4. 登录态脱敏
+            User safeUser = userManager.getSafeUser(user);
 
-        // 5. 登录态脱敏
-        User safeUser = getSafeUser(user);
-
-        // 6. 记录用户登录态（已脱敏）
-        request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, safeUser);
-        return safeUser;
+            // 5. 记录用户登录态（已脱敏）
+            request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, safeUser);
+            return safeUser;
+        }
     }
 
     /**
@@ -187,7 +194,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new MyException(ErrorCodeEnum.PARAM_ERROR, "id异常！");
         }
         User user = this.getById(id);
-        return getSafeUser(user);
+        return userManager.getSafeUser(user);
     }
 
     /**
@@ -212,20 +219,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<User> searchUsers(String userName, HttpServletRequest request) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.isNotBlank(userName)) {
-            queryWrapper.like("userName", userName);   // 默认模糊查询
-        }
+        queryWrapper.like("userName", userName);   // 默认模糊查询
         List<User> userList = this.list(queryWrapper);
-        return userList.stream().map(user -> {
-            user.setUserPassword(AESConstant.CONFUSION);   // 密码保护
-            return user;
-        }).collect(Collectors.toList());
+        return userList.stream()
+                .map(user -> {
+                    user.setUserPassword(AESConstant.CONFUSION);   // 密码保护
+                    return user;
+                }).collect(Collectors.toList());
     }
 
     /**
      * 用户封禁 / 解封（仅管理员）
      *
-     * @param id 待封禁/解封用户id
+     * @param id 待封禁 / 解封用户id
      * @return 状态码
      */
     @Override
@@ -258,29 +264,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return 0;
     }
 
-    /**
-     * 用户脱敏
-     * 使用掩码隐藏敏感信息，保障传输层安全
-     * @param user 脱敏前的账户
-     * @return 脱敏后的账户
-     */
-    private static User getSafeUser(User user) {
-        if (user == null) return null;
-        User safeUser = new User();
-        safeUser.setId(user.getId());
-        safeUser.setUserName(user.getUserName());
-        safeUser.setPlanetCode(user.getPlanetCode());
-        safeUser.setRole(user.getRole());
-        safeUser.setAvatarUrl(user.getAvatarUrl());
-        safeUser.setGender(user.getGender());
-        safeUser.setUserPassword(AESConstant.CONFUSION);
-        safeUser.setAge(user.getAge());
-        safeUser.setPhone(AESConstant.CONFUSION);
-        safeUser.setEmail(user.getEmail());
-        safeUser.setUserStatus(user.getUserStatus());
-        safeUser.setCreateTime(user.getCreateTime());
-        safeUser.setUpdateTime(new Date());
-        return safeUser;
-    }
+
 
 }

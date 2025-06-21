@@ -1,5 +1,6 @@
 package com.rngad33.web.manager;
 
+import com.rngad33.web.constant.AESConstant;
 import com.rngad33.web.constant.ErrorConstant;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.model.dto.user.UserManageRequest;
@@ -80,7 +81,32 @@ public class UserManager {
     }
 
     /**
-     * id传递
+     * 用户脱敏
+     * 使用掩码隐藏敏感信息，保障传输层安全
+     * @param user 脱敏前的账户
+     * @return 脱敏后的账户
+     */
+    public User getSafeUser(User user) {
+        if (user == null) return null;
+        User safeUser = new User();
+        safeUser.setId(user.getId());
+        safeUser.setUserName(user.getUserName());
+        safeUser.setPlanetCode(user.getPlanetCode());
+        safeUser.setRole(user.getRole());
+        safeUser.setAvatarUrl(user.getAvatarUrl());
+        safeUser.setGender(user.getGender());
+        safeUser.setUserPassword(AESConstant.CONFUSION);
+        safeUser.setAge(user.getAge());
+        safeUser.setPhone(AESConstant.CONFUSION);
+        safeUser.setEmail(user.getEmail());
+        safeUser.setUserStatus(user.getUserStatus());
+        safeUser.setCreateTime(user.getCreateTime());
+        safeUser.setUpdateTime(new Date());
+        return safeUser;
+    }
+
+    /**
+     * 传递id
      *
      * @param userManageRequest 用户管理请求体
      * @param request 用户登录态

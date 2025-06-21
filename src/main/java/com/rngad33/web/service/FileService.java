@@ -8,6 +8,7 @@ import java.io.File;
 /**
  * 文件服务接口
  */
+@Deprecated
 public interface FileService {
 
     /**

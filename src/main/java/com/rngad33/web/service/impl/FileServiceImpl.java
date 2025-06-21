@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Service
+@Deprecated
 public class FileServiceImpl implements FileService {
 
     @Resource

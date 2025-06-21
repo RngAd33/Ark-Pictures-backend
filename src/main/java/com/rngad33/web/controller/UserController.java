@@ -1,7 +1,9 @@
 package com.rngad33.web.controller;
 
+import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
-import com.rngad33.web.common.ResultUtils;
+import com.rngad33.web.utils.ResultUtils;
+import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.model.dto.user.UserLoginRequest;
@@ -10,6 +12,7 @@ import com.rngad33.web.model.dto.user.UserRegisterRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.service.UserService;
+import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -110,13 +113,10 @@ public class UserController {
      * @param userName 用户名
      * @return 用户列表
      */
-    @GetMapping("/admin/search")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @GetMapping("/search")
     public BaseResponse<List<User>> searchUsers(String userName, HttpServletRequest request) {
-        // 鉴权，仅管理员可操作
-        if (userManager.isNotAdmin(request)) {
-            // return ResultUtils.error(ErrorCodeEnum.USER_NOT_AUTH);
-            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
-        }
+        ThrowUtils.throwIf(StringUtils.isNotBlank(userName), ErrorCodeEnum.NOT_PARAM, "未找到该用户！");
         List<User> users = userService.searchUsers(userName, request);
         return ResultUtils.success(users);
     }

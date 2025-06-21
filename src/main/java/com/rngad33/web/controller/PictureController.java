@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
 import com.rngad33.web.common.DeleteRequest;
-import com.rngad33.web.common.ResultUtils;
+import com.rngad33.web.utils.ResultUtils;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.MyCacheManager;
