@@ -1,9 +1,9 @@
 package com.rngad33.web.common;
 
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
+import lombok.Data;
 
 import java.io.Serializable;
-import lombok.Data;
 
 /**
  * 通用返回类

@@ -1,6 +1,7 @@
 package com.rngad33.web.model.dto.user;
 
 import lombok.Data;
+
 import java.io.Serializable;
 
 /**

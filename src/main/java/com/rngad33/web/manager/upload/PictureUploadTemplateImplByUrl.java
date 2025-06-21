@@ -1,6 +1,5 @@
 package com.rngad33.web.manager.upload;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
