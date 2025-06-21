@@ -187,6 +187,40 @@ public class PictureController {
     }
 
     /**
+     * 图片审核（仅管理员）
+     *
+     * @param pictureReviewRequest
+     * @param request
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/review")
+    public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest,
+                                               HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        User loginUser = userService.getCurrentUser(request);
+        pictureService.reviewPicture(pictureReviewRequest, loginUser);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 抓取图片批量上传（仅管理员）
+     *
+     * @param pictureUploadByBatchRequest
+     * @param request
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/upload/batch")
+    public BaseResponse<Integer> uploadPictureByBatch(
+            @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        User loginUser = userService.getCurrentUser(request);
+        int uploadCount = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
+        return ResultUtils.success(uploadCount);
+    }
+
+    /**
      * 根据id获取图片（管理员）
      *
      * @param id
@@ -309,40 +343,6 @@ public class PictureController {
         pictureTagCategory.setNastList(nastList);
         pictureTagCategory.setCategoryList(categoryList);
         return ResultUtils.success(pictureTagCategory);
-    }
-
-    /**
-     * 图片审核（仅管理员）
-     *
-     * @param pictureReviewRequest
-     * @param request
-     * @return
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/review")
-    public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest,
-                                               HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
-        User loginUser = userService.getCurrentUser(request);
-        pictureService.reviewPicture(pictureReviewRequest, loginUser);
-        return ResultUtils.success(true);
-    }
-
-    /**
-     * 抓取图片批量上传（仅管理员）
-     *
-     * @param pictureUploadByBatchRequest
-     * @param request
-     * @return
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/upload/batch")
-    public BaseResponse<Integer> uploadPictureByBatch(
-            @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAM_ERROR);
-        User loginUser = userService.getCurrentUser(request);
-        int uploadCount = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
-        return ResultUtils.success(uploadCount);
     }
 
 }
