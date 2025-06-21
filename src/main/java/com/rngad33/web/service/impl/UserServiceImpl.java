@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
 
-        // 细粒度锁
+        // - 加锁
         synchronized (LockUtils.getKeyLock(userName)) {
             // 2. 账户信息查重
             log.info("正在执行信息查重……");
@@ -146,13 +146,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.error(ErrorConstant.USER_HAVE_SPECIAL_CHAR_MESSAGE);
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
-
-        // 2. 密码加密
-        String encryptedPassword = AESUtils.doEncrypt(userPassword);
-
-        // 3. 连接数据库，核对用户信息
-        User user;
+        // - 加锁
         synchronized (LockUtils.getKeyLock(userName)) {
+            // 2. 密码加密
+            String encryptedPassword = AESUtils.doEncrypt(userPassword);
+            // 3. 连接数据库，核对用户信息
+            User user;
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("userName", userName);
             queryWrapper.eq("userPassword", encryptedPassword);
@@ -169,8 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             // 4. 登录态脱敏
             User safeUser = userManager.getSafeUser(user);
-
-            // 5. 记录用户登录态（已脱敏）
+            // 5. 记录用户登录态
             request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, safeUser);
             return safeUser;
         }
