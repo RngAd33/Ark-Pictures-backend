@@ -1,6 +1,7 @@
 package com.rngad33.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.model.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 

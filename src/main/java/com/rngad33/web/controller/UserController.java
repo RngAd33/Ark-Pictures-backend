@@ -2,6 +2,7 @@ package com.rngad33.web.controller;
 
 import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
+import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.utils.ResultUtils;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
@@ -43,8 +44,7 @@ public class UserController {
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) throws Exception {
         if (userRegisterRequest == null) {
-            //  throw new RunException(ErrorCodeEnum.USER_LOSE_ACTION);
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         String userName = userRegisterRequest.getUserName();
         String userPassword = userRegisterRequest.getUserPassword();
@@ -68,7 +68,7 @@ public class UserController {
     @PostMapping("/login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) throws Exception {
         if (userLoginRequest == null) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         String userName = userLoginRequest.getUserName();
         String userPassword = userLoginRequest.getUserPassword();
@@ -101,7 +101,7 @@ public class UserController {
     @PostMapping("/logout")
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         Integer result = userService.userLogout(request);
         return ResultUtils.success(result);
@@ -110,14 +110,17 @@ public class UserController {
     /**
      * 用户查询（仅管理员）
      *
-     * @param userName 用户名
+     * @param userQueryRequest 用户查询请求体
      * @return 用户列表
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/search")
-    public BaseResponse<List<User>> searchUsers(String userName, HttpServletRequest request) {
-        ThrowUtils.throwIf(StringUtils.isNotBlank(userName), ErrorCodeEnum.NOT_PARAM, "未找到该用户！");
-        List<User> users = userService.searchUsers(userName, request);
+    public BaseResponse<List<User>> searchUsers(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+        if (userQueryRequest == null) {
+            throw new MyException(ErrorCodeEnum.NOT_PARAM);
+        }
+        String username = userQueryRequest.getUserName();
+        List<User> users = userService.searchUsers(username, request);
         return ResultUtils.success(users);
     }
 
