@@ -347,7 +347,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Element div = document.getElementsByClass("dgControl").first();
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取外层元素失败！");
         log.info(">>>元素抓取完毕，开始抓取图片");
-        // 筛选图片元素（选择所有类名为 mimg 的<img>标签并存储在 imgElementList 中）
+        // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
         // 遍历元素，依次上传
         int uploadCount = 0;

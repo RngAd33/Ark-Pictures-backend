@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 文件交互接口
+ * 文件交互接口（测试用）
  */
 @Slf4j
 @RestController
 @RequestMapping("/file")
+@Deprecated
 public class FileController {
 
     @Resource
@@ -31,7 +32,7 @@ public class FileController {
      * @return 可访问地址
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/upload")
+    @PostMapping("/test/upload")
     public BaseResponse<String> uploadFile(@RequestPart("/file") MultipartFile multipartFile) {
         try {
             String filePath = fileService.uploadFile(multipartFile);
@@ -49,7 +50,7 @@ public class FileController {
      * @param response HTTP响应
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/download")
+    @GetMapping("/test/download")
     public void downloadFile(String filePath, HttpServletResponse response) {
         try {
             fileService.downloadFile(filePath, response);

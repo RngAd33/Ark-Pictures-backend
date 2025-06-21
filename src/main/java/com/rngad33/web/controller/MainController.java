@@ -38,7 +38,7 @@ public class MainController {
     /**
      * Ping接口
      */
-    @PostMapping("/ping")
+    @PostMapping("/health")
     public void ping() {
         System.out.println("OK>>>");
     }
