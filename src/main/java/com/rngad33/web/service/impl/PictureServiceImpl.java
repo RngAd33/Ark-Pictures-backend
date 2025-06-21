@@ -308,7 +308,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
         // 校验参数
         ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAM);
-        // 设置参数
+        // 设置搜索参数
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
         // 图片名称前缀默认为搜索词
@@ -317,25 +317,28 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             namePrefix = searchText;
         }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
-        // 抓取图片
+        // 设置图源
         String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
+        // String fetchUrl = String.format(UrlConstant.sourcePixiv, searchText);
+        // 抓取图片
         Document document = null;
         int loseCount = 0;
+        log.info("抓取器已启动，正在连接图源>>>");
         do {
             try {
                 document = Jsoup.connect(fetchUrl).get();
                 loseCount = 0;
+                log.info(">>>图源连接成功，开始抓取元素");
             } catch (IOException e) {
-                log.error("——！抓取器联网失败，正在重新建立连接！——");
                 loseCount++;
+                log.error("——！图源连接失败，正在重新建立连接！——");
                 ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
             }
         } while (document == null);
-        log.info("抓取器联网成功，开始抓取元素>>>");
         // 解析图片元素
         Element div = document.getElementsByClass("dgControl").first();
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取外层元素失败！");
-        log.info("元素抓取完毕，开始抓取图片>>>");
+        log.info(">>>元素抓取完毕，开始抓取图片");
         // 筛选图片元素（选择所有类名为 mimg 的<img>标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
         // 遍历元素，依次上传
