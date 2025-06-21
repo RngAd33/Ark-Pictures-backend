@@ -221,7 +221,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.like("userName", userName);   // 默认模糊查询
         List<User> userList = this.list(queryWrapper);
         return userList.stream()
-                .filter(user -> !Objects.equals(user.getRole(), UserConstant.ADMIN_ROLE)) // 过滤掉管理员
+                .filter(user -> !Objects.equals(user.getRole(), UserConstant.ADMIN_ROLE))   // 过滤管理员账户
                 .map(user -> {
                     user.setUserPassword(AESConstant.CONFUSION);   // 密码保护
                     return user;
