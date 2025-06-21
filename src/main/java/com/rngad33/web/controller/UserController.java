@@ -66,7 +66,8 @@ public class UserController {
      * @throws Exception
      */
     @PostMapping("/login")
-    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) throws Exception {
+    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request)
+            throws Exception {
         if (userLoginRequest == null) {
             throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
@@ -114,8 +115,9 @@ public class UserController {
      * @return 用户列表
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/search")
-    public BaseResponse<List<User>> searchUsers(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    @PostMapping("/search")
+    public BaseResponse<List<User>> searchUsers(@RequestBody UserQueryRequest userQueryRequest,
+                                                HttpServletRequest request) {
         if (userQueryRequest == null) {
             throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
@@ -131,7 +133,8 @@ public class UserController {
      * @return 删除成功与否
      */
     @PostMapping("/admin/delete")
-    public BaseResponse<Boolean> userDelete(@RequestBody UserManageRequest userManageRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> userDelete(@RequestBody UserManageRequest userManageRequest,
+                                            HttpServletRequest request) {
         Long id = userManager.getId(userManageRequest, request);
         if (id == null) {
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
