@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new MyException(ErrorCodeEnum.PARAM_ERROR);
         }
 
-        // 单机锁
+        // 细粒度锁
         synchronized (LockUtils.getKeyLock(userName)) {
             // 2. 账户信息查重
             log.info("正在执行信息查重……");
