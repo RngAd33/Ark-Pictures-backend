@@ -180,11 +180,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null) {
-            throw new MyException(ErrorCodeEnum.USER_NOT_LOGIN, "你还没有登录！");
+            throw new MyException(ErrorCodeEnum.USER_NOT_LOGIN);
         }
         long id = currentUser.getId();
         if (id <= 0) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.PARAM_ERROR, "id异常！");
         }
         User user = this.getById(id);
         return getSafeUser(user);
