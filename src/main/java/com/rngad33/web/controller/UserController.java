@@ -109,20 +109,14 @@ public class UserController {
     }
 
     /**
-     * 用户查询（仅管理员）
+     * 用户模糊查询
      *
-     * @param userQueryRequest 用户查询请求体
+     * @param userName 目标用户名
      * @return 用户列表
      */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/search")
-    public BaseResponse<List<User>> searchUsers(@RequestBody UserQueryRequest userQueryRequest,
-                                                HttpServletRequest request) {
-        if (userQueryRequest == null) {
-            throw new MyException(ErrorCodeEnum.NOT_PARAM);
-        }
-        String username = userQueryRequest.getUserName();
-        List<User> users = userService.searchUsers(username, request);
+    @GetMapping("/search")
+    public BaseResponse<List<User>> searchUsers(String userName, HttpServletRequest request) {
+        List<User> users = userService.searchUsers(userName, request);
         return ResultUtils.success(users);
     }
 
