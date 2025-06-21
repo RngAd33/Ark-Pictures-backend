@@ -15,8 +15,6 @@ public interface ErrorConstant {
 
     String LENGTH_ERROR_MESSAGE = "——！账户名称长度或密码长度太短！——";
 
-    String USER_NOT_LOGIN_MESSAGE = "——！用户未登录！——";
-
     String USER_NOT_AUTH_MESSAGE = "——！用户未授权！——";
 
     String USER_ALREADY_BAN_MESSAGE = "——！用户已被封禁！——";

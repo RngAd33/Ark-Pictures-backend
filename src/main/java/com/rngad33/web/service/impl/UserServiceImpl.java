@@ -145,23 +145,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 2. 密码加密
         String encryptedPassword = AESUtils.doEncrypt(userPassword);
 
-        // 3. 查询用户是否存在
+        // 3. 连接数据库，核对用户信息
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userName", userName);
         queryWrapper.eq("userPassword", encryptedPassword);
         User user = userMapper.selectOne(queryWrapper);
+        // - 判断用户信息是否有误
         if (user == null) {
-            log.error(ErrorConstant.USER_NOT_EXIST_MESSAGE);
+            log.error(ErrorConstant.USER_NOT_EXIST_OR_PASSWORD_ERROR_RETRY_MESSAGE);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         }
-
-        // 4. 判断账户是否被封禁
+        // - 判断账户是否被封禁
         if (Objects.equals(user.getUserStatus(), UserStatusEnum.BAN_STATUS.getValue())) {
             log.error(ErrorConstant.USER_ALREADY_BAN_MESSAGE);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         }
 
-        // 5. 信息脱敏
+        // 5. 登录态脱敏
         User safeUser = getSafeUser(user);
 
         // 6. 记录用户登录态（已脱敏）

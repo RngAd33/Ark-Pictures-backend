@@ -34,7 +34,7 @@ public class MyCacheManager {
     /**
      * 细粒度锁构造
      */
-    private final Map<String, Object> keyLocks = new ConcurrentHashMap<>();
+    private final Map<String, Object> KEY_LOCKS = new ConcurrentHashMap<>();
 
     /**
      * 本地缓存构造
@@ -46,7 +46,7 @@ public class MyCacheManager {
             .build();
 
     /**
-     * 数据查询
+     * 数据多级查询
      *
      * @param pictureQueryRequest
      * @param redisKey
@@ -65,7 +65,7 @@ public class MyCacheManager {
             cachedValue = getCachedFromRedis(caffeineKey);
             if (cachedValue == null) {
                 // 为当前redisKey获取或创建一个细粒度锁对象
-                Object lock = keyLocks.computeIfAbsent(redisKey, k -> new Object());
+                Object lock = KEY_LOCKS.computeIfAbsent(redisKey, k -> new Object());
                 // 双检锁
                 synchronized (lock) {
                     cachedValue = getCachedFromRedis(caffeineKey);

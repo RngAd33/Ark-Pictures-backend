@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rngad33.web.constant.UrlConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.mapper.PictureMapper;
 import com.rngad33.web.manager.UserManager;
@@ -72,7 +73,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser) {
         // 校验是否登录
-        ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_AUTH);
+        ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_LOGIN);
         // 判断是新增还是删除
         Long pictureId = null;
         if (pictureUploadRequest != null) {
@@ -194,7 +195,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      */
     @Override
     public void validPicture(Picture picture) {
-        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM, "请先选择图片！");
         Long id = picture.getId();
         String url = picture.getUrl();
         String introduction =picture.getIntroduction();
@@ -310,14 +311,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 设置参数
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
-        // - 名称前缀默认为搜索词
+        // 图片名称前缀默认为搜索词
         String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
         if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
         // 抓取图片
-        String fetchUrl = String.format("https://www.bing.com/images/async?q=%s&mmasync=1", searchText);
+        String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
         Document document = null;
         int loseCount = 0;
         do {

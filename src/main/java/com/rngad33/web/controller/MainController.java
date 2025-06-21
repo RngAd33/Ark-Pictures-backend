@@ -29,7 +29,7 @@ public class MainController {
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/cleanCache")
+    @PostMapping("/removeCache")
     public BaseResponse<Integer> removeCache(String redisKey) {
         stringRedisTemplate.delete(redisKey);
         return ResultUtils.success(null);
