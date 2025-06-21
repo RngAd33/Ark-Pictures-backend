@@ -239,7 +239,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request) {
         List<Picture> pictureList = picturePage.getRecords();
-        Page<PictureVO> pictureVOPage = new Page<>(picturePage.getCurrent(), picturePage.getSize(), picturePage.getTotal());
+        Page<PictureVO> pictureVOPage = new Page<> (
+                picturePage.getCurrent(),
+                picturePage.getSize(),
+                picturePage.getTotal()
+        );
         if (CollUtil.isEmpty(pictureList)) {
             return pictureVOPage;
         }
@@ -248,7 +252,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 .map(PictureVO::objToVo)
                 .collect(Collectors.toList());
         // 1. 关联查询用户信息
-        Set<Long> userIdSet = pictureList.stream().map(Picture::getUserId).collect(Collectors.toSet());
+        Set<Long> userIdSet = pictureList.stream()
+                .map(Picture::getUserId)
+                .collect(Collectors.toSet());
         // n -> userN
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
                 .collect(Collectors.groupingBy(User::getId));
@@ -278,7 +284,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Long id = pictureReviewRequest.getId();
         Integer reviewStatus = pictureReviewRequest.getReviewStatus();
         PictureReviewStatusEnum pictureReviewStatusEnum = PictureReviewStatusEnum.getEnumByValue(reviewStatus);
-        if (id == null || pictureReviewStatusEnum == null || PictureReviewStatusEnum.REVIEWING.equals(pictureReviewStatusEnum)) {
+        if (id == null || pictureReviewStatusEnum == null
+                || PictureReviewStatusEnum.REVIEWING.equals(pictureReviewStatusEnum)) {
             throw new MyException(ErrorCodeEnum.NOT_PARAM);
         }
         // 2. 判断图片是否存在
@@ -332,7 +339,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             } catch (IOException e) {
                 loseCount++;
                 log.error("——！图源连接失败，正在重新建立连接！——");
-                ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
+                ThrowUtils.throwIf(loseCount > 12,
+                        ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
             }
         } while (document == null);
         // 解析图片元素
