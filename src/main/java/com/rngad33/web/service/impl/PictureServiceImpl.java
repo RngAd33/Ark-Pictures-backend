@@ -256,7 +256,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 .map(Picture::getUserId)
                 .collect(Collectors.toSet());
         // n -> userN
-        Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
+        Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet)
+                .stream()
                 .collect(Collectors.groupingBy(User::getId));
         // 2. 填充信息
         pictureVOList.forEach(pictureVO -> {
@@ -326,7 +327,6 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
         // 设置图源
         String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
-        // String fetchUrl = String.format(UrlConstant.sourcePixiv, searchText);
         // 抓取图片
         Document document = null;
         int loseCount = 0;
