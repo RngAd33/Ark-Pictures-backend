@@ -8,7 +8,6 @@ import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.mapper.UserMapper;
-import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.enums.user.UserStatusEnum;

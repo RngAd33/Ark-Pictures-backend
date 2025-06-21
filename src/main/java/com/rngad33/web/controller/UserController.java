@@ -1,10 +1,7 @@
 package com.rngad33.web.controller;
 
-import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
-import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.utils.ResultUtils;
-import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.model.dto.user.UserLoginRequest;
@@ -13,7 +10,6 @@ import com.rngad33.web.model.dto.user.UserRegisterRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.service.UserService;
-import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
