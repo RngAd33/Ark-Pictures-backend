@@ -326,22 +326,24 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                 document = Jsoup.connect(fetchUrl).get();
                 loseCount = 0;
             } catch (IOException e) {
-                log.error("——！抓取器联网失败，正在尝试重新连接！——");
+                log.error("——！抓取器联网失败，正在重新建立连接！——");
                 loseCount++;
                 ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
             }
         } while (document == null);
-        // 解析内容
-        Element div = document.getElementsByClass("dgControl").first();   // 外层元素
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取元素失败！");
-        log.info("抓取器联网成功，开始抓取图片>>>");
+        log.info("抓取器联网成功，开始抓取元素>>>");
+        // 解析图片元素
+        Element div = document.getElementsByClass("dgControl").first();
+        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取外层元素失败！");
+        log.info("元素抓取完毕，开始抓取图片>>>");
+        // 筛选图片元素（选择所有类名为 mimg 的<img>标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
-        int uploadCount = 0;
         // 遍历元素，依次上传
+        int uploadCount = 0;
         for (Element imgElement : imgElementList) {
             String fileUrl = imgElement.attr("src");
             if (StrUtil.isBlank(fileUrl)) {
-                log.info("——！当前链接为空，已跳过：{}！——", fileUrl);
+                log.info("——！当前图片链接为空，已跳过：{}！——", fileUrl);
                 continue;
             }
             // 处理图片地址，防止转义或者对象存储冲突
