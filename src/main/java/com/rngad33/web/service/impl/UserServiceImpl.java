@@ -209,7 +209,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 用户查询（仅管理员）
+     * 用户模糊查询
      *
      * @param userName 用户名
      * @return 用户列表

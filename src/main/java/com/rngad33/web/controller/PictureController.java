@@ -279,24 +279,6 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表（管理员，一般无需缓存）
-     *
-     * @param pictureQueryRequest
-     * @return
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/list/page")
-    public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
-        long current = pictureQueryRequest.getCurrent();
-        long size = pictureQueryRequest.getPageSize();
-        // 查询数据库
-        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
-                pictureService.getQueryWrapper(pictureQueryRequest));
-        // 获取封装类
-        return ResultUtils.success(picturePage);
-    }
-
-    /**
      * 分页获取图片列表（用户，有缓存）
      *
      * @param pictureQueryRequest
@@ -323,6 +305,24 @@ public class PictureController {
                 current, size, request);
         // 查询结束，返回封装类
         return ResultUtils.success(pictureVOPage);
+    }
+
+    /**
+     * 分页获取图片列表（管理员，一般无需缓存）
+     *
+     * @param pictureQueryRequest
+     * @return
+     */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/list/page")
+    public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
+        // 查询数据库
+        Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
+                pictureService.getQueryWrapper(pictureQueryRequest));
+        // 获取封装类
+        return ResultUtils.success(picturePage);
     }
 
     /**

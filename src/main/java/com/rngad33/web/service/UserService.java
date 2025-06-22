@@ -48,7 +48,7 @@ public interface UserService extends IService<User> {
     Integer userLogout(HttpServletRequest request);
 
     /**
-     * 用户查询（仅管理员）
+     * 用户模糊查询
      *
      * @param userName 用户名
      * @return 用户列表
