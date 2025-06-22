@@ -326,7 +326,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
         // 设置图源
-        String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
+        // String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
+        String fetchUrl = String.format(UrlConstant.sourceSafebooru, searchText);
         // 抓取图片
         Document document = null;
         int loseCount = 0;
