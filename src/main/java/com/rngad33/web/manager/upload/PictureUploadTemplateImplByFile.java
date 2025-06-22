@@ -26,14 +26,14 @@ public class PictureUploadTemplateImplByFile extends PictureUploadTemplate {
         // - 强制类型转换
         MultipartFile multipartFile = (MultipartFile) inputSource;
         // - 文件是否存在
-        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
+        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAMS_ERROR, "请先选择图片！");
         // - 校验文件大小
         ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 12,
-                ErrorCodeEnum.PARAM_ERROR, "图片大小不能超过12M！");
+                ErrorCodeEnum.PARAMS_ERROR, "图片大小不能超过12M！");
         // - 校验文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         final List<String> SUFFIX_ALLOW = Arrays.asList("png", "jpg", "jpeg", "gif", "webp");
-        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAM_ERROR, "不支持的图片格式！");
+        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAMS_ERROR, "不支持的图片格式！");
     }
 
     /**

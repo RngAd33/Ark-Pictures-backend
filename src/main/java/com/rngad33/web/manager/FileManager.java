@@ -149,14 +149,14 @@ public class FileManager {
      */
     public void validPicture(MultipartFile multipartFile) {
         // - 文件是否存在
-        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAM_ERROR, "请先选择图片！");
+        ThrowUtils.throwIf(multipartFile == null, ErrorCodeEnum.PARAMS_ERROR, "请先选择图片！");
         // - 校验文件大小
         ThrowUtils.throwIf(multipartFile.getSize() > 1024 * 1024 * 10,
-                ErrorCodeEnum.PARAM_ERROR, "图片大小不能超过10M！");
+                ErrorCodeEnum.PARAMS_ERROR, "图片大小不能超过10M！");
         // - 校验文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         final List<String> SUFFIX_ALLOW = Arrays.asList("png", "jpg", "jpeg", "gif", "webp");
-        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAM_ERROR, "不支持的图片格式！");
+        ThrowUtils.throwIf(!SUFFIX_ALLOW.contains(fileSuffix), ErrorCodeEnum.PARAMS_ERROR, "不支持的图片格式！");
     }
 
     /**
@@ -166,16 +166,16 @@ public class FileManager {
      */
     public void validPicture(String fileUrl) {
         // 校验非空
-        ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCodeEnum.PARAM_ERROR, "文件url不能为空！");
+        ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCodeEnum.PARAMS_ERROR, "文件url不能为空！");
         // 校验url格式
         try {
             new URL(fileUrl);
         } catch (MalformedURLException e) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR, "url格式不正确！");
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR, "url格式不正确！");
         }
         // 校验url协议
         ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
-                ErrorCodeEnum.PARAM_ERROR, "仅支持HTTP或HTTPS协议！");
+                ErrorCodeEnum.PARAMS_ERROR, "仅支持HTTP或HTTPS协议！");
 
         HttpResponse response = null;
         try {
@@ -193,7 +193,7 @@ public class FileManager {
                 // 允许的图片类型
                 final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp");
                 ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase()),
-                        ErrorCodeEnum.PARAM_ERROR, "文件类型错误！");
+                        ErrorCodeEnum.PARAMS_ERROR, "文件类型错误！");
             }
             // 文件存在，校验文件大小
             String contentLengthStr = response.header("Content-Length");
@@ -201,9 +201,9 @@ public class FileManager {
                 try {
                     long contentLength = Long.parseLong(contentLengthStr);
                     final long LIMIT = 10 * 1024 * 1024L;   // 限制文件大小
-                    ThrowUtils.throwIf(contentLength > LIMIT, ErrorCodeEnum.PARAM_ERROR, "文件大小不能超过10M");
+                    ThrowUtils.throwIf(contentLength > LIMIT, ErrorCodeEnum.PARAMS_ERROR, "文件大小不能超过10M");
                 } catch (NumberFormatException e) {
-                    throw new MyException(ErrorCodeEnum.PARAM_ERROR, "文件大小错误！");
+                    throw new MyException(ErrorCodeEnum.PARAMS_ERROR, "文件大小错误！");
                 }
             }
         } finally {

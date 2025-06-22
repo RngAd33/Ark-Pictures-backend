@@ -55,7 +55,7 @@ public abstract class PictureUploadTemplate {
         }
         // 校验后缀是否存在
         if (StrUtil.isBlank(suffix)) {
-            throw new MyException(ErrorCodeEnum.NOT_PARAM, "文件后缀为空！");
+            throw new MyException(ErrorCodeEnum.NOT_PARAMS, "文件后缀为空！");
         }
         // 自己拼接图片上传路径，不使用原始名称，保证安全性
         String uploadFileName = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid, suffix);

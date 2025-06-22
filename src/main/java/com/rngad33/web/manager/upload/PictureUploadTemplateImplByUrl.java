@@ -32,16 +32,16 @@ public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
         // 强制类型转换
         String fileUrl = (String) inputSource;
         // 校验非空
-        ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCodeEnum.PARAM_ERROR, "文件url不能为空！");
+        ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCodeEnum.PARAMS_ERROR, "文件url不能为空！");
         // 校验url格式
         try {
             new URL(fileUrl);
         } catch (MalformedURLException e) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR, "url格式不正确！");
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR, "url格式不正确！");
         }
         // 校验url协议
         ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
-                ErrorCodeEnum.PARAM_ERROR, "仅支持HTTP或HTTPS协议！");
+                ErrorCodeEnum.PARAMS_ERROR, "仅支持HTTP或HTTPS协议！");
         // 发送HEAD请求，验证文件是否存在
         HttpResponse response = null;
         try {
@@ -58,7 +58,7 @@ public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
                 // 允许的图片类型
                 final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp");
                 ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase()),
-                        ErrorCodeEnum.PARAM_ERROR, "文件类型错误！");
+                        ErrorCodeEnum.PARAMS_ERROR, "文件类型错误！");
             }
             // 文件存在，校验文件大小
             String contentLengthStr = response.header("Content-Length");
@@ -66,9 +66,9 @@ public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
                 try {
                     long contentLength = Long.parseLong(contentLengthStr);
                     final long LIMIT = 10 * 1024 * 1024L;   // 限制文件大小
-                    ThrowUtils.throwIf(contentLength > LIMIT, ErrorCodeEnum.PARAM_ERROR, "文件大小不能超过10M");
+                    ThrowUtils.throwIf(contentLength > LIMIT, ErrorCodeEnum.PARAMS_ERROR, "文件大小不能超过10M");
                 } catch (NumberFormatException e) {
-                    throw new MyException(ErrorCodeEnum.PARAM_ERROR, "文件大小错误！");
+                    throw new MyException(ErrorCodeEnum.PARAMS_ERROR, "文件大小错误！");
                 }
             }
         } finally {
