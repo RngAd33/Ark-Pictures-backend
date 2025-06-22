@@ -9,7 +9,6 @@ import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.utils.ThrowUtils;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
