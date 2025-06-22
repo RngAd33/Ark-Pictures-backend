@@ -1,4 +1,4 @@
-package com.rngad33.usercenter.config;
+package com.rngad33.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
