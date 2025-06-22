@@ -25,6 +25,11 @@ public class PictureUploadByBatchRequest implements Serializable {
      */
     private String namePrefix;
 
+    /**
+     * 目标图源
+     */
+    private String library;
+
     private static final long serialVersionUID = 3191241716373120793L;
 
 }

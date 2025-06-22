@@ -10,6 +10,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.constant.UrlConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
+import com.rngad33.web.manager.jsoup.JsoupTemplate;
+import com.rngad33.web.manager.jsoup.JsoupTemplateFromBing;
+import com.rngad33.web.manager.jsoup.JsoupTemplateFromKonachan;
+import com.rngad33.web.manager.jsoup.JsoupTemplateFromSafebooru;
 import com.rngad33.web.manager.upload.PictureUploadTemplate;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByFile;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByUrl;
@@ -62,6 +66,15 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Resource
     private PictureUploadTemplateImplByUrl pictureUploadTemplateImplByUrl;
+
+    @Resource
+    private JsoupTemplateFromBing jsoupTemplateFromBing;
+
+    @Resource
+    private JsoupTemplateFromSafebooru jsoupTemplateFromSafebooru;
+
+    @Resource
+    private JsoupTemplateFromKonachan jsoupTemplateFromKonachan;
 
     /**
      * 图片上传
@@ -319,67 +332,22 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 设置搜索参数
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
-        // 图片名称前缀默认为搜索词
+        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
+        String library = pictureUploadByBatchRequest.getLibrary();
+        // - 图片名称前缀默认为搜索词
         String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
         if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
-        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
-        // 设置图源
-        String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
-        // 抓取图片
-        Document document = null;
-        int loseCount = 0;
-        log.info("抓取器已启动，正在连接图源>>>");
-        do {
-            try {
-                document = Jsoup.connect(fetchUrl).get();
-                loseCount = 0;
-                log.info(">>>图源连接成功，开始抓取元素");
-            } catch (IOException e) {
-                loseCount++;
-                log.error("——！图源连接失败，正在重新建立连接！——");
-                ThrowUtils.throwIf(loseCount > 12,
-                        ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
-            }
-        } while (document == null);
-        // 解析图片元素
-        Element div = document.getElementsByClass("dgControl").first();
-        log.error("——！抓取外层元素失败！——");
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
-        // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
-        Elements imgElementList = div.select("img.mimg");
-        log.info(">>>元素抓取完毕，开始上传图片");
-        // 遍历元素，依次上传
-        int uploadCount = 0;
-        for (Element imgElement : imgElementList) {
-            String fileUrl = imgElement.attr("src");
-            if (StrUtil.isBlank(fileUrl)) {
-                log.info("——！当前图片链接为空，已跳过：{}！——", fileUrl);
-                continue;
-            }
-            // 处理图片地址，防止转义或者对象存储冲突
-            int questionIndex = fileUrl.indexOf("?");
-            if (questionIndex > -1) {
-                fileUrl = fileUrl.substring(0, questionIndex);
-            }
-            // 上传图片
-            PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
-            pictureUploadRequest.setFileUrl(fileUrl);
-            pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
-            try {
-                PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
-                log.info(">>>已上传图片：{}", pictureVO.getId());
-                uploadCount++;
-            } catch (Exception e) {
-                log.error("——！图片上传失败，正在尝试重新抓取！——");
-                continue;
-            }
-            if (uploadCount >= count) {
-                break;
-            }
+        // 设置图源仓库（默认为Bing图源）
+        JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
+        if (library.equals(UrlConstant.sourceSafebooru)) {
+            jsoupTemplate = jsoupTemplateFromSafebooru;
+        } else if (library.equals(UrlConstant.sourceKonachan)) {
+            jsoupTemplate = jsoupTemplateFromKonachan;
         }
-        return uploadCount;
+        // 抓取图片
+        return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);
     }
 
 }

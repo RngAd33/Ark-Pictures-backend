@@ -1,8 +1,8 @@
-package com.rngad33.web.manager;
+package com.rngad33.web.manager.jsoup;
 
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.rngad33.web.constant.UrlConstant;
+import com.rngad33.web.model.dto.picture.PictureUploadByBatchRequest;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
@@ -21,18 +21,34 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * Jsoup通用化策略
+ * Jsoup模板方法
  */
 @Service
 @Slf4j
-public class JsoupManager {
+public abstract class JsoupTemplate {
 
     @Resource
     private PictureService pictureService;
 
-    public int executePictures(int count, String searchText, String namePrefix, User loginUser) throws IOException {
-        // 设置图源
+    /**
+     * 定义抓取流程
+     *
+     * @param pictureUploadByBatchRequest
+     * @param loginUser
+     * @return
+     * @throws IOException
+     */
+    public final int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
+        // 设置搜索参数
+        String searchText = pictureUploadByBatchRequest.getSearchText();
+        Integer count = pictureUploadByBatchRequest.getCount();
+        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
         String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
+        // - 图片名称前缀默认为搜索词
+        String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
+        if (StrUtil.isBlank(namePrefix)) {
+            namePrefix = searchText;
+        }
         // 抓取图片
         Document document = null;
         int loseCount = 0;
@@ -50,25 +66,13 @@ public class JsoupManager {
             }
         } while (document == null);
         // 解析图片元素
-        Element div = document.getElementsByClass("dgControl").first();
-        log.error("——！抓取外层元素失败！——");
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
-        // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
-        Elements imgElementList = div.select(".post-preview a img");
-        log.info(">>>元素抓取完毕，开始上传图片");
+        Elements imgElementList = this.getImgElement(document);
         // 遍历元素，依次上传
         int uploadCount = 0;
         for (Element imgElement : imgElementList) {
             // 获取图片详情页的 URL
-            String thumbUrl = imgElement.absUrl("src"); // 缩略图地址
-            String detailPageUrl = imgElement.parent().absUrl("href");
+            String fileUrl = this.getFileUrl(imgElement);
 
-            Document detailDoc = Jsoup.connect(detailPageUrl).userAgent("Mozilla/5.0").get();
-            Element fullImg = detailDoc.select("img#image").first();
-            if (fullImg == null) {
-                continue;
-            }
-            String fileUrl = fullImg.absUrl("src");
             if (StrUtil.isBlank(fileUrl)) {
                 log.info("——！当前图片链接为空，已跳过：{}！——", fileUrl);
                 continue;
@@ -79,20 +83,47 @@ public class JsoupManager {
                 fileUrl = fileUrl.substring(0, questionIndex);
             }
             // 上传图片
-            PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
-            pictureUploadRequest.setFileUrl(fileUrl);
-            pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
-            try {
-                PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
-                log.info(">>>已上传图片：{}", pictureVO.getId());
-                uploadCount++;
-            } catch (Exception e) {
-                log.error("——！图片上传失败，正在尝试重新抓取！——");
-                continue;
-            }
+            uploadCount = this.uploadPic(namePrefix, fileUrl, uploadCount, loginUser);
             if (uploadCount >= count) {
                 break;
+            } else {
+                continue;
             }
+        }
+        return uploadCount;
+    }
+
+    /**
+     * 获取图片元素
+     *
+     * @return
+     */
+    protected abstract Elements getImgElement(Document document);
+
+    /**
+     * 获取图片地址
+     *
+     * @return
+     */
+    protected abstract String getFileUrl(Element imgElement);
+
+    /**
+     * 上传图片
+     *
+     * @param fileUrl 文件地址
+     * @param loginUser 当前用户
+     * @return 是否完成任务
+     */
+    private int uploadPic(String namePrefix, String fileUrl, int uploadCount, User loginUser) {
+        PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
+        pictureUploadRequest.setFileUrl(fileUrl);
+        pictureUploadRequest.setName(namePrefix + (uploadCount + 1) + new Date());
+        try {
+            PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
+            log.info(">>>已上传图片：{}", pictureVO.getId());
+            uploadCount++;
+        } catch (Exception e) {
+            log.error("——！图片上传失败，正在尝试重新抓取！——");
         }
         return uploadCount;
     }
