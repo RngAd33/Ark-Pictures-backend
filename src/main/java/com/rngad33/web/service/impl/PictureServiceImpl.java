@@ -82,7 +82,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 如果是更新，判断图片是否存在
         if (pictureId != null) {
             Picture oldPicture = this.getById(pictureId);
-            ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "图片不存在！");
+            ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "图片不存在！");
             // - 仅本人或管理员有权编辑图片
             if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
                 throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
@@ -195,16 +195,16 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      */
     @Override
     public void validPicture(Picture picture) {
-        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM, "请先选择图片！");
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAMS, "请先选择图片！");
         Long id = picture.getId();
         String url = picture.getUrl();
         String introduction =picture.getIntroduction();
-        ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAM_ERROR, "id为空！");
+        ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAMS_ERROR, "id为空！");
         if (StrUtil.isNotBlank(url)) {
-            ThrowUtils.throwIf(url.length() > 1024, ErrorCodeEnum.PARAM_ERROR, "url过长！");
+            ThrowUtils.throwIf(url.length() > 1024, ErrorCodeEnum.PARAMS_ERROR, "url过长！");
         }
         if (StrUtil.isNotBlank(introduction)) {
-            ThrowUtils.throwIf(introduction.length() > 800, ErrorCodeEnum.PARAM_ERROR, "简介过长！");
+            ThrowUtils.throwIf(introduction.length() > 800, ErrorCodeEnum.PARAMS_ERROR, "简介过长！");
         }
     }
 
@@ -281,20 +281,20 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public void reviewPicture(PictureReviewRequest pictureReviewRequest, User loginUser) {
         // 1. 校验参数
-        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.NOT_PARAMS);
         Long id = pictureReviewRequest.getId();
         Integer reviewStatus = pictureReviewRequest.getReviewStatus();
         PictureReviewStatusEnum pictureReviewStatusEnum = PictureReviewStatusEnum.getEnumByValue(reviewStatus);
         if (id == null || pictureReviewStatusEnum == null
                 || PictureReviewStatusEnum.REVIEWING.equals(pictureReviewStatusEnum)) {
-            throw new MyException(ErrorCodeEnum.NOT_PARAM);
+            throw new MyException(ErrorCodeEnum.NOT_PARAMS);
         }
         // 2. 判断图片是否存在
         Picture oldPicture = this.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS);
         // 3. 检查审核状态是否重复
         if (oldPicture.getReviewStatus().equals(reviewStatus)) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         // 4. 操作数据库
         Picture uploadPicture = new Picture();
@@ -315,7 +315,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Override
     public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
         // 校验参数
-        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAMS);
         // 设置搜索参数
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
@@ -324,7 +324,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
-        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAM_ERROR, "一次最多抓取30条数据！");
+        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
         // 设置图源
         String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
         // 抓取图片
@@ -345,7 +345,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         } while (document == null);
         // 解析图片元素
         Element div = document.getElementsByClass("dgControl").first();
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAM, "抓取外层元素失败！");
+        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS, "抓取外层元素失败！");
         log.info(">>>元素抓取完毕，开始抓取图片");
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");

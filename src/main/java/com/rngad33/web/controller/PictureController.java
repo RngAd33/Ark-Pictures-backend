@@ -62,7 +62,7 @@ public class PictureController {
     public BaseResponse<PictureVO> uploadPicture(@RequestPart("pic") MultipartFile multipartFile,
             PictureUploadRequest pictureUploadRequest, HttpServletRequest request) {
         if (pictureUploadRequest == null || multipartFile.isEmpty()) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         User loginUser = userService.getCurrentUser(request);
         // 登录态校验在Service层
@@ -79,7 +79,7 @@ public class PictureController {
     @PostMapping("/upload/url")
     public BaseResponse<PictureVO> uploadPictureByUrl(@RequestBody PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAMS_ERROR);
         User loginUser = userService.getCurrentUser(request);
         String fileUrl = pictureUploadRequest.getFileUrl();
         PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
@@ -97,12 +97,12 @@ public class PictureController {
     public BaseResponse<Boolean> editPicture(@RequestBody PictureEditRequest pictureEditRequest,
             HttpServletRequest request) {
         if (pictureEditRequest == null || pictureEditRequest.getId() <= 0) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         // 判断原图是否存在
         Long id = pictureEditRequest.getId();
         Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "原图不存在！");
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "原图不存在！");
         // 仅本人或管理员可编辑
         User loginUser = userService.getCurrentUser(request);
         if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
@@ -135,13 +135,13 @@ public class PictureController {
     @PostMapping("/delete")
     public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         Long id = deleteRequest.getId();
         User loginUser = userService.getCurrentUser(request);
         // 判断原图是否存在
         Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM, "原图不存在！");
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "原图不存在！");
         // 仅本人或管理员可删除
         if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
             throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
@@ -164,12 +164,12 @@ public class PictureController {
     public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest,
                                                HttpServletRequest request) {
         if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
-            throw new MyException(ErrorCodeEnum.PARAM_ERROR);
+            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         // 判断原图是否存在
         Long id = pictureUpdateRequest.getId();
         Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS);
         // 由实体类转换为DTO
         Picture picture = new Picture();
         BeanUtil.copyProperties(pictureUpdateRequest, picture);
@@ -197,7 +197,7 @@ public class PictureController {
     @PostMapping("/review")
     public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest,
                                                HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAMS_ERROR);
         User loginUser = userService.getCurrentUser(request);
         pictureService.reviewPicture(pictureReviewRequest, loginUser);
         return ResultUtils.success(true);
@@ -214,7 +214,7 @@ public class PictureController {
     @PostMapping("/upload/batch")
     public BaseResponse<Integer> uploadPictureByBatch(
             @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAMS_ERROR);
         User loginUser = userService.getCurrentUser(request);
         int uploadCount = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
         return ResultUtils.success(uploadCount);
@@ -229,10 +229,10 @@ public class PictureController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/getPI")
     public BaseResponse<Picture> getPictureById(Long id) {
-        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
-        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAMS);
         // 获取封装类
         return ResultUtils.success(picture);
     }
@@ -246,10 +246,10 @@ public class PictureController {
      */
     @GetMapping("/getPI/vo")
     public BaseResponse<PictureVO> getPictureVOById(Long id, HttpServletRequest request) {
-        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
-        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAM);
+        ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAMS);
         // 获取封装类
         return ResultUtils.success(pictureService.getPictureVO(picture, request));
     }
@@ -268,7 +268,7 @@ public class PictureController {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAMS_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 查询数据库
@@ -292,7 +292,7 @@ public class PictureController {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAM_ERROR);
+        ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAMS_ERROR);
         // 普通用户默认只能看到已过审的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 构建key
