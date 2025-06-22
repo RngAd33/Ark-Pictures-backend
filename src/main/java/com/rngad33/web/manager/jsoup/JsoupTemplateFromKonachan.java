@@ -1,9 +1,11 @@
 package com.rngad33.web.manager.jsoup;
 
+import com.rngad33.web.service.PictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class JsoupTemplateFromKonachan extends JsoupTemplate {
+
+    public JsoupTemplateFromKonachan(@Lazy PictureService pictureService) {
+        super(pictureService);
+    }
 
     /**
      * 获取图片元素

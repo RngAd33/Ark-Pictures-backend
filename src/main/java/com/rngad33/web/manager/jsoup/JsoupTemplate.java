@@ -15,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,8 +28,16 @@ import java.util.Date;
 @Slf4j
 public abstract class JsoupTemplate {
 
-    @Resource
-    private PictureService pictureService;
+    private final PictureService pictureService;
+
+    /**
+     * 构造函数注入 + 懒加载
+     *
+     * @param pictureService
+     */
+    public JsoupTemplate(@Lazy PictureService pictureService) {
+        this.pictureService = pictureService;
+    }
 
     /**
      * 定义抓取流程
@@ -52,7 +61,7 @@ public abstract class JsoupTemplate {
         // 抓取图片
         Document document = null;
         int loseCount = 0;
-        log.info("抓取器已启动，正在连接图源>>>");
+        log.info("抓取器初始化完成，正在连接图源>>>");
         do {
             try {
                 document = Jsoup.connect(fetchUrl).get();
