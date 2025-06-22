@@ -234,7 +234,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return 状态码
      */
     @Override
-    public Integer userOrBan(@RequestBody Long id, HttpServletRequest request) {
+    public int userOrBan(@RequestBody Long id, HttpServletRequest request) {
         // 1. 查询用户是否存在
         User user = userMapper.selectById(id);
         if (user == null) {
@@ -260,7 +260,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         } else {
             log.info("用户已解封");
         }
-        return 0;
+        return newStatus;
     }
 
 }

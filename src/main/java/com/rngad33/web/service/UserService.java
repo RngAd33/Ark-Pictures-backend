@@ -61,6 +61,6 @@ public interface UserService extends IService<User> {
      * @param id 待封禁/解封用户id
      * @return 状态码
      */
-    Integer userOrBan(Long id, HttpServletRequest request);
+    int userOrBan(Long id, HttpServletRequest request);
 
 }

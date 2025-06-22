@@ -12,6 +12,7 @@ import com.rngad33.web.model.dto.user.UserRegisterRequest;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.service.UserService;
+import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -130,10 +131,11 @@ public class UserController {
                                             HttpServletRequest request) {
         Long id = userManager.getId(userManageRequest, request);
         if (id == null) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION, "用户不存在！");
         }
         boolean result = userService.removeById(id);   // 无需业务层
-        return ResultUtils.success(result);
+        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        return ResultUtils.success(true);
     }
 
     /**
@@ -147,9 +149,10 @@ public class UserController {
     public BaseResponse<Integer> userOrBan(@RequestBody UserManageRequest userManageRequest, HttpServletRequest request) {
         Long id = userManager.getId(userManageRequest, request);
         if (id == null) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION, "用户不存在！");
         }
-        Integer result = userService.userOrBan(id, request);
+        int result = userService.userOrBan(id, request);
+        ThrowUtils.throwIf(result == 0 || result == 1, ErrorCodeEnum.USER_LOSE_ACTION);
         return ResultUtils.success(result);
     }
 
