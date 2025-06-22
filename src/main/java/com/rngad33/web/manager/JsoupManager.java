@@ -30,7 +30,7 @@ public class JsoupManager {
     @Resource
     private PictureService pictureService;
 
-    public int executePictures(int count, String searchText, String namePrefix, User loginUser) {
+    public int executePictures(int count, String searchText, String namePrefix, User loginUser) throws IOException {
         // 设置图源
         String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
         // 抓取图片
