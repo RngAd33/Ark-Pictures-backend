@@ -1,6 +1,8 @@
 package com.rngad33.web.controller;
 
+import com.rngad33.web.annotation.AuthCheck;
 import com.rngad33.web.common.BaseResponse;
+import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.utils.ResultUtils;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
@@ -122,6 +124,7 @@ public class UserController {
      * @param userManageRequest 用户管理请求体
      * @return 删除成功与否
      */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/admin/delete")
     public BaseResponse<Boolean> userDelete(@RequestBody UserManageRequest userManageRequest,
                                             HttpServletRequest request) {
@@ -139,6 +142,7 @@ public class UserController {
      * @param userManageRequest 用户管理请求体
      * @return 操作后用户状态
      */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/admin/ban")
     public BaseResponse<Integer> userOrBan(@RequestBody UserManageRequest userManageRequest, HttpServletRequest request) {
         Long id = userManager.getId(userManageRequest, request);
