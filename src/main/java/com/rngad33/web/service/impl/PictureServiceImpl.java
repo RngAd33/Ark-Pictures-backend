@@ -326,8 +326,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         }
         ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
         // 设置图源
-        // String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
-        String fetchUrl = String.format(UrlConstant.sourceSafebooru, searchText);
+        String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
         // 抓取图片
         Document document = null;
         int loseCount = 0;
@@ -346,10 +345,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         } while (document == null);
         // 解析图片元素
         Element div = document.getElementsByClass("dgControl").first();
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS, "抓取外层元素失败！");
-        log.info(">>>元素抓取完毕，开始抓取图片");
+        log.error("——！抓取外层元素失败！——");
+        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
+        log.info(">>>元素抓取完毕，开始上传图片");
         // 遍历元素，依次上传
         int uploadCount = 0;
         for (Element imgElement : imgElementList) {
