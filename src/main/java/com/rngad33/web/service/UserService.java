@@ -1,7 +1,11 @@
 package com.rngad33.web.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.rngad33.web.model.dto.user.UserAddRequest;
+import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.model.entity.User;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.rngad33.web.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -56,11 +60,44 @@ public interface UserService extends IService<User> {
     List<User> searchUsers(String userName, HttpServletRequest request);
 
     /**
+     * 分页查询对象构建
+     *
+     * @param userQueryRequest 用户查询请求对象
+     * @return QueryWrapper 查询条件构造器
+     */
+    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    /**
+     * 添加用户（仅管理员）
+     *
+     * @param userAddRequest
+     * @return
+     * @throws Exception
+     */
+    Long addUser(UserAddRequest userAddRequest) throws Exception ;
+
+    /**
      * 用户封禁 / 解封（仅管理员）
      *
      * @param id 待封禁/解封用户id
      * @return 状态码
      */
-    int userOrBan(Long id, HttpServletRequest request);
+    Integer userOrBan(Long id, HttpServletRequest request);
+
+    /**
+     * 获取单个用户信息
+     *
+     * @param user
+     * @return
+     */
+    UserVO getUserVO(User user);
+
+    /**
+     * 获取用户列表
+     *
+     * @param userList
+     * @return
+     */
+    List<UserVO> getUserVOList(List<User> userList);
 
 }
