@@ -31,7 +31,7 @@ public class JsoupTemplateFromBing extends JsoupTemplate {
     protected Elements getImgElement(Document document) {
         // 解析图片元素
         Element div = document.getElementsByClass("dgControl").first();
-        log.error("——！抓取外层元素失败！——");
+        log.error("——！抓取外层元素失败，正在尝试重新抓取！——");
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
