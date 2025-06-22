@@ -25,10 +25,10 @@ import java.util.concurrent.TimeUnit;
 public class MyCacheManager {
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private PictureService pictureService;
 
     @Resource
-    private PictureService pictureService;
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 本地缓存构造
