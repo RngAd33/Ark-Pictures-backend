@@ -94,8 +94,6 @@ public abstract class JsoupTemplate {
             uploadCount = this.uploadPic(namePrefix, fileUrl, uploadCount, loginUser);
             if (uploadCount >= count) {
                 break;
-            } else {
-                continue;
             }
         }
         return uploadCount;

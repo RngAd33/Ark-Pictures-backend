@@ -34,7 +34,7 @@ public class JsoupTemplateFromBing extends JsoupTemplate {
         log.error("——！抓取外层元素失败，正在尝试重新抓取！——");
         ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
-        Elements imgElementList = div.select("img.mimg");
+        Elements imgElementList = div.select("img.mimg");   // 缩略图
         log.info(">>>元素抓取完毕，开始上传图片");
         return imgElementList;
     }
