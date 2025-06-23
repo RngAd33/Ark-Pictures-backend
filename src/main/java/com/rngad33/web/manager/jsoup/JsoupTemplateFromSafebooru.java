@@ -11,8 +11,6 @@ import org.jsoup.select.Elements;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 /**
  * Safebooru源模板
  */
@@ -47,17 +45,13 @@ public class JsoupTemplateFromSafebooru extends JsoupTemplate {
     protected String getFileUrl(Element imgElement) {
         // 获取缩略图所在 a 标签的 href 属性（即详情页 URL）
         String detailPageUrl = imgElement.parent().attr("href");
-        try {
-            // 访问详情页
-            Document detailDoc = Jsoup.connect(detailPageUrl).userAgent("Mozilla/5.0").get();
-            // 在详情页中选择 id 为 "image" 的 img 标签
-            Element fullImg = detailDoc.select("img#image").first();
-            if (fullImg != null) {
-                // 获取完整图片的 src 属性
-                return fullImg.absUrl("src");
-            }
-        } catch (IOException e) {
-            log.error("获取完整图片地址失败: {}", e.getMessage());
+        // 访问详情页
+        Document detailDoc = Jsoup.connect(detailPageUrl).userAgent("Mozilla/5.0").get();
+        // 在详情页中选择 id 为 "image" 的 img 标签
+        Element fullImg = detailDoc.select("img#image").first();
+        if (fullImg != null) {
+            // 获取完整图片的 src 属性
+            return fullImg.absUrl("src");
         }
         return null;
     }

@@ -30,7 +30,7 @@ public class JsoupTemplateFromBing extends JsoupTemplate {
     protected Elements getImgElement(Document document) {
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = document.select("img.mimg");
-        ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.USER_LOSE_ACTION, "未找到图片元素");
+        ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.USER_LOSE_ACTION, "未找到图片元素！");
         log.info(">>>内层元素抓取完毕，开始上传图片");
         return imgElementList;
     }
