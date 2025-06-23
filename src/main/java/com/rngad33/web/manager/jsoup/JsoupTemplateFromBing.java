@@ -1,6 +1,5 @@
 package com.rngad33.web.manager.jsoup;
 
-import cn.hutool.core.util.ObjUtil;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.utils.ThrowUtils;
@@ -26,16 +25,13 @@ public class JsoupTemplateFromBing extends JsoupTemplate {
      * 获取图片元素
      *
      * @param document
-     * @return
+     * @return 缩略图表
      */
     protected Elements getImgElement(Document document) {
-        // 解析图片元素
-        Element div = document.getElementsByClass("dgControl").first();
-        log.error("——！抓取外层元素失败，正在尝试重新抓取！——");
-        ThrowUtils.throwIf(ObjUtil.isEmpty(div), ErrorCodeEnum.NOT_PARAMS);
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
-        Elements imgElementList = div.select("img.mimg");   // 缩略图
-        log.info(">>>元素抓取完毕，开始上传图片");
+        Elements imgElementList = document.select("img.mimg");
+        ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.USER_LOSE_ACTION, "未找到图片元素");
+        log.info(">>>内层元素抓取完毕，开始上传图片");
         return imgElementList;
     }
 

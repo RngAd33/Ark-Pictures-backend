@@ -336,15 +336,17 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         String library = pictureUploadByBatchRequest.getLibrary();
         // - 图片名称前缀默认为搜索词
         String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
-        if (StrUtil.isBlank(namePrefix)) {
+        if (StrUtil.isEmpty(namePrefix)) {
             namePrefix = searchText;
         }
         // 设置图源仓库（默认为Bing图源）
         JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
         if (library.equals(UrlConstant.sourceSafebooru)) {
             jsoupTemplate = jsoupTemplateFromSafebooru;
+            log.info("切换到Safebooru源");
         } else if (library.equals(UrlConstant.sourceKonachan)) {
             jsoupTemplate = jsoupTemplateFromKonachan;
+            log.info("切换到Konachan源");
         }
         // 抓取图片
         return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);

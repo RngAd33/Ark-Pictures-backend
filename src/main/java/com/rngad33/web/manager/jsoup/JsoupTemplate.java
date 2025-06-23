@@ -1,7 +1,9 @@
 package com.rngad33.web.manager.jsoup;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.rngad33.web.constant.UrlConstant;
+import com.rngad33.web.exception.MyException;
 import com.rngad33.web.model.dto.picture.PictureUploadByBatchRequest;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.entity.User;
@@ -57,7 +59,7 @@ public abstract class JsoupTemplate {
         if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
-        // 抓取图片
+        // 解析图源
         Document document = null;
         int loseCount = 0;
         log.info("抓取器初始化完成，正在连接图源>>>");
@@ -69,10 +71,14 @@ public abstract class JsoupTemplate {
             } catch (IOException e) {
                 loseCount++;
                 log.error("——！图源连接失败，正在重新建立连接！——");
-                ThrowUtils.throwIf(loseCount > 12,
-                        ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "抓取器联网多次失败，进程已终止！");
+                ThrowUtils.throwIf(loseCount > 12, ErrorCodeEnum.TOO_MANY_TIMES_MESSAGE, "多次连接失败，进程已终止！");
             }
         } while (document == null);
+        if (ObjUtil.isEmpty(document)) {
+            log.error("——！抓取外层元素失败！——");
+            throw new MyException(ErrorCodeEnum.NOT_PARAMS);
+        }
+        log.info(">>>外层元素抓取完毕，开始抓取内层元素");
         // 解析图片元素
         Elements imgElementList = this.getImgElement(document);
         // 遍历元素，依次上传
@@ -80,7 +86,6 @@ public abstract class JsoupTemplate {
         for (Element imgElement : imgElementList) {
             // 获取图片详情页的 URL
             String fileUrl = this.getFileUrl(imgElement);
-
             if (StrUtil.isBlank(fileUrl)) {
                 log.info("——！当前图片链接为空，已跳过：{}！——", fileUrl);
                 continue;
@@ -102,7 +107,7 @@ public abstract class JsoupTemplate {
     /**
      * 获取图片元素
      *
-     * @return
+     * @return 缩略图表
      */
     protected abstract Elements getImgElement(Document document);
 
