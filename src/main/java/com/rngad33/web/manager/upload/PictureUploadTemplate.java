@@ -50,14 +50,14 @@ public abstract class PictureUploadTemplate {
         String originalFileName = getOriginFilename(inputSource);
         String suffix = FileUtil.getSuffix(originalFileName);
         // 临时对冲抓取图片扩展名异常问题
-        if (StrUtil.length(suffix) > 7) {
+        if (StrUtil.length(suffix) > 6) {
             suffix = "jpg";
         }
         // 校验后缀是否存在
         if (StrUtil.isBlank(suffix)) {
             throw new MyException(ErrorCodeEnum.NOT_PARAMS, "文件后缀为空！");
         }
-        // 自己拼接图片上传路径，不使用原始名称，保证安全性
+        // - 自己拼接图片上传路径，不使用原始名称，保证安全性
         String uploadFileName = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid, suffix);
         String uploadFilePath = String.format("/%s/%s", uploadPathPrefix, uploadFileName);
 
