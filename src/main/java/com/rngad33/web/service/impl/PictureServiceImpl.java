@@ -35,6 +35,7 @@ import com.rngad33.web.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -117,7 +118,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             picName = pictureUploadRequest.getName();
         }
         Picture picture = new Picture();
-        picture.setUrl(pictureUploadResult.getUrl());
+        picture.setOriginUrl(pictureUploadResult.getOriginUrl());
+        picture.setThumbUrl(pictureUploadResult.getThumbUrl());
         picture.setName(picName);
         picture.setPicSize(pictureUploadResult.getPicSize());
         picture.setPicWidth(pictureUploadResult.getPicWidth());
@@ -210,11 +212,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     public void validPicture(Picture picture) {
         ThrowUtils.throwIf(picture == null, ErrorCodeEnum.NOT_PARAMS, "请先选择图片！");
         Long id = picture.getId();
-        String url = picture.getUrl();
+        String originUrl = picture.getOriginUrl();
+        String thumbUrl = picture.getThumbUrl();
         String introduction =picture.getIntroduction();
         ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCodeEnum.PARAMS_ERROR, "id为空！");
-        if (StrUtil.isNotBlank(url)) {
-            ThrowUtils.throwIf(url.length() > 1024, ErrorCodeEnum.PARAMS_ERROR, "url过长！");
+        if (StringUtils.isAnyBlank(originUrl, thumbUrl)) {
+            ThrowUtils.throwIf(originUrl.length() > 1024, ErrorCodeEnum.PARAMS_ERROR, "url过长！");
+            ThrowUtils.throwIf(thumbUrl.length() > 1024, ErrorCodeEnum.PARAMS_ERROR, "url过长！");
         }
         if (StrUtil.isNotBlank(introduction)) {
             ThrowUtils.throwIf(introduction.length() > 800, ErrorCodeEnum.PARAMS_ERROR, "简介过长！");

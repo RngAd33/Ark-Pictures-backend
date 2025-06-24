@@ -16,7 +16,7 @@ public class PictureTagCategory {
     private List<String> tagList;
 
     /**
-     * 纳斯特港
+     * 纳斯特港列表
      */
     private List<String> nastList;
 

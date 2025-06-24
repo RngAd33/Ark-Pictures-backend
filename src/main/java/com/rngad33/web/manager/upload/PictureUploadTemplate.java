@@ -128,7 +128,7 @@ public abstract class PictureUploadTemplate {
         int width = imageInfo.getWidth();
         int height = imageInfo.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
-        pictureUploadResult.setUrl(cosClientConfig.getHost() + "/" + uploadFilePath);
+        pictureUploadResult.setOriginUrl(cosClientConfig.getHost() + "/" + uploadFilePath);
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(FileUtil.size(file));
         pictureUploadResult.setPicWidth(width);
@@ -150,7 +150,7 @@ public abstract class PictureUploadTemplate {
         int height = compressCiObject.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
-        pictureUploadResult.setUrl(cosClientConfig.getHost() + "/" + compressCiObject.getKey());
+        pictureUploadResult.setThumbUrl(cosClientConfig.getHost() + "/" + compressCiObject.getKey());
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(compressCiObject.getSize().longValue());
         pictureUploadResult.setPicWidth(width);
