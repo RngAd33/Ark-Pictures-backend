@@ -98,11 +98,8 @@ public class UserManager {
         safeUser.setPlanetCode(user.getPlanetCode());
         safeUser.setRole(user.getRole());
         safeUser.setAvatarUrl(user.getAvatarUrl());
-        safeUser.setGender(user.getGender());
         safeUser.setUserPassword(AESConstant.CONFUSION);
-        safeUser.setAge(user.getAge());
         safeUser.setPhone(AESConstant.CONFUSION);
-        safeUser.setEmail(user.getEmail());
         safeUser.setUserStatus(user.getUserStatus());
         safeUser.setCreateTime(user.getCreateTime());
         safeUser.setUpdateTime(new Date());

@@ -124,6 +124,7 @@ public abstract class PictureUploadTemplate {
      */
     private PictureUploadResult buildResult(String originalFileName, File file, ImageInfo imageInfo, String uploadFilePath) {
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
+        // 计算宽高
         int width = imageInfo.getWidth();
         int height = imageInfo.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();

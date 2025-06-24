@@ -104,10 +104,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
             }
 
-            // 3. 密码加密
-            log.info("正在执行密码加密……");
+            // 3. 信息加密
+            log.info("正在执行信息加密……");
             String encryptedPassword = AESUtils.doEncrypt(userPassword);
-            if (encryptedPassword == null) {
+            String encryptedPhone = AESUtils.doEncrypt(phone);
+            if (StringUtils.isAnyBlank(encryptedPassword, encryptedPhone)) {
                 log.error(ErrorConstant.USER_LOSE_ACTION_MESSAGE);
                 throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
             }
@@ -117,6 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             user.setUserName(userName);
             user.setUserPassword(encryptedPassword);
+            user.setPhone(encryptedPhone);
             user.setPlanetCode(planetCode);
             boolean saveResult = this.save(user);
             if (!saveResult) {
