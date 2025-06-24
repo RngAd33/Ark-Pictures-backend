@@ -37,29 +37,14 @@ public class UserUpdateRequest implements Serializable {
     private String avatarUrl;
 
     /**
-     * 性别
-     */
-    private Integer gender;
-
-    /**
      * 密码
      */
     private String userPassword;
 
     /**
-     * 年龄
-     */
-    private Integer age;
-
-    /**
      * 电话
      */
     private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 用户状态：0-正常，1-封禁

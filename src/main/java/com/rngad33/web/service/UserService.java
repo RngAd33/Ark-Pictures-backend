@@ -21,15 +21,16 @@ public interface UserService extends IService<User> {
      * @param userName 用户名
      * @param userPassword 密码
      * @param checkPassword 确认密码
+     * @param phone 手机号
      * @param planetCode 星球编号
      * @return 新账户id
      */
-    Long userRegister(String userName, String userPassword, String checkPassword, String planetCode) throws Exception;
+    Long userRegister(String userName, String userPassword, String checkPassword, String phone, String planetCode) throws Exception;
 
     /**
      * 用户登录
      *
-     * @param userName 账号
+     * @param userName 用户名
      * @param userPassword 密码
      * @return 脱敏后的登录态
      */

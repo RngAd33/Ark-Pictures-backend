@@ -39,11 +39,6 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private String phone;
 
     /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
      * 用户状态：0-正常，1-封禁
      */
     private Integer userStatus;

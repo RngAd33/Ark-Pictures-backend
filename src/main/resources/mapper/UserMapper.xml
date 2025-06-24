@@ -10,11 +10,8 @@
         <result property="planetCode" column="planetCode" />
         <result property="role" column="role" />
         <result property="avatarUrl" column="avatarUrl" />
-        <result property="gender" column="gender" />
         <result property="userPassword" column="userPassword" />
-        <result property="age" column="age" />
         <result property="phone" column="phone" />
-        <result property="email" column="email" />
         <result property="userStatus" column="userStatus" />
         <result property="createTime" column="createTime" />
         <result property="updateTime" column="updateTime" />
@@ -22,7 +19,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userName,planetCode,role,avatarUrl,gender,userPassword,
-        age,phone,email,userStatus,createTime,updateTime,isDelete
+        id,userName,planetCode,role,avatarUrl,userPassword,
+        phone,userStatus,createTime,updateTime,isDelete
     </sql>
 </mapper>

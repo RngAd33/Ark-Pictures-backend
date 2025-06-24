@@ -37,29 +37,14 @@ public class UserAddRequest implements Serializable {
     private String avatarUrl;
 
     /**
-     * 性别
-     */
-    private Integer gender;
-
-    /**
      * 密码
      */
     private String userPassword;
 
     /**
-     * 年龄
-     */
-    private Integer age;
-
-    /**
      * 电话
      */
     private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 用户状态：0-正常，1-封禁
@@ -70,12 +55,6 @@ public class UserAddRequest implements Serializable {
      * 创建时间
      */
     private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
 
     private static final long serialVersionUID = 3191241716373120793L;
 

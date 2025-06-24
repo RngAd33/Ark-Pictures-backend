@@ -13,6 +13,7 @@ import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.model.dto.user.UserAddRequest;
 import com.rngad33.web.model.dto.user.UserQueryRequest;
 import com.rngad33.web.utils.AESUtils;
+import com.rngad33.web.utils.LockUtils;
 import com.rngad33.web.utils.SpecialCharValidator;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.web.model.enums.user.UserStatusEnum;
@@ -50,14 +51,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 用户注册
      *
-     * @param userName 账户
+     * @param userName 用户名
      * @param userPassword 密码
      * @param checkPassword 确认密码
+     * @param phone 手机号
      * @param planetCode 星球编号
      * @return 新账户id
      */
     @Override
-    public Long userRegister(String userName, String userPassword, String checkPassword, String planetCode)
+    public Long userRegister(String userName, String userPassword, String checkPassword, String phone, String planetCode)
             throws Exception {
         // 1. 信息校验
         log.info("正在执行信息校验……");
@@ -81,8 +83,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
 
-        // 单机锁
-        synchronized (userName.intern()) {
+        // - 细粒度锁
+        synchronized (LockUtils.getKeyLock(userName)) {
             // 2. 账户信息查重
             log.info("正在执行信息查重……");
             // - 名称查重
@@ -131,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 用户登录
      *
-     * @param userName 账号
+     * @param userName 用户名
      * @param userPassword 密码
      * @param request http请求
      * @return 脱敏后的用户信息
@@ -243,7 +245,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String planetCode = userQueryRequest.getPlanetCode();
         Integer role = userQueryRequest.getRole();
         String phone = userQueryRequest.getPhone();
-        String email = userQueryRequest.getEmail();
         Integer userStatus = userQueryRequest.getUserStatus();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(ObjUtil.isNotNull(id), "id", id);
@@ -251,7 +252,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.eq(StrUtil.isNotBlank(planetCode), "planet_code", planetCode);
         queryWrapper.eq(ObjUtil.isNotNull(role), "role", role);
         queryWrapper.eq(StrUtil.isNotBlank(phone), "phone", phone);
-        queryWrapper.eq(StrUtil.isNotBlank(email), "email", email);
         queryWrapper.eq(ObjUtil.isNotNull(userStatus), "user_status", userStatus);
         return queryWrapper;
     }

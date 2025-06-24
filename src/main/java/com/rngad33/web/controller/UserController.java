@@ -50,12 +50,13 @@ public class UserController {
         String userName = userRegisterRequest.getUserName();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
+        String phone = userRegisterRequest.getPhone();
         String planetCode = userRegisterRequest.getPlanetCode();
         // 校验参数（倾向于对参数本身的校验，不涉及业务逻辑）
-        if (StringUtils.isAnyBlank(userName, userPassword, checkPassword, planetCode)) {
-            throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
+        if (StringUtils.isAnyBlank(userName, userPassword, checkPassword, phone, planetCode)) {
+            throw new MyException(ErrorCodeEnum.NOT_PARAMS);
         }
-        Long result = userService.userRegister(userName, userPassword, checkPassword, planetCode);
+        Long result = userService.userRegister(userName, userPassword, checkPassword, phone, planetCode);
         return ResultUtils.success(result);
     }
 
