@@ -74,6 +74,7 @@ public class CosManager {
         PicOperations picOperations = new PicOperations();
         // 返回原图信息
         picOperations.setIsPicInfo(1);
+        // - 图片处理规则列表
         List<PicOperations.Rule> rules = new ArrayList<>();
         // 图片压缩(*.* -> *.webp)
         String webpKey = FileUtil.mainName(key) + ".webp";
