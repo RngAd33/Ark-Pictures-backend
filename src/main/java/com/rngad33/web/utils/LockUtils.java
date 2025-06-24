@@ -9,6 +9,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 锁工具类（提供各种预置锁）
+ *
+ * @author RngAd33
  */
 public class LockUtils {
 
