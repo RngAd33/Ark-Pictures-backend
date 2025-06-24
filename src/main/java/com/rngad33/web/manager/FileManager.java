@@ -75,7 +75,7 @@ public class FileManager {
             double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
             // 封装返回结果
             PictureUploadResult pictureUploadResult = new PictureUploadResult();
-            pictureUploadResult.setUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
+            pictureUploadResult.setOriginUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
             pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
             pictureUploadResult.setPicSize(FileUtil.size(file));
             pictureUploadResult.setPicWidth(imageInfo.getWidth());
@@ -125,7 +125,7 @@ public class FileManager {
             double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
             // 封装返回结果
             PictureUploadResult pictureUploadResult = new PictureUploadResult();
-            pictureUploadResult.setUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
+            pictureUploadResult.setOriginUrl(cosClientConfig.getHost() + File.separator + uploadFilePath);
             pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
             pictureUploadResult.setPicSize(FileUtil.size(file));
             pictureUploadResult.setPicWidth(imageInfo.getWidth());
