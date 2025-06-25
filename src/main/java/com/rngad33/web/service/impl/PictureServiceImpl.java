@@ -340,7 +340,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         String library = pictureUploadByBatchRequest.getLibrary();
         // - 图片名称前缀默认为搜索词
         String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
-        if (StrUtil.isEmpty(namePrefix)) {
+        if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
         // 设置图源仓库（默认为Bing图源）
