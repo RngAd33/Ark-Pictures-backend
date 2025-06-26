@@ -67,7 +67,7 @@ public abstract class JsoupTemplate {
             try {
                 document = Jsoup.connect(fetchUrl).get();
                 loseCount = 0;
-                log.info(">>>图源连接成功，开始抓取元素");
+                log.info(">>>图源连接成功，开始抓取外层元素");
             } catch (IOException e) {
                 loseCount++;
                 log.error("——！图源连接失败，正在重新建立连接！——");
