@@ -107,8 +107,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 上传图片
         PictureUploadResult pictureUploadResult = pictureUploadTemplate.uploadPicture(inputSource, uploadFilePrefix);
         // 构造要入库的图片信息
-        // - 支持外层传递图片名称
         String picName = pictureUploadResult.getPicName();
+        // - 支持外层传递图片名称
         if (pictureUploadRequest != null && StrUtil.isNotBlank(pictureUploadRequest.getName())) {
             picName = pictureUploadRequest.getName();
         }

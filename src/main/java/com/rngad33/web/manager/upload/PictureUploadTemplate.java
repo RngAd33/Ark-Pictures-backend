@@ -63,7 +63,7 @@ public abstract class PictureUploadTemplate {
 
         File file = null;
         try {
-            // 创建临时文件
+            // 创建临时文件，获取文件到服务器
             file = File.createTempFile(uploadFilePath, null);
             // 处理文件来源
             processFile(inputSource, file);
@@ -129,6 +129,7 @@ public abstract class PictureUploadTemplate {
         int width = imageInfo.getWidth();
         int height = imageInfo.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
+        // 封装返回结果
         pictureUploadResult.setOriginUrl(cosClientConfig.getHost() + "/" + uploadFilePath);
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(FileUtil.size(file));
@@ -152,6 +153,7 @@ public abstract class PictureUploadTemplate {
         int width = compressCiObject.getWidth();
         int height = compressCiObject.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
+        // 封装返回结果
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(compressCiObject.getSize().longValue());
@@ -169,7 +171,7 @@ public abstract class PictureUploadTemplate {
      *
      * @param file 临时文件
      */
-    public void deleteTempFile(File file) {
+    private void deleteTempFile(File file) {
         if (file != null) {
             return;
         }
