@@ -41,7 +41,7 @@ public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
         }
         // 校验url协议
         ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
-                ErrorCodeEnum.PARAMS_ERROR, "仅支持HTTP或HTTPS协议！");
+                ErrorCodeEnum.PARAMS_ERROR, "仅支持HTTP或HTTPS协议链接！");
         // 发送HEAD请求，验证文件是否存在
         HttpResponse response = null;
         try {

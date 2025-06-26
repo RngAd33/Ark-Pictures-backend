@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS `picture`;
 
 CREATE TABLE `picture` (
     id           bigint NOT NULL auto_increment comment 'id' primary key,
-    originUrl          varchar(512)                       not null comment '原图 url',
-    thumbUrl          varchar(512)                       not null comment '缩略图 url',
+    originUrl    varchar(512)                       not null comment '原图 url',
+    thumbUrl     varchar(512)                       not null comment '缩略图 url',
     name         varchar(128)                       not null comment '图片名称',
     introduction varchar(512)                       null comment '简介',
     category     varchar(64)                        null comment '分类',
