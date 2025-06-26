@@ -38,8 +38,7 @@ public class CosManager {
      * @throws CosClientException
      * @throws CosServiceException
      */
-    public PutObjectResult putObject(String key, File file)
-            throws CosClientException, CosServiceException {
+    public PutObjectResult putObject(String key, File file) throws CosClientException, CosServiceException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
         return cosClient.putObject(putObjectRequest);
     }
@@ -52,8 +51,7 @@ public class CosManager {
      * @throws CosClientException
      * @throws CosServiceException
      */
-    public COSObject getObject(String key)
-            throws CosClientException, CosServiceException {
+    public COSObject getObject(String key) throws CosClientException, CosServiceException {
         GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
         return cosClient.getObject(getObjectRequest);
     }
@@ -84,12 +82,15 @@ public class CosManager {
         compressRule.setRule("imageMogr2/format/webp");
         rules.add(compressRule);
         // 2. 缩略图处理
-        PicOperations.Rule thumbnailRule = new PicOperations.Rule();
-        String thumbnailKey = FileUtil.mainName(key) + "_thumbnail." + FileUtil.getSuffix(key);
-        thumbnailRule.setBucket(cosClientConfig.getBucket());
-        thumbnailRule.setFileId(thumbnailKey);
-        thumbnailRule.setRule(String.format("imageMogr2/thumbnail/%sx%s", 256, 256));
-        rules.add(thumbnailRule);
+        // - 过滤小图片
+        if (file.length() > 1024 * 2) {
+            PicOperations.Rule thumbnailRule = new PicOperations.Rule();
+            String thumbnailKey = FileUtil.mainName(key) + "_thumbnail." + FileUtil.getSuffix(key);
+            thumbnailRule.setBucket(cosClientConfig.getBucket());
+            thumbnailRule.setFileId(thumbnailKey);
+            thumbnailRule.setRule(String.format("imageMogr2/thumbnail/%sx%s", 256, 256));
+            rules.add(thumbnailRule);
+        }
         // 构造处理参数
         picOperations.setRules(rules);
         putObjectRequest.setPicOperations(picOperations);

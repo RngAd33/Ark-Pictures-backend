@@ -75,10 +75,13 @@ public abstract class PictureUploadTemplate {
             ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults();
             List<CIObject> objectList = processResults.getObjectList();
             if (CollUtil.isNotEmpty(objectList)) {
-                // - 获取压缩后的图片信息
+                // 获取压缩后的图片信息
                 CIObject compressCiObject = objectList.get(0);
-                CIObject thumbnailCiObject = objectList.get(1);
-                // - 封装压缩图的返回结果
+                // - 缩略图默认等同于压缩图
+                CIObject thumbnailCiObject = compressCiObject;
+                if (file.length() > 1024 * 2) {
+                    thumbnailCiObject = objectList.get(1);
+                }
                 return buildResult(originalFileName, compressCiObject, thumbnailCiObject);
             }
             // 封装原图的返回结果
