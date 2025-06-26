@@ -62,7 +62,7 @@ public abstract class JsoupTemplate {
         // 解析图源
         Document document = null;
         int loseCount = 0;
-        log.info("抓取器初始化完成，正在连接图源>>>");
+        log.info(">>>抓取器初始化完成，正在连接图源");
         do {
             try {
                 document = Jsoup.connect(fetchUrl).get();

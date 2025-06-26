@@ -331,19 +331,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      */
     @Override
     public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
-        // 校验参数
-        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAMS);
-        // 设置搜索参数
-        String searchText = pictureUploadByBatchRequest.getSearchText();
-        Integer count = pictureUploadByBatchRequest.getCount();
-        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
-        String library = pictureUploadByBatchRequest.getLibrary();
-        // - 图片名称前缀默认为搜索词
-        String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
-        if (StrUtil.isBlank(namePrefix)) {
-            namePrefix = searchText;
-        }
         // 设置图源仓库（默认为Bing图源）
+        String library = pictureUploadByBatchRequest.getLibrary();
         JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
         if (library.equals(UrlConstant.sourceSafebooru)) {
             jsoupTemplate = jsoupTemplateFromSafebooru;
@@ -351,6 +340,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         } else if (library.equals(UrlConstant.sourceKonachan)) {
             jsoupTemplate = jsoupTemplateFromKonachan;
             log.info("已切换到Konachan源");
+        } else {
+            log.info("已切换到Bing源");
         }
         // 抓取图片
         return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);

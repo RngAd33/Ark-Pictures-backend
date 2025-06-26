@@ -214,7 +214,9 @@ public class PictureController {
     @PostMapping("/upload/batch")
     public BaseResponse<Integer> uploadPictureByBatch(
             @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.PARAMS_ERROR);
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAMS);
+        // 限制抓取数量
+        ThrowUtils.throwIf(pictureUploadByBatchRequest.getCount() > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
         User loginUser = userService.getCurrentUser(request);
         int uploadCount = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
         return ResultUtils.success(uploadCount);
