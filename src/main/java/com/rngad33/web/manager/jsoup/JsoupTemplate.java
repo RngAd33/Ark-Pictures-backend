@@ -75,11 +75,11 @@ public abstract class JsoupTemplate {
             }
         } while (document == null);
         if (ObjUtil.isEmpty(document)) {
-            log.error("——！抓取外层元素失败！——");
+            log.error("——！外层元素抓取失败！——");
             throw new MyException(ErrorCodeEnum.NOT_PARAMS);
         }
-        log.info(">>>外层元素抓取完毕，开始抓取内层元素");
         // 解析图片元素
+        log.info(">>>外层元素抓取完毕，开始解析内层元素");
         Elements imgElementList = this.getImgElement(document);
         // 遍历元素，依次上传
         int uploadCount = 0;

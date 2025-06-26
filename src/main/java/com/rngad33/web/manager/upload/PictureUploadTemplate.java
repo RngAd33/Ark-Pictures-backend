@@ -77,8 +77,9 @@ public abstract class PictureUploadTemplate {
             if (CollUtil.isNotEmpty(objectList)) {
                 // - 获取压缩后的图片信息
                 CIObject compressCiObject = objectList.get(0);
+                CIObject thumbnailCiObject = objectList.get(1);
                 // - 封装压缩图的返回结果
-                return buildResult(originalFileName, compressCiObject);
+                return buildResult(originalFileName, compressCiObject, thumbnailCiObject);
             }
             // 封装原图的返回结果
             return buildResult(originalFileName, file, imageInfo, uploadFilePath);
@@ -120,7 +121,7 @@ public abstract class PictureUploadTemplate {
      * @param file 临时文件
      * @param imageInfo 对象存储返回的图片信息
      * @param uploadFilePath 上传路径
-     * @return 上传结果封装
+     * @return 可访问地址
      */
     private PictureUploadResult buildResult(String originalFileName, File file, ImageInfo imageInfo, String uploadFilePath) {
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
@@ -143,20 +144,23 @@ public abstract class PictureUploadTemplate {
      *
      * @param originalFileName 原始文件名
      * @param compressCiObject 压缩后的对象
-     * @return
+     * @param thumbnailCiObject 缩略图对象
+     * @return 可访问地址
      */
-    private PictureUploadResult buildResult(String originalFileName, CIObject compressCiObject) {
+    private PictureUploadResult buildResult(String originalFileName, CIObject compressCiObject, CIObject thumbnailCiObject) {
+        // 计算宽高
         int width = compressCiObject.getWidth();
         int height = compressCiObject.getHeight();
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
-        pictureUploadResult.setThumbUrl(cosClientConfig.getHost() + "/" + compressCiObject.getKey());
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(compressCiObject.getSize().longValue());
         pictureUploadResult.setPicWidth(width);
         pictureUploadResult.setPicHeight(height);
         pictureUploadResult.setPicScale(scale);
         pictureUploadResult.setPicFormat(compressCiObject.getFormat());
+        // 缩略图地址
+        pictureUploadResult.setThumbUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
         return pictureUploadResult;
     }
 
