@@ -331,12 +331,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
         if (library.equals(UrlConstant.sourceSafebooru)) {
             jsoupTemplate = jsoupTemplateFromSafebooru;
-            log.info("已切换到Safebooru源");
+            log.info("已切换到Safebooru源>>>");
         } else if (library.equals(UrlConstant.sourceKonachan)) {
             jsoupTemplate = jsoupTemplateFromKonachan;
-            log.info("已切换到Konachan源");
+            log.info("已切换到Konachan源>>>");
         } else {
-            log.info("已切换到Bing源");
+            log.info("已切换到Bing源>>>");
         }
         // 抓取图片
         return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);
