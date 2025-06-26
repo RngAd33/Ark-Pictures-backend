@@ -50,7 +50,7 @@ public abstract class PictureUploadTemplate {
         String originalFileName = getOriginFilename(inputSource);
         String suffix = FileUtil.getSuffix(originalFileName);
         // 临时对冲抓取图片扩展名异常问题
-        if (StrUtil.length(suffix) > 6) {
+        if (StrUtil.length(suffix) > 5) {
             suffix = "jpg";
         }
         // 校验后缀是否存在
