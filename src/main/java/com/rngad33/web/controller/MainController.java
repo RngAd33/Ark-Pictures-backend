@@ -35,12 +35,4 @@ public class MainController {
         return ResultUtils.success(null);
     }
 
-    /**
-     * Ping接口
-     */
-    @PostMapping("/health")
-    public void ping() {
-        System.out.println("OK>>>");
-    }
-
 }
