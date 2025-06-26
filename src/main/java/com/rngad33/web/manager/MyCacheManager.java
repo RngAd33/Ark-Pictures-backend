@@ -35,7 +35,7 @@ public class MyCacheManager {
      */
     private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
             .initialCapacity(1024)
-            .maximumSize(10_000L)   // 最多缓存1000条数据
+            .maximumSize(10_000L)   // 最多缓存10000条数据
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
 
