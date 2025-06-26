@@ -32,15 +32,14 @@ public class CosManager {
     /**
      * 文件上传
      *
-     * @param key 唯一键
+     * @param key  唯一键
      * @param file 文件
-     * @return
      * @throws CosClientException
      * @throws CosServiceException
      */
-    public PutObjectResult putObject(String key, File file) throws CosClientException, CosServiceException {
+    public void putObject(String key, File file) throws CosClientException, CosServiceException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
-        return cosClient.putObject(putObjectRequest);
+        cosClient.putObject(putObjectRequest);
     }
 
     /**
