@@ -1,8 +1,8 @@
 package com.rngad33.web.exception;
 
 import com.rngad33.web.common.BaseResponse;
-import com.rngad33.web.utils.ResultUtils;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
+import com.rngad33.web.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
