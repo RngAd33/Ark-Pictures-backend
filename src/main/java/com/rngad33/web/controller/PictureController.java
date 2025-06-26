@@ -281,7 +281,7 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表（用户，有缓存）
+     * 分页获取、缓存图片列表（用户）
      *
      * @param pictureQueryRequest
      * @param request
