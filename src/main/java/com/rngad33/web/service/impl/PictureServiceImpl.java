@@ -52,10 +52,10 @@ import java.util.stream.Collectors;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
 
     @Resource
-    private UserManager userManager;
+    private UserService userService;
 
     @Resource
-    private UserService userService;
+    private UserManager userManager;
 
     @Resource
     private PictureUploadTemplateImplByFile pictureUploadTemplateImplByFile;
