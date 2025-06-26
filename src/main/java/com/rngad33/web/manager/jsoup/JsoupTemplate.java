@@ -134,7 +134,8 @@ public abstract class JsoupTemplate {
             log.info(">>>已上传图片：{}", pictureVO.getId());
             uploadCount++;
         } catch (Exception e) {
-            log.error("——！图片上传失败，正在尝试重新抓取！——");
+            // "——！图片上传失败，正在尝试重新抓取！——",
+            log.error(e.getMessage());
         }
         return uploadCount;
     }

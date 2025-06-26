@@ -88,7 +88,7 @@ public class CosManager {
         String thumbnailKey = FileUtil.mainName(key) + "_thumbnail." + FileUtil.getSuffix(key);
         thumbnailRule.setBucket(cosClientConfig.getBucket());
         thumbnailRule.setFileId(thumbnailKey);
-        thumbnailRule.setRule(String.format("imageMogr2/thumbnail/%sx%s", 128, 128));
+        thumbnailRule.setRule(String.format("imageMogr2/thumbnail/%sx%s", 256, 256));
         rules.add(thumbnailRule);
         // 构造处理参数
         picOperations.setRules(rules);
