@@ -136,12 +136,6 @@
             <artifactId>disruptor</artifactId>
             <version>4.0.0</version>
         </dependency>
-        <!-- Jsoup：HTML解析 + 数据抓取 -->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.19.1</version>
-        </dependency>
         <!-- WebSocket 双向通信 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -153,7 +147,6 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.5.0</version>
         </dependency>
-        <!-- todo AI绘画大模型 -->
 
     </dependencies>
 

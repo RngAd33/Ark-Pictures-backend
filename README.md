@@ -10,6 +10,7 @@
 ### SpringBoot 框架
 ### MyBatis + MyBatisPlus 框架
 ### Redis + Caffeine 多级缓存
+### 腾讯云COS对象存储 + 数据万象
 ### Disruptor 无锁并发框架
 ### JUnit 单元测试
 ### Swagger + Knife4j 接口文档
