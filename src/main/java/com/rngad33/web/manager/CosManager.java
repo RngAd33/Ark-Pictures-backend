@@ -37,22 +37,10 @@ public class CosManager {
      * @throws CosClientException
      * @throws CosServiceException
      */
+    @Deprecated
     public void putObject(String key, File file) throws CosClientException, CosServiceException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
         cosClient.putObject(putObjectRequest);
-    }
-
-    /**
-     * 文件下载
-     *
-     * @param key 唯一键
-     * @return
-     * @throws CosClientException
-     * @throws CosServiceException
-     */
-    public COSObject getObject(String key) throws CosClientException, CosServiceException {
-        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
-        return cosClient.getObject(getObjectRequest);
     }
 
     /**
@@ -94,6 +82,30 @@ public class CosManager {
         picOperations.setRules(rules);
         putObjectRequest.setPicOperations(picOperations);
         return cosClient.putObject(putObjectRequest);
+    }
+
+    /**
+     * 文件下载
+     *
+     * @param key 唯一键
+     * @return
+     * @throws CosClientException
+     * @throws CosServiceException
+     */
+    @Deprecated
+    public COSObject getObject(String key) throws CosClientException, CosServiceException {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
+        return cosClient.getObject(getObjectRequest);
+    }
+
+    /**
+     * 文件删除
+     *
+     * @param key 唯一键
+     * @return
+     */
+    public void deleteObject(String key) {
+        cosClient.deleteObject(cosClientConfig.getBucket(), key);
     }
 
 }
