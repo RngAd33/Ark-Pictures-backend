@@ -5,15 +5,13 @@
 
 ## Q：这个项目用到了哪些技术选型？
 ## A：前端部分：
-###  Vue框架
+### Vue3框架
 ## 后端部分：
 ### SpringBoot 框架
 ### MyBatis + MyBatisPlus 框架
-### Redis + Caffeine 缓存框架
+### Redis + Caffeine 多级缓存
 ### Disruptor 无锁并发框架
 ### JUnit 单元测试
 ### Swagger + Knife4j 接口文档
 
 ## 严正声明：本站所有图片均采集自网络，请务必重视版权意识，尊重作者劳动成果，全站图片严禁商用！一经发现，永久封号处理！
-
-项目施工中，敬请期待！
