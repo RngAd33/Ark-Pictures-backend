@@ -7,13 +7,8 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rngad33.web.constant.UrlConstant;
 import com.rngad33.web.exception.MyException;
 import com.rngad33.web.manager.UserManager;
-import com.rngad33.web.manager.jsoup.JsoupTemplate;
-import com.rngad33.web.manager.jsoup.JsoupTemplateFromBing;
-import com.rngad33.web.manager.jsoup.JsoupTemplateFromKonachan;
-import com.rngad33.web.manager.jsoup.JsoupTemplateFromSafebooru;
 import com.rngad33.web.manager.upload.PictureUploadTemplate;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByFile;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByUrl;
@@ -21,7 +16,6 @@ import com.rngad33.web.mapper.PictureMapper;
 import com.rngad33.web.model.dto.file.PictureUploadResult;
 import com.rngad33.web.model.dto.picture.PictureQueryRequest;
 import com.rngad33.web.model.dto.picture.PictureReviewRequest;
-import com.rngad33.web.model.dto.picture.PictureUploadByBatchRequest;
 import com.rngad33.web.model.dto.picture.PictureUploadRequest;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
@@ -62,15 +56,6 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Resource
     private PictureUploadTemplateImplByUrl pictureUploadTemplateImplByUrl;
-
-    @Resource
-    private JsoupTemplateFromBing jsoupTemplateFromBing;
-
-    @Resource
-    private JsoupTemplateFromSafebooru jsoupTemplateFromSafebooru;
-
-    @Resource
-    private JsoupTemplateFromKonachan jsoupTemplateFromKonachan;
 
     /**
      * 图片上传
@@ -315,31 +300,6 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         uploadPicture.setReviewTime(new Date());
         boolean result = this.updateById(uploadPicture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
-    }
-
-    /**
-     * 抓取图片批量上传（仅管理员）
-     *
-     * @param pictureUploadByBatchRequest 批量上传请求体
-     * @param loginUser 当前用户
-     * @return 实际上传数量
-     */
-    @Override
-    public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
-        // 设置图源仓库（默认为Bing图源）
-        String library = pictureUploadByBatchRequest.getLibrary();
-        JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
-        if (library.equals(UrlConstant.sourceSafebooru)) {
-            jsoupTemplate = jsoupTemplateFromSafebooru;
-            log.info("已切换到Safebooru源>>>");
-        } else if (library.equals(UrlConstant.sourceKonachan)) {
-            jsoupTemplate = jsoupTemplateFromKonachan;
-            log.info("已切换到Konachan源>>>");
-        } else {
-            log.info("已切换到Bing源>>>");
-        }
-        // 抓取图片
-        return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);
     }
 
 }
