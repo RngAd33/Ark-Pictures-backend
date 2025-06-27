@@ -89,12 +89,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 判断是新增还是更新
         Long pictureId = null;
         if (pictureUploadRequest != null) {
-            // - 更新，判断图片是否存在
             pictureId = pictureUploadRequest.getId();
             if (pictureId != null) {
-                // - 存在
+                // - 更新
                 Picture oldPicture = this.getById(pictureId);
-                ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "图片不存在！");
+                ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "原图不存在！");
+                this.deletePicture(oldPicture);
                 // - 仅本人或管理员有权编辑图片
                 if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
                     throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
@@ -126,14 +126,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setPicScale(pictureUploadResult.getPicScale());
         picture.setPicFormat(pictureUploadResult.getPicFormat());
         picture.setUserId(loginUser.getId());
-        // 补充审核参数
-        userManager.fillReviewParams(picture, loginUser);
-        // 操作数据库
         if (pictureId != null) {
-            // - 更新，补充信息
+            // - 是更新，补充信息
             picture.setId(pictureId);
             picture.setEditTime(new Date());
         }
+        // 补充审核参数
+        userManager.fillReviewParams(picture, loginUser);
+        // 操作数据库
         boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "上传失败！");
         return PictureVO.objToVo(picture);
