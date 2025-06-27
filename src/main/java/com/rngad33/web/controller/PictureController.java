@@ -65,7 +65,8 @@ public class PictureController {
             throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
         User loginUser = userService.getCurrentUser(request);
-        // 登录态校验在Service层
+        // 校验是否登录
+        ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_LOGIN, "请先登录！");
         PictureVO pictureVO = pictureService.uploadPicture(multipartFile, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
     }
@@ -81,6 +82,8 @@ public class PictureController {
             HttpServletRequest request) {
         ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAMS_ERROR);
         User loginUser = userService.getCurrentUser(request);
+        // 校验是否登录
+        ThrowUtils.throwIf(loginUser == null, ErrorCodeEnum.USER_NOT_LOGIN, "请先登录！");
         String fileUrl = pictureUploadRequest.getFileUrl();
         PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
         return ResultUtils.success(pictureVO);
@@ -149,6 +152,8 @@ public class PictureController {
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        // 清理图片
+        pictureService.deletePicture(oldPicture);
         return ResultUtils.success(true);
     }
 

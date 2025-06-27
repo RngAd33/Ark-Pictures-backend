@@ -102,7 +102,6 @@ public class CosManager {
      * 文件删除
      *
      * @param key 唯一键
-     * @return
      */
     public void deleteObject(String key) {
         cosClient.deleteObject(cosClientConfig.getBucket(), key);
