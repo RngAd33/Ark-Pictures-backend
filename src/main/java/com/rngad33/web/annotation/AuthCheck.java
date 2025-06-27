@@ -1,5 +1,7 @@
 package com.rngad33.web.annotation;
 
+import com.rngad33.web.constant.UserConstant;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,6 +17,6 @@ public @interface AuthCheck {
     /**
      * 必须具备某个角色
      */
-    String mustRole() default "";
+    String mustRole() default UserConstant.DEFAULT_ROLE;
 
 }
