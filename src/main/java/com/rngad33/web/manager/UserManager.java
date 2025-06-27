@@ -73,7 +73,7 @@ public class UserManager {
     }
 
     /**
-     * 传递id
+     * 传递 id
      *
      * @param userManageRequest 用户管理请求体
      * @param request 用户登录态
