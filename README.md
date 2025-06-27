@@ -13,6 +13,7 @@
 ### 腾讯云COS对象存储 + 数据万象
 ### Elasticsearch 分布式搜索
 ### Disruptor 无锁并发框架
+### WebSocket 双向通信
 ### Jsoup 网页解析框架
 ### JUnit 单元测试
 ### Swagger + Knife4j 接口文档
