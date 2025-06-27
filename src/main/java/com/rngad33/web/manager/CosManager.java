@@ -30,32 +30,6 @@ public class CosManager {
     private COSClient cosClient;
 
     /**
-     * 文件上传
-     *
-     * @param key  唯一键
-     * @param file 文件
-     * @throws CosClientException
-     * @throws CosServiceException
-     */
-    public void putObject(String key, File file) throws CosClientException, CosServiceException {
-        PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key, file);
-        cosClient.putObject(putObjectRequest);
-    }
-
-    /**
-     * 文件下载
-     *
-     * @param key 唯一键
-     * @return
-     * @throws CosClientException
-     * @throws CosServiceException
-     */
-    public COSObject getObject(String key) throws CosClientException, CosServiceException {
-        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
-        return cosClient.getObject(getObjectRequest);
-    }
-
-    /**
      * 文件上传（附带图片信息）
      * 使用前需要先开通腾讯云数据万象
      *
@@ -94,6 +68,15 @@ public class CosManager {
         picOperations.setRules(rules);
         putObjectRequest.setPicOperations(picOperations);
         return cosClient.putObject(putObjectRequest);
+    }
+
+    /**
+     * 文件删除
+     *
+     * @param key 唯一键
+     */
+    public void deleteObject(String key) {
+        cosClient.deleteObject(cosClientConfig.getBucket(), key);
     }
 
 }

@@ -149,6 +149,8 @@ public class PictureController {
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        // 清理图片
+        pictureService.deletePicture(oldPicture);
         return ResultUtils.success(true);
     }
 
@@ -183,6 +185,8 @@ public class PictureController {
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+        // 清理图片
+        pictureService.deletePicture(oldPicture);
         return ResultUtils.success(true);
     }
 

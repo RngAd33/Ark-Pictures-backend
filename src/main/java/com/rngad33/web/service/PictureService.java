@@ -65,4 +65,11 @@ public interface PictureService extends IService<Picture> {
      */
     void reviewPicture(PictureReviewRequest pictureReviewRequest, User loginUser);
 
+    /**
+     * 清理图片
+     *
+     * @param oldPicture
+     */
+    void deletePicture(Picture oldPicture);
+
 }

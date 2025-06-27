@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rngad33.web.exception.MyException;
+import com.rngad33.web.manager.CosManager;
 import com.rngad33.web.manager.UserManager;
 import com.rngad33.web.manager.upload.PictureUploadTemplate;
 import com.rngad33.web.manager.upload.PictureUploadTemplateImplByFile;
@@ -30,6 +31,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -47,6 +49,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CosManager cosManager;
 
     @Resource
     private UserManager userManager;
@@ -72,14 +77,15 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Long pictureId = null;
         if (pictureUploadRequest != null) {
             pictureId = pictureUploadRequest.getId();
-        }
-        // 如果是更新，判断图片是否存在
-        if (pictureId != null) {
-            Picture oldPicture = this.getById(pictureId);
-            ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "图片不存在！");
-            // - 仅本人或管理员有权编辑图片
-            if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
-                throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+            // 如果是更新，判断图片是否存在
+            if (pictureId != null) {
+                Picture oldPicture = this.getById(pictureId);
+                ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "图片不存在！");
+                this.deletePicture(oldPicture);
+                // - 仅本人或管理员有权编辑图片
+                if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
+                    throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
+                }
             }
         }
         // 按照用户id划分目录
@@ -107,12 +113,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setPicScale(pictureUploadResult.getPicScale());
         picture.setPicFormat(pictureUploadResult.getPicFormat());
         picture.setUserId(loginUser.getId());
-        // 更新，补充信息
-        userManager.fillReviewParams(picture, loginUser);   // 审核参数
         if (pictureId != null) {
             picture.setId(pictureId);
             picture.setEditTime(new Date());
         }
+        // 补充审核参数
+        userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "上传失败！");
@@ -300,6 +306,31 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         uploadPicture.setReviewTime(new Date());
         boolean result = this.updateById(uploadPicture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
+    }
+
+    /**
+     * 清理图片
+     *
+     * @param oldPicture
+     */
+    @Async
+    @Override
+    public void deletePicture(Picture oldPicture) {
+        // 判断图片是否被多条记录引用
+        String originUrl = oldPicture.getOriginUrl();
+        long count = this.lambdaQuery()
+                .eq(Picture::getOriginUrl, originUrl)
+                .count();
+        if (count > 1) {
+            // - 有不止一条记录引用此图片，不清理
+            return;
+        }
+        // 关联删除原图和缩略图
+        cosManager.deleteObject(originUrl);
+        String thumbUrl = oldPicture.getThumbUrl();
+        if (StrUtil.isNotBlank(thumbUrl)) {
+            cosManager.deleteObject(thumbUrl);
+        }
     }
 
 }
