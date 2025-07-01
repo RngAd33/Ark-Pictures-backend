@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 锁工具类（提供各种预置锁）
- *
+ * 为确保返回内容无误，此处不使用 @Getter 注解
  * @author RngAd33
  */
 public class LockUtils {
