@@ -1,5 +1,6 @@
 package com.rngad33.web.manager;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,8 +11,11 @@ import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.utils.LockUtils;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,11 @@ public class MyCacheManager {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private RedissonClient redissonClient;
+
+    private RBloomFilter<String> bloomFilter;
+
     /**
      * 本地缓存构造
      */
@@ -40,18 +49,33 @@ public class MyCacheManager {
             .build();
 
     /**
+     * 初始化布隆过滤器
+     */
+    @PostConstruct
+    public void initBloomFilter() {
+        bloomFilter = redissonClient.getBloomFilter("picture_bloom_filter");
+        // 设置预期插入数量和误判率
+        bloomFilter.tryInit(1000000, 0.01);
+    }
+
+    /**
      * 数据多级查询
      *
-     * @param pictureQueryRequest
-     * @param redisKey
-     * @param caffeineKey
-     * @param current
-     * @param size
-     * @param request
+     * @param pictureQueryRequest 查询请求
+     * @param redisKey 缓存的key
+     * @param caffeineKey 缓存的key
+     * @param current 当前页
+     * @param size 页尺寸
+     * @param request HTTP请求
      * @return
      */
     public Page<PictureVO> cacheQuery(PictureQueryRequest pictureQueryRequest, String redisKey, String caffeineKey,
                                       long current, long size, HttpServletRequest request) {
+        // 使用布隆过滤器判断key是否存在
+        if (ObjUtil.isNotNull(pictureQueryRequest) && !bloomFilter.contains(redisKey)) {
+            // key不存在，直接返回空页面，避免缓存穿透
+            return new Page<PictureVO>().setSize(size).setCurrent(current);
+        }
         // 优先查询本地缓存
         String cachedValue = getCachedFromCaffeine(redisKey);
         if (cachedValue == null) {
@@ -89,7 +113,7 @@ public class MyCacheManager {
     /**
      * 从Redis缓存中获取缓存数据
      *
-     * @param redisKey
+     * @param redisKey 缓存的key
      * @return cachedValue
      */
     private String getCachedFromRedis(String redisKey) {
@@ -99,7 +123,7 @@ public class MyCacheManager {
     /**
      * 从本地缓存中获取缓存数据
      *
-     * @param caffeineKey
+     * @param caffeineKey 缓存的key
      * @return cachedValue
      */
     private String getCachedFromCaffeine(String caffeineKey) {
@@ -109,9 +133,9 @@ public class MyCacheManager {
     /**
      * 将数据写入Redis缓存
      *
-     * @param redisKey
-     * @param cacheValue
-     * @param cacheExpireTime
+     * @param redisKey 缓存的key
+     * @param cacheValue 缓存的数据
+     * @param cacheExpireTime 超时时间
      */
     private void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
         stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
