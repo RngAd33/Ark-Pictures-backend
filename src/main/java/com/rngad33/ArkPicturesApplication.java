@@ -4,7 +4,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 项目启动入口
@@ -12,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableAsync
 // @EnableScheduling
-@MapperScan("com.rngad33.web.mapper")
+@MapperScan("com.rngad33.ark.mapper")
 public class ArkPicturesApplication {
 
     public static void main(String[] args) {
