@@ -194,7 +194,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.rngad33.ArkPicturesApplication</mainClass>
+                    <mainClass>com.rngad33.ark.ArkPicturesApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

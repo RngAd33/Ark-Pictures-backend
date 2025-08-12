@@ -1,4 +1,4 @@
-package com.rngad33;
+package com.rngad33.ark;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
