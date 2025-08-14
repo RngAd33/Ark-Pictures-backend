@@ -82,7 +82,7 @@ public class MyCacheManager {
             // - 本地缓存未命中，查询Redis缓存
             cachedValue = getCachedFromRedis(caffeineKey);
             if (cachedValue == null) {
-                // 设置双检锁
+                // 双检锁
                 // Object lock = LockUtils.KEY_LOCKS.computeIfAbsent(redisKey, k -> new Object());
                 synchronized (LockUtils.getKeyLock(redisKey)) {
                     cachedValue = getCachedFromRedis(caffeineKey);
