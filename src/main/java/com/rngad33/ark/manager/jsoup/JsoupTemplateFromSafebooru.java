@@ -20,6 +20,11 @@ import java.io.IOException;
 @Slf4j
 public class JsoupTemplateFromSafebooru extends JsoupTemplate {
 
+    /**
+     * 构造函数注入 + 懒加载
+     *
+     * @param pictureService
+     */
     public JsoupTemplateFromSafebooru(@Lazy PictureService pictureService) {
         super(pictureService);
     }

@@ -83,7 +83,7 @@ public class MyCacheManager {
             cachedValue = getCachedFromRedis(caffeineKey);
             if (cachedValue == null) {
                 // 双检锁
-                // Object lock = LockUtils.KEY_LOCKS.computeIfAbsent(redisKey, k -> new Object());
+                // Object lock = LockUtils.KEY_LOCK.computeIfAbsent(redisKey, k -> new Object());
                 synchronized (LockUtils.getKeyLock(redisKey)) {
                     cachedValue = getCachedFromRedis(caffeineKey);
                     if (cachedValue == null) {

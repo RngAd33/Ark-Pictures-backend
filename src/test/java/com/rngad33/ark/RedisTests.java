@@ -1,7 +1,7 @@
 package com.rngad33.ark;
 
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -9,9 +9,9 @@ import org.springframework.data.redis.core.ValueOperations;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class ArkPicturesApplicationTests {
+class RedisTests {
 
-    @Autowired
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     @Test
