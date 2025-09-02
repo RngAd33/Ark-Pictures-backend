@@ -4,9 +4,7 @@ import com.rngad33.web.constant.AESConstant;
 import com.rngad33.web.constant.ErrorConstant;
 import com.rngad33.web.constant.UserConstant;
 import com.rngad33.web.model.dto.user.UserManageRequest;
-import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
-import com.rngad33.web.model.enums.picture.PictureReviewStatusEnum;
 import com.rngad33.web.model.enums.user.UserRoleEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
@@ -85,24 +83,6 @@ public class UserManager {
         Long id = userManageRequest.getId();
         if (id <= 0) return null;
         return id;
-    }
-
-    /**
-     * 补充审核参数
-     *
-     * @param picture
-     * @param loginUser
-     */
-    public void fillReviewParams(Picture picture, User loginUser) {
-        if (isNotAdmin(loginUser)) {
-            // 非管理员创建和编辑都要重新审核
-            picture.setReviewStatus(PictureReviewStatusEnum.REVIEWING.getCode());
-        } else {
-            picture.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
-            picture.setReviewerId(loginUser.getId());
-            picture.setReviewTime(new Date());
-            picture.setReviewMessage("管理员自动过审>>>");
-        }
     }
 
 }

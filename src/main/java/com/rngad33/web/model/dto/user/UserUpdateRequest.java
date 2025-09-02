@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,7 +10,8 @@ import java.util.Date;
  * 用户更新请求体
  */
 @Data
-public class UserUpdateRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserUpdateRequest {
 
     /**
      * 用户 id
@@ -55,7 +57,5 @@ public class UserUpdateRequest implements Serializable {
      * 更新时间
      */
     private Date updateTime;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }

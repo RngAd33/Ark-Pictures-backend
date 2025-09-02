@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * 图片上传模板实现类（基于URL）
  */
+@Deprecated
 @Service
 public class PictureUploadTemplateImplByUrl extends PictureUploadTemplate {
 

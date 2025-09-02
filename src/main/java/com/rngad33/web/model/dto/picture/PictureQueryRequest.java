@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rngad33.web.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,8 +13,9 @@ import java.util.List;
  * 图片查询请求体
  */
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class PictureQueryRequest extends PageRequest implements Serializable {
+public class PictureQueryRequest extends PageRequest {
 
     /**
      * id
@@ -74,27 +76,5 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      * 用户 id
      */
     private Long userId;
-
-    /**
-     * 审核状态：0-待审核; 1-通过; 2-拒绝
-     */
-    private Integer reviewStatus;
-
-    /**
-     * 审核信息
-     */
-    private String reviewMessage;
-
-    /**
-     * 审核人id
-     */
-    private Long reviewId;
-
-    /**
-     * 审核时间
-     */
-    private Date reviewTime;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }

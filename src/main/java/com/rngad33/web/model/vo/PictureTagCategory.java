@@ -1,4 +1,4 @@
-package com.rngad33.web.model.dto.picture;
+package com.rngad33.web.model.vo;
 
 import lombok.Data;
 

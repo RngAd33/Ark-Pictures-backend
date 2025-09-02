@@ -14,7 +14,7 @@ import com.rngad33.web.model.dto.picture.*;
 import com.rngad33.web.model.entity.Picture;
 import com.rngad33.web.model.entity.User;
 import com.rngad33.web.model.enums.misc.ErrorCodeEnum;
-import com.rngad33.web.model.enums.picture.PictureReviewStatusEnum;
+import com.rngad33.web.model.vo.PictureTagCategory;
 import com.rngad33.web.model.vo.PictureVO;
 import com.rngad33.web.service.PictureService;
 import com.rngad33.web.service.UserService;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +57,7 @@ public class PictureController {
      * @param pictureUploadRequest 图片上传请求
      * @return 访问地址
      */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload")
     public BaseResponse<PictureVO> uploadPicture(@RequestPart("pic") MultipartFile multipartFile,
             PictureUploadRequest pictureUploadRequest, HttpServletRequest request) {
@@ -71,67 +71,13 @@ public class PictureController {
     }
 
     /**
-     * 图片上传（基于url）
-     *
-     * @param pictureUploadRequest 图片上传请求
-     * @return 访问地址
-     */
-    @PostMapping("/upload/url")
-    public BaseResponse<PictureVO> uploadPictureByUrl(@RequestBody PictureUploadRequest pictureUploadRequest,
-            HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureUploadRequest == null, ErrorCodeEnum.PARAMS_ERROR);
-        User loginUser = userService.getCurrentUser(request);
-        String fileUrl = pictureUploadRequest.getFileUrl();
-        PictureVO pictureVO = pictureService.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
-        return ResultUtils.success(pictureVO);
-    }
-
-    /**
-     * 图片编辑
-     *
-     * @param pictureEditRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/edit")
-    public BaseResponse<Boolean> editPicture(@RequestBody PictureEditRequest pictureEditRequest,
-            HttpServletRequest request) {
-        if (pictureEditRequest == null || pictureEditRequest.getId() <= 0) {
-            throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
-        }
-        // 判断原图是否存在
-        Long id = pictureEditRequest.getId();
-        Picture oldPicture = pictureService.getById(id);
-        ThrowUtils.throwIf(oldPicture == null, ErrorCodeEnum.NOT_PARAMS, "原图不存在！");
-        // 仅本人或管理员可编辑
-        User loginUser = userService.getCurrentUser(request);
-        if (!oldPicture.getUserId().equals(loginUser.getId()) && userManager.isNotAdmin(loginUser)) {
-            throw new MyException(ErrorCodeEnum.USER_NOT_AUTH);
-        }
-        // 由实体类转换为DTO
-        Picture picture = new Picture();
-        BeanUtil.copyProperties(pictureEditRequest, picture);
-        // 将list转换为json字符串
-        picture.setTags(JSONUtil.toJsonStr(pictureEditRequest.getTags()));
-        // 数据校验
-        pictureService.validPicture(picture);
-        // 设置编辑时间
-        picture.setEditTime(new Date());
-        // 补充审核参数
-        userManager.fillReviewParams(picture, loginUser);
-        // 操作数据库
-        boolean result = pictureService.updateById(picture);
-        ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
-        return ResultUtils.success(true);
-    }
-
-    /**
      * 图片删除
      *
      * @param deleteRequest
      * @param request
      * @return
      */
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/delete")
     public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
@@ -158,13 +104,11 @@ public class PictureController {
      * 图片更新（仅管理员）
      *
      * @param pictureUpdateRequest
-     * @param request
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/update")
-    public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest,
-                                               HttpServletRequest request) {
+    public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest) {
         if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
         }
@@ -179,31 +123,11 @@ public class PictureController {
         picture.setTags(JSONUtil.toJsonStr(pictureUpdateRequest.getTags()));
         // 数据校验
         pictureService.validPicture(picture);
-        // 补充审核参数
-        User loginUser = userService.getCurrentUser(request);
-        userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
         boolean result = pictureService.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
         // 清理图片
         pictureService.deletePicture(oldPicture);
-        return ResultUtils.success(true);
-    }
-
-    /**
-     * 图片审核（仅管理员）
-     *
-     * @param pictureReviewRequest
-     * @param request
-     * @return
-     */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/review")
-    public BaseResponse<Boolean> reviewPicture(@RequestBody PictureReviewRequest pictureReviewRequest,
-                                               HttpServletRequest request) {
-        ThrowUtils.throwIf(pictureReviewRequest == null, ErrorCodeEnum.PARAMS_ERROR);
-        User loginUser = userService.getCurrentUser(request);
-        pictureService.reviewPicture(pictureReviewRequest, loginUser);
         return ResultUtils.success(true);
     }
 
@@ -248,6 +172,7 @@ public class PictureController {
      * @param request
      * @return
      */
+    @Deprecated
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
@@ -256,8 +181,6 @@ public class PictureController {
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAMS_ERROR);
-        // 普通用户默认只能看到已过审的图片
-        pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
@@ -266,7 +189,7 @@ public class PictureController {
     }
 
     /**
-     * 分页获取、缓存图片列表（用户）
+     * 分页获取、缓存图片列表（用户，有缓存）
      *
      * @param pictureQueryRequest
      * @param request
@@ -280,8 +203,6 @@ public class PictureController {
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 13, ErrorCodeEnum.PARAMS_ERROR);
-        // 普通用户默认只能看到已过审的图片
-        pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getCode());
         // 构建key
         String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);   // 序列化
         String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());

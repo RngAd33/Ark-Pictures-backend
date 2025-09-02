@@ -1,6 +1,7 @@
 package com.rngad33.web.model.vo;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rngad33.web.model.entity.User;
 import lombok.Data;
 
@@ -11,7 +12,8 @@ import java.util.Date;
  * 用户封装类
  */
 @Data
-public class UserVO implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserVO {
 
     /**
      * id
@@ -63,8 +65,6 @@ public class UserVO implements Serializable {
      */
     private Date updateTime;
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * 封装类转对象
      *
@@ -72,6 +72,9 @@ public class UserVO implements Serializable {
      * @return
      */
     public static User voToObj(UserVO userVO) {
+        if (userVO == null) {
+            return null;
+        }
         User user = new User();
         BeanUtil.copyProperties(userVO, user);
         return user;

@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,9 +9,8 @@ import java.io.Serializable;
  * 用户管理请求体
  */
 @Data
-public class UserManageRequest implements Serializable {
-
-    private static final long serialVersionUID = 3191241716373120793L;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserManageRequest {
 
     private Long id;
 

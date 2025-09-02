@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,7 +10,8 @@ import java.util.List;
  * 图片修改请求体
  */
 @Data
-public class PictureEditRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PictureEditRequest {
 
     /**
      * id
@@ -35,7 +37,5 @@ public class PictureEditRequest implements Serializable {
      * 标签
      */
     private List<String> tags;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }

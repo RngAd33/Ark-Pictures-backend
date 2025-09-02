@@ -1,6 +1,7 @@
 package com.rngad33.web.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,7 +14,8 @@ import java.util.Date;
  */
 @Data
 @TableName(value ="picture")
-public class Picture implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Picture {
 
     /**
      * id
@@ -122,11 +124,5 @@ public class Picture implements Serializable {
      */
     @TableLogic
     private Integer isDelete;
-
-    /**
-     * 序列化版本号
-     */
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
 }

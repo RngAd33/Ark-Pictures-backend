@@ -7,6 +7,7 @@ import com.rngad33.web.utils.ResultUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,16 @@ public class MainController {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 健康检查
+     *
+     * @return
+     */
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "OK";
+    }
 
     /**
      * 清空缓存（仅管理员）

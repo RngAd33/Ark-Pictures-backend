@@ -1,5 +1,6 @@
 package com.rngad33.web.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,7 +9,8 @@ import java.io.Serializable;
  * 批量导入图片请求体
  */
 @Data
-public class PictureUploadByBatchRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PictureUploadByBatchRequest {
 
     /**
      * 抓取数量
@@ -29,7 +31,5 @@ public class PictureUploadByBatchRequest implements Serializable {
      * 目标图源
      */
     private String library;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }
