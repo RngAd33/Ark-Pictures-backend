@@ -50,12 +50,13 @@ public abstract class JsoupTemplate {
      */
     public final int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException {
         // 设置搜索参数
-        String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
-        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
-        String fetchUrl = String.format(UrlConstant.sourceBing, searchText);
-        // - 图片名称前缀默认为搜索词
+        String searchText = pictureUploadByBatchRequest.getSearchText();
         String namePrefix = pictureUploadByBatchRequest.getNamePrefix();
+        String library = pictureUploadByBatchRequest.getLibrary();
+        ThrowUtils.throwIf(count > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");
+        String fetchUrl = String.format(library, searchText);
+        // - 图片名称前缀默认为搜索词
         if (StrUtil.isBlank(namePrefix)) {
             namePrefix = searchText;
         }
