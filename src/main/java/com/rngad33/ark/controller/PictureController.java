@@ -27,6 +27,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -218,7 +219,7 @@ public class PictureController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/upload/batch")
     public BaseResponse<Integer> uploadPictureByBatch(
-            @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) {
+            @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest, HttpServletRequest request) throws IOException {
         ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCodeEnum.NOT_PARAMS);
         // 限制抓取数量
         ThrowUtils.throwIf(pictureUploadByBatchRequest.getCount() > 30, ErrorCodeEnum.PARAMS_ERROR, "一次最多抓取30条数据！");

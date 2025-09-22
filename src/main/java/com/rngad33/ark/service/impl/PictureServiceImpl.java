@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -330,7 +331,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      * @return 实际上传数量
      */
     @Override
-    public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
+    public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException {
         // 设置图源仓库（默认为Bing图源）
         String library = pictureUploadByBatchRequest.getLibrary();
         JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;

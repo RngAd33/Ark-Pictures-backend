@@ -12,6 +12,8 @@ import com.rngad33.ark.model.entity.User;
 import com.rngad33.ark.model.vo.PictureVO;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
+
 /**
  * 图片服务接口
  */
@@ -73,7 +75,7 @@ public interface PictureService extends IService<Picture> {
      * @param loginUser
      * @return
      */
-    Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser);
+    Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException;
 
     /**
      * 清理图片
