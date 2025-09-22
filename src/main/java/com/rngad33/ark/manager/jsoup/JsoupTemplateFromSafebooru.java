@@ -36,8 +36,8 @@ public class JsoupTemplateFromSafebooru extends JsoupTemplate {
      * @return 缩略图表
      */
     protected Elements getImgElement(Document document) {
-        // 筛选图片元素（选择所有class="thumb"的span元素内的img标签）
-        Elements imgElementList = document.select("span.thumb img");
+        // 筛选图片元素
+        Elements imgElementList = document.select("img.preview");
         ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.USER_LOSE_ACTION, "未找到图片元素");
         log.info(">>>内层元素抓取完毕，开始上传图片");
         return imgElementList;

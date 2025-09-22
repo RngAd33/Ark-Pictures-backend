@@ -13,12 +13,12 @@ public interface UrlConstant {
     /**
      * Safebooru源（推荐）
      */
-    String sourceSafebooru = "https://safebooru.org/index.php?page=post&s=search&tags=%s+";
+    String sourceSafebooru = "https://safebooru.org/index.php?page=post&s=list&tags=%s";
 
     /**
-     * Konachan源（需开启代理）
+     * Konachan源（存在反爬机制，暂不可用）
      */
-    String sourceKonachan = "https://konachan.com/post?tags=%s";
+    String sourceKonachan = "https://konachan.net/post?tags=%s";
 
     /**
      * P站源（暂不可用）
