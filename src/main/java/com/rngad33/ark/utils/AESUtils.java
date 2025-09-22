@@ -211,7 +211,7 @@ public class AESUtils {
         System.out.println("IV已从文件加载。");
 
         // 测试明文
-        String originalText = "恐猿莱欧斯吓s泰拉";
+        String originalText = "roottoor";
         System.out.println("原始文本: " + originalText);
 
         // 使用加载的密钥进行加密

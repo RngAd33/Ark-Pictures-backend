@@ -39,7 +39,6 @@ public class JsoupTemplateFromSafebooru extends JsoupTemplate {
         // 筛选图片元素
         Elements imgElementList = document.select("img.preview");
         ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.USER_LOSE_ACTION, "未找到图片元素");
-        log.info(">>>内层元素抓取完毕，开始上传图片");
         return imgElementList;
     }
 

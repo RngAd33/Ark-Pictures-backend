@@ -79,8 +79,8 @@ public abstract class JsoupTemplate {
             throw new MyException(ErrorCodeEnum.NOT_PARAMS);
         }
         // 解析图片元素
-        log.info(">>>外层元素抓取完毕，开始解析内层元素");
         Elements imgElementList = this.getImgElement(document);
+        log.info(">>>外层元素抓取完毕，开始解析内层元素");
         // 遍历元素，依次上传
         int uploadCount = 0;
         for (Element imgElement : imgElementList) {
@@ -101,6 +101,7 @@ public abstract class JsoupTemplate {
                 break;
             }
         }
+        log.info("上传完成>>>");
         return uploadCount;
     }
 
