@@ -48,7 +48,7 @@ public abstract class JsoupTemplate {
      * @return
      * @throws IOException
      */
-    public final int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
+    public final int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException {
         // 设置搜索参数
         String searchText = pictureUploadByBatchRequest.getSearchText();
         Integer count = pictureUploadByBatchRequest.getCount();
@@ -116,7 +116,7 @@ public abstract class JsoupTemplate {
      *
      * @return
      */
-    protected abstract String getFileUrl(Element imgElement);
+    protected abstract String getFileUrl(Element imgElement) throws IOException;
 
     /**
      * 上传图片

@@ -49,20 +49,21 @@ public class JsoupTemplateFromSafebooru extends JsoupTemplate {
      * @param imgElement
      * @return
      */
-    protected String getFileUrl(Element imgElement) {
-        // 获取缩略图所在 a 标签的 href 属性（即详情页 URL）
-        String detailPageUrl = imgElement.parent().attr("href");
-        try {
-            // 访问详情页
-            Document detailDoc = Jsoup.connect(detailPageUrl).userAgent("Mozilla/5.0").get();
-            // 在详情页中选择 id 为 "image" 的 img 标签
-            Element fullImg = detailDoc.select("img#image").first();
-            if (fullImg != null) {
-                // 获取完整图片的 src 属性
-                return fullImg.absUrl("src");
+    protected String getFileUrl(Element imgElement) throws IOException {
+        String m = imgElement.attr("src");
+        // 构造图片详情页地址
+        String imageId = m.substring(m.lastIndexOf("?") + 1);
+        String detailPageUrl = "https://safebooru.org/index.php?page=post&s=view&id=" + imageId;
+        // 获取原图地址
+        Document doc = Jsoup.connect(detailPageUrl).get();
+        Element originalLink = doc.select("div.link-list a:contains(Original image)").first();
+        if (originalLink != null) {
+            String href = originalLink.attr("href");
+            if (href.startsWith("http")) {
+                return href;
+            } else if (href.startsWith("/")) {
+                return "https://safebooru.org" + href;
             }
-        } catch (IOException e) {
-            log.error("获取完整图片地址失败: {}", e.getMessage());
         }
         return null;
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * Konachan源模板
  */
+@Deprecated
 @Service
 @Slf4j
 public class JsoupTemplateFromKonachan extends JsoupTemplate {
