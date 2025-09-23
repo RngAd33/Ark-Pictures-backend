@@ -81,7 +81,7 @@ public abstract class JsoupTemplate {
         }
         // 解析图片元素
         Elements imgElementList = this.getImgElement(document);
-        log.info(">>>外层元素抓取完毕，开始解析内层元素");
+        log.info(">>>外层元素抓取完毕，开始解析内层元素并上传");
         // 遍历元素，依次上传
         int uploadCount = 0;
         for (Element imgElement : imgElementList) {
