@@ -44,7 +44,6 @@ public class JsoupTemplateFromBing extends JsoupTemplate {
         // 筛选图片元素（选择所有类名为 mimg 的 <img> 标签并存储在 imgElementList 中）
         Elements imgElementList = div.select("img.mimg");
         ThrowUtils.throwIf(imgElementList.isEmpty(), ErrorCodeEnum.NOT_PARAMS);
-        log.info(">>>内层元素解析完毕，开始上传图片");
         return imgElementList;
     }
 
