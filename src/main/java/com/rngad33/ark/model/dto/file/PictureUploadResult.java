@@ -19,7 +19,7 @@ public class PictureUploadResult {
     private String thumbUrl;
 
     /**
-     * 名称
+     * 图片名称
      */
     private String picName;
 

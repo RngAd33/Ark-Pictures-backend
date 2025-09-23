@@ -57,7 +57,7 @@ public abstract class PictureUploadTemplate {
         if (StrUtil.isBlank(suffix)) {
             throw new MyException(ErrorCodeEnum.NOT_PARAMS, "文件后缀为空！");
         }
-        // - 自己拼接图片上传路径，不使用原始名称，保证安全性
+        // 自己拼接图片上传路径，不使用原始名称，保证安全性
         String uploadFileName = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid, suffix);
         String uploadFilePath = String.format("/%s/%s", uploadPathPrefix, uploadFileName);
 
@@ -82,16 +82,16 @@ public abstract class PictureUploadTemplate {
                 if (file.length() > 1024 * 2) {
                     thumbnailCiObject = objectList.get(1);
                 }
-                return buildResult(originalFileName, compressCiObject, thumbnailCiObject);
+                return this.buildResult(originalFileName, compressCiObject, thumbnailCiObject);
             }
             // 封装原图的返回结果
-            return buildResult(originalFileName, file, imageInfo, uploadFilePath);
+            return this.buildResult(originalFileName, file, imageInfo, uploadFilePath);
         } catch (Exception e) {
             log.error(ErrorConstant.USER_LOSE_ACTION_MESSAGE + uploadFilePath, e);
             throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION);
         } finally {
             // 清理临时文件
-            deleteTempFile(file);
+            this.deleteTempFile(file);
         }
     }
 
@@ -158,6 +158,8 @@ public abstract class PictureUploadTemplate {
         double scale = NumberUtil.round(width * 1.0 / height, 2).doubleValue();
         // 封装返回结果
         PictureUploadResult pictureUploadResult = new PictureUploadResult();
+        pictureUploadResult.setOriginUrl(cosClientConfig.getHost() + "/" + compressCiObject.getKey());
+        pictureUploadResult.setThumbUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
         pictureUploadResult.setPicName(FileUtil.mainName(originalFileName));
         pictureUploadResult.setPicSize(compressCiObject.getSize().longValue());
         pictureUploadResult.setPicWidth(width);
