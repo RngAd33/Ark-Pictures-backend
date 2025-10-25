@@ -11,12 +11,17 @@ public interface UrlConstant {
     String sourceBing = "https://www.bing.com/images/async?q=%s&mmasync=1";
 
     /**
-     * Safebooru源（推荐）
+     * Unsplash源
+     */
+    String sourceUnsplash = "https://unsplash.com/s/photos/%s";
+
+    /**
+     * Safebooru源（二次元图源，推荐）
      */
     String sourceSafebooru = "https://safebooru.org/index.php?page=post&s=list&tags=%s";
 
     /**
-     * Konachan源（存在反爬机制，暂不可用）
+     * Konachan源（二次元图源，存在反爬机制，暂不可用）
      */
     String sourceKonachan = "https://konachan.net/post?tags=%s";
 

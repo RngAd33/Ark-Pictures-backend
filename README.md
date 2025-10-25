@@ -8,18 +8,18 @@
 
 ## Q：这个项目用到了哪些技术选型？
 ## A：前端部分：
-### Vue3框架
+- Vue3框架
 ## 后端部分：
-### SpringBoot 框架
-### MyBatis + MyBatisPlus 框架
-### Redis + Caffeine 多级缓存
-### 腾讯云COS对象存储 + 数据万象
-### Elasticsearch 分布式搜索
-### Disruptor 无锁并发框架
-### WebSocket 双向通信
-### Jsoup 网页解析框架
-### JUnit 单元测试
-### Swagger + Knife4j 接口文档
+- SpringBoot 框架
+- MyBatis + MyBatisPlus 框架
+- Redis + Caffeine 多级缓存
+- 腾讯云COS对象存储 + 数据万象
+- Elasticsearch 分布式搜索
+- Disruptor 无锁并发框架
+- WebSocket 双向通信
+- Jsoup 网页解析框架
+- JUnit 单元测试
+- Swagger + Knife4j 接口文档
 
 ## 严正声明：本站所有图片均来自网络，请务必重视版权意识，尊重他人劳动成果，全站图片未经作者授权严禁商用！一经发现，后果自负！
 
