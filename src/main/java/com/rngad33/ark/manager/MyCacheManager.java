@@ -39,6 +39,8 @@ public class MyCacheManager {
 
     private RBloomFilter<String> bloomFilter;
 
+    private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
+
     /**
      * 本地缓存构造
      */
@@ -71,7 +73,7 @@ public class MyCacheManager {
      */
     public Page<PictureVO> cacheQuery(PictureQueryRequest pictureQueryRequest, String redisKey, String caffeineKey,
                                       long current, long size, HttpServletRequest request) {
-        // 使用布隆过滤器判断key是否存在
+        // 使用布隆过滤器判断 key 是否存在
         if (ObjUtil.isNotNull(pictureQueryRequest) && !bloomFilter.contains(redisKey)) {
             // key不存在，直接返回空页面，避免缓存穿透
             return new Page<PictureVO>().setSize(size).setCurrent(current);
@@ -92,7 +94,7 @@ public class MyCacheManager {
                                 pictureService.getQueryWrapper(pictureQueryRequest));
                         Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
                         String cacheValue = JSONUtil.toJsonStr(pictureVOPage);   // 序列化
-                        // 设置Redis缓存有效期
+                        // 设置 Redis 缓存有效期
                         int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
                         // 写入二级缓存
                         this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
