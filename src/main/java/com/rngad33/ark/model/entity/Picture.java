@@ -84,6 +84,11 @@ public class Picture {
     private Long userId;
 
     /**
+     * 点赞量
+     */
+    private Long thumbCount;
+
+    /**
      * 创建时间
      */
     private Date createTime;

@@ -31,6 +31,7 @@ import com.rngad33.ark.model.enums.picture.PictureReviewStatusEnum;
 import com.rngad33.ark.model.vo.PictureVO;
 import com.rngad33.ark.model.vo.UserVO;
 import com.rngad33.ark.service.PictureService;
+import com.rngad33.ark.service.ThumbService;
 import com.rngad33.ark.service.UserService;
 import com.rngad33.ark.utils.ThrowUtils;
 import jakarta.annotation.Resource;
@@ -55,13 +56,16 @@ import java.util.stream.Collectors;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private CosManager cosManager;
 
     @Resource
     private UserManager userManager;
+
+    @Resource
+    private ThumbService thumbService;
+
+    @Resource
+    private UserService userService;
 
     @Resource
     private PictureUploadTemplateImplByFile pictureUploadTemplateImplByFile;

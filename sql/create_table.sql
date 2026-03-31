@@ -34,6 +34,7 @@ CREATE TABLE `picture` (
                            picScale     double                             null comment '图片宽高比例',
                            picFormat    varchar(32)                        null comment '图片格式',
                            userId       bigint                             not null comment '创建用户 id',
+                           thumbCount   bigint default 0                   not null comment '点赞量',
                            createTime   datetime default CURRENT_TIMESTAMP not null comment '创建时间',
                            editTime     datetime default CURRENT_TIMESTAMP not null comment '编辑时间',
                            updateTime   datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
