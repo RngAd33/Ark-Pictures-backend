@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 文件交互接口（测试用）
+ * 文件交互接口（COS测试用）
  */
 @Slf4j
 @RestController
