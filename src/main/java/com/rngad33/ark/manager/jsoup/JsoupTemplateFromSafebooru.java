@@ -21,15 +21,6 @@ import java.io.IOException;
 public class JsoupTemplateFromSafebooru extends JsoupTemplate {
 
     /**
-     * 构造函数注入 + 懒加载
-     *
-     * @param pictureService
-     */
-    public JsoupTemplateFromSafebooru(@Lazy PictureService pictureService) {
-        super(pictureService);
-    }
-
-    /**
      * 获取图片元素
      *
      * @param document

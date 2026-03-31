@@ -11,6 +11,7 @@ import com.rngad33.ark.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.ark.model.vo.PictureVO;
 import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.utils.ThrowUtils;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,16 +30,9 @@ import java.util.Date;
 @Slf4j
 public abstract class JsoupTemplate {
 
-    private final PictureService pictureService;
-
-    /**
-     * 构造函数注入 + 懒加载
-     *
-     * @param pictureService
-     */
-    public JsoupTemplate(@Lazy PictureService pictureService) {
-        this.pictureService = pictureService;
-    }
+    @Resource
+    @Lazy
+    private PictureService pictureService;
 
     /**
      * 定义抓取流程
@@ -48,7 +42,7 @@ public abstract class JsoupTemplate {
      * @return
      * @throws IOException
      */
-    public final int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException {
+    public int executePictures(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) throws IOException {
         // 设置搜索参数
         Integer count = pictureUploadByBatchRequest.getCount();
         String searchText = pictureUploadByBatchRequest.getSearchText();

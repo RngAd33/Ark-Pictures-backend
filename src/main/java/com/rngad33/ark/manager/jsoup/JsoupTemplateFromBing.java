@@ -20,15 +20,6 @@ import org.springframework.stereotype.Service;
 public class JsoupTemplateFromBing extends JsoupTemplate {
 
     /**
-     * 构造函数注入 + 懒加载
-     *
-     * @param pictureService
-     */
-    public JsoupTemplateFromBing(@Lazy PictureService pictureService) {
-        super(pictureService);
-    }
-
-    /**
      * 获取图片元素
      *
      * @param document

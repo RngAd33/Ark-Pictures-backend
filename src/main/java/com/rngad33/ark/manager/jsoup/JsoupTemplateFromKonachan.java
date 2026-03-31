@@ -17,15 +17,6 @@ import org.springframework.stereotype.Service;
 public class JsoupTemplateFromKonachan extends JsoupTemplate {
 
     /**
-     * 构造函数注入 + 懒加载
-     *
-     * @param pictureService
-     */
-    public JsoupTemplateFromKonachan(@Lazy PictureService pictureService) {
-        super(pictureService);
-    }
-
-    /**
      * 获取图片元素
      *
      * @return
