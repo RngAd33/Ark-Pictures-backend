@@ -1,11 +1,13 @@
 package com.rngad33.ark.model.dto.file;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
- * 文件上传结果对象
+ * 文件上传请求体
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PictureUploadResult {
 
     /**

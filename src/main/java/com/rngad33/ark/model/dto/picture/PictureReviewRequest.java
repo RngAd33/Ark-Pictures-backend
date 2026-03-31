@@ -1,14 +1,14 @@
 package com.rngad33.ark.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 图片审核请求体
  */
 @Data
-public class PictureReviewRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PictureReviewRequest {
 
     /**
      * id
@@ -24,7 +24,5 @@ public class PictureReviewRequest implements Serializable {
      * 审核信息
      */
     private String reviewMessage;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }

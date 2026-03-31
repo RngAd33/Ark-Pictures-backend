@@ -2,19 +2,20 @@ package com.rngad33.ark.model.vo;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rngad33.ark.model.entity.Picture;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * 图片封装类
+ * 图片视图
  */
 @Data
-public class PictureVO implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PictureVO {
 
     /**
      * id
@@ -100,13 +101,6 @@ public class PictureVO implements Serializable {
      * 创建人信息
      */
     private UserVO user;
-
-    /**
-     * 权限列表
-     */
-    private List<String> permissionList = new ArrayList<>();
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * 封装类转对象

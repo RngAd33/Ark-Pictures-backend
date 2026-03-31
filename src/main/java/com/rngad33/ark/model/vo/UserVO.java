@@ -1,17 +1,18 @@
 package com.rngad33.ark.model.vo;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rngad33.ark.model.entity.User;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户封装类
+ * 用户视图
  */
 @Data
-public class UserVO implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserVO {
 
     /**
      * id
@@ -19,12 +20,12 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 鐢ㄦ埛鍚嶇О
      */
     private String userName;
 
     /**
-     * 星球编号
+     * 鏃犲彇鍖栧彉鍗�
      */
     private String planetCode;
 
@@ -49,7 +50,7 @@ public class UserVO implements Serializable {
     private String phone;
 
     /**
-     * 用户状态：0-正常，1-封禁
+     * 鐢ㄦ埛鐘舵€�0-正常，1-封禁
      */
     private Integer userStatus;
 
@@ -63,8 +64,6 @@ public class UserVO implements Serializable {
      */
     private Date updateTime;
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * 封装类转对象
      *
@@ -72,6 +71,9 @@ public class UserVO implements Serializable {
      * @return
      */
     public static User voToObj(UserVO userVO) {
+        if (userVO == null) {
+            return null;
+        }
         User user = new User();
         BeanUtil.copyProperties(userVO, user);
         return user;

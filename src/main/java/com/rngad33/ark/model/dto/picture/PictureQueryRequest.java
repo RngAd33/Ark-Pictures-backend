@@ -1,10 +1,10 @@
 package com.rngad33.ark.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rngad33.ark.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +13,8 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PictureQueryRequest extends PageRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PictureQueryRequest extends PageRequest {
 
     /**
      * id
@@ -94,7 +95,5 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      * 审核时间
      */
     private Date reviewTime;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }
