@@ -52,5 +52,4 @@ public class ThumbController {
         return ResultUtils.success(thumbService.unThumb(thumbRequest));
     }
 
-
 }
