@@ -83,6 +83,11 @@ public class PictureVO {
     private Long userId;
 
     /**
+     * 点赞量
+     */
+    private Long thumbCount;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -113,6 +118,7 @@ public class PictureVO {
             return null;
         }
         Picture picture = new Picture();
+        BeanUtil.copyProperties(pictureVO, picture, "tags");
         picture.setTags(JSONUtil.toJsonStr(pictureVO.getTags()));
         return picture;
     }
@@ -128,7 +134,7 @@ public class PictureVO {
             return null;
         }
         PictureVO pictureVO = new PictureVO();
-        BeanUtil.copyProperties(picture, pictureVO);
+        BeanUtil.copyProperties(picture, pictureVO, "tags");
         pictureVO.setTags(JSONUtil.toList(picture.getTags(), String.class));
         return pictureVO;
     }

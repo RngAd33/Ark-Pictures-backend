@@ -1,8 +1,10 @@
 package com.rngad33.ark.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.mybatisflex.core.service.IService;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
 import com.rngad33.ark.model.entity.Thumb;
+
+import java.util.List;
 
 /**
  * 点赞服务接口
@@ -22,7 +24,7 @@ public interface ThumbService extends IService<Thumb> {
     /**
      * 查看某用户赞过的图片 id
      */
-    long[] listThumbIds(long userId);
+    List<Long> listThumbIds(long userId);
 
     /**
      * 统计某图片的点赞量

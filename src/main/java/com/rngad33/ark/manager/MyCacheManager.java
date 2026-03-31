@@ -3,9 +3,9 @@ package com.rngad33.ark.manager;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.mybatisflex.core.paginate.Page;
 import com.rngad33.ark.model.dto.picture.PictureQueryRequest;
 import com.rngad33.ark.model.entity.Picture;
 import com.rngad33.ark.model.vo.PictureVO;
@@ -79,7 +79,7 @@ public class MyCacheManager {
         // 使用布隆过滤器判断 key 是否存在
         if (ObjUtil.isNotNull(pictureQueryRequest) && !bloomFilter.contains(redisKey)) {
             // key不存在，直接返回空页面，避免缓存穿透
-            return new Page<PictureVO>().setSize(size).setCurrent(current);
+            return new Page<>(current, size);
         }
         // 优先查询本地缓存
         String cachedValue = getCachedFromCaffeine(redisKey);

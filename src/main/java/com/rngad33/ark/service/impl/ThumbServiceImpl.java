@@ -1,13 +1,11 @@
 package com.rngad33.ark.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.manager.MyCacheManager;
 import com.rngad33.ark.mapper.ThumbMapper;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
-import com.rngad33.ark.model.entity.Picture;
 import com.rngad33.ark.model.entity.Thumb;
-import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
 import com.rngad33.ark.service.UserService;
 import jakarta.annotation.Resource;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 点赞服务实现类
@@ -45,7 +44,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
         long pictureId = thumbRequest.getPictureId();
 
         // 判断是否已经点赞
-        QueryWrapper<Thumb> queryWrapper = new QueryWrapper<>();
+        QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("userId", userId).eq("pictureId", pictureId);
         if (this.count(queryWrapper) > 0) {
             log.error("你已点赞过该图片！");
@@ -79,11 +78,11 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
      * @return
      */
     @Override
-    public long[] listThumbIds(long userId) {
-        QueryWrapper<Thumb> queryWrapper = new QueryWrapper<>();
+    public List<Long> listThumbIds(long userId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.select("id").eq("userId", userId);
         List<Thumb> list = this.list(queryWrapper);
-        return list.stream().mapToLong(Thumb::getId).toArray();
+        return list.stream().map(Thumb::getId).collect(Collectors.toList());
     }
 
     /**
@@ -94,7 +93,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
      */
     @Override
     public long countThumb(long pictureId) {
-        QueryWrapper<Thumb> queryWrapper = new QueryWrapper<>();
+        QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("pictureId", pictureId);
         return this.count(queryWrapper);
     }

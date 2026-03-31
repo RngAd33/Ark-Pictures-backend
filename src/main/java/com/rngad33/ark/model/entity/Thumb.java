@@ -1,20 +1,23 @@
 package com.rngad33.ark.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import lombok.Data;
 
 /**
  * 点赞实体类
  */
 @Data
-@TableName("thumb")
+@Table("thumb")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Thumb {
 
     /**
      * id
      */
+    @Id(keyType = KeyType.Generator)
     private Long id;
 
     /**

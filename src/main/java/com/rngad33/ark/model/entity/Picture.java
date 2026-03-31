@@ -1,7 +1,10 @@
 package com.rngad33.ark.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,7 +15,7 @@ import java.util.Date;
  * @TableName picture
  */
 @Data
-@TableName(value ="picture")
+@Table("picture")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Picture {
 
@@ -20,7 +23,7 @@ public class Picture {
      * id
      * 当前策略为随机长id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id(keyType = KeyType.Generator)
     private Long id;
 
     /**
@@ -126,7 +129,7 @@ public class Picture {
     /**
      * 是否删除
      */
-    @TableLogic
+    @Column(isLogicDelete = true)
     private Integer isDelete;
 
 }

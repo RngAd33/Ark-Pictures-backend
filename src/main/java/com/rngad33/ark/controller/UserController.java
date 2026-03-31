@@ -1,6 +1,6 @@
 package com.rngad33.ark.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mybatisflex.core.paginate.Page;
 import com.rngad33.ark.annotation.AuthCheck;
 import com.rngad33.ark.common.BaseResponse;
 import com.rngad33.ark.constant.UserConstant;
@@ -160,7 +160,7 @@ public class UserController {
         long pageSize = userQueryRequest.getPageSize();
         Page<User> userPage = userService.page(new Page<>(current, pageSize),
                 userService.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotal());
+        Page<UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotalPage());
         List<UserVO> userVOList = userService.getUserVOList(userPage.getRecords());
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage);

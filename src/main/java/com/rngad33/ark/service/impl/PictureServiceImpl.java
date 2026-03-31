@@ -4,9 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.constant.UrlConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.manager.CosManager;
@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.rngad33.ark.model.entity.table.PictureTableDef.PICTURE;
 
 /**
  * 图片业务实现
@@ -151,8 +153,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
      * @return
      */
     @Override
-    public QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest) {
-        QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
+    public QueryWrapper getQueryWrapper(PictureQueryRequest pictureQueryRequest) {
+        QueryWrapper queryWrapper = new QueryWrapper();
         if (pictureQueryRequest == null) {
             return queryWrapper;
         }
@@ -176,27 +178,24 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         String sortField = pictureQueryRequest.getSortField();
         String sortOrder = pictureQueryRequest.getSortOrder();
         // 从多字段中搜索
+        queryWrapper.eq("id", id, ObjUtil.isNotEmpty(id));
+        queryWrapper.eq("userId", userId, ObjUtil.isNotEmpty(userId));
+        queryWrapper.like("name", name, StrUtil.isNotBlank(name));
+        queryWrapper.like("introduction", introduction, StrUtil.isNotBlank(introduction));
+        queryWrapper.like("picFormat", picFormat, StrUtil.isNotBlank(picFormat));
+        queryWrapper.like("reviewMessage", reviewMessage, StrUtil.isNotBlank(reviewMessage));
+        queryWrapper.eq("category", category, StrUtil.isNotBlank(category));
+        queryWrapper.eq("picWidth", picWidth, ObjUtil.isNotEmpty(picWidth));
+        queryWrapper.eq("picHeight", picHeight, ObjUtil.isNotEmpty(picHeight));
+        queryWrapper.eq("picSize", picSize, ObjUtil.isNotEmpty(picSize));
+        queryWrapper.eq("picScale", picScale, ObjUtil.isNotEmpty(picScale));
+        queryWrapper.eq("reviewStatus", reviewStatus, ObjUtil.isNotEmpty(reviewStatus));
+        queryWrapper.eq("reviewId", reviewId, ObjUtil.isNotEmpty(reviewId));
+        queryWrapper.eq("reviewTime", reviewTime, ObjUtil.isNotEmpty(reviewTime));
         if (StrUtil.isNotBlank(searchText)) {
-            // 需要拼接查询条件
-            queryWrapper.and(qw -> qw.like("name", searchText)
-                    .or()
-                    .like("introduction", searchText)
-            );
+            // 有搜索词需要拼接查询条件
+            queryWrapper.and(PICTURE.NAME.like(searchText).or(PICTURE.INTRODUCTION.like(searchText)));
         }
-        queryWrapper.eq(ObjUtil.isNotEmpty(id), "id", id);
-        queryWrapper.eq(ObjUtil.isNotEmpty(userId), "userId", userId);
-        queryWrapper.like(StrUtil.isNotBlank(name), "name", name);
-        queryWrapper.like(StrUtil.isNotBlank(introduction), "introduction", introduction);
-        queryWrapper.like(StrUtil.isNotBlank(picFormat), "picFormat", picFormat);
-        queryWrapper.like(StrUtil.isNotBlank(reviewMessage), "reviewMessage", reviewMessage);
-        queryWrapper.eq(StrUtil.isNotBlank(category), "category", category);
-        queryWrapper.eq(ObjUtil.isNotEmpty(picWidth), "picWidth", picWidth);
-        queryWrapper.eq(ObjUtil.isNotEmpty(picHeight), "picHeight", picHeight);
-        queryWrapper.eq(ObjUtil.isNotEmpty(picSize), "picSize", picSize);
-        queryWrapper.eq(ObjUtil.isNotEmpty(picScale), "picScale", picScale);
-        queryWrapper.eq(ObjUtil.isNotEmpty(reviewStatus), "reviewStatus", reviewStatus);
-        queryWrapper.eq(ObjUtil.isNotEmpty(reviewId), "reviewId", reviewId);
-        queryWrapper.eq(ObjUtil.isNotEmpty(reviewTime), "reviewTime", reviewTime);
         // JSON 数组查询
         if (CollUtil.isNotEmpty(tags)) {
             for (String tag : tags) {
@@ -204,7 +203,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             }
         }
         // 排序
-        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
+        queryWrapper.orderBy(sortField, sortOrder.equals("ascend"));
         return queryWrapper;
     }
 
@@ -242,8 +241,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 对象转封装类
         PictureVO pictureVO = PictureVO.objToVo(picture);
         // 关联查询用户信息
-        Long userId = picture.getUserId();
-        if (userId != null && userId > 0) {
+        long userId = picture.getUserId();
+        if (userId > 0) {
             User user = userService.getById(userId);
             UserVO userVO = UserVO.objToVo(user);
             pictureVO.setUser(userVO);
@@ -262,14 +261,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     public Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request) {
         List<Picture> pictureList = picturePage.getRecords();
         Page<PictureVO> pictureVOPage = new Page<> (
-                picturePage.getCurrent(),
-                picturePage.getSize(),
-                picturePage.getTotal()
+                picturePage.getPageNumber(),
+                picturePage.getPageSize(),
+                picturePage.getTotalPage()
         );
         if (CollUtil.isEmpty(pictureList)) {
             return pictureVOPage;
         }
-        // 对象列表 => 封装对象列表
+        // 对象列表 => 封装类列表
         List<PictureVO> pictureVOList = pictureList.stream()
                 .map(PictureVO::objToVo)
                 .collect(Collectors.toList());
@@ -286,7 +285,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             Long userId = pictureVO.getUserId();
             User user = null;
             if (userIdUserListMap.containsKey(userId)) {
-                user = userIdUserListMap.get(userId).get(0);
+                user = userIdUserListMap.get(userId).getFirst();
             }
             pictureVO.setUser(UserVO.objToVo(user));
         });
@@ -362,9 +361,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     public void deletePicture(Picture oldPicture) {
         // 判断图片是否被多条记录引用
         String originUrl = oldPicture.getOriginUrl();
-        long count = this.lambdaQuery()
-                .eq(Picture::getOriginUrl, originUrl)
-                .count();
+        long count = this.count(QueryWrapper.create().eq(Picture::getOriginUrl, originUrl));
         if (count > 1) {
             // - 有不止一条记录引用此图片，不清理
             return;
@@ -376,5 +373,16 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             cosManager.deleteObject(thumbUrl);
         }
     }
+
+    /**
+     * 查询当前用户已经点赞的图片
+     */
+    public Page<PictureVO> listThumbPictures(long userId) {
+        List<Long> ids = thumbService.listThumbIds(userId);
+        Page<Picture> picturePage = this.page(new Page<>(1, 20, ids.size()),
+                QueryWrapper.create().in("pictureId", ids, !ids.isEmpty()));
+        return picturePage.map(PictureVO::objToVo);
+    }
+
 
 }

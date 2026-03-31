@@ -2,7 +2,7 @@ package com.rngad33.ark.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mybatisflex.core.paginate.Page;
 import com.rngad33.ark.annotation.AuthCheck;
 import com.rngad33.ark.common.BaseResponse;
 import com.rngad33.ark.common.DeleteRequest;

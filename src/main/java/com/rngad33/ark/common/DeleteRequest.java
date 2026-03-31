@@ -1,5 +1,6 @@
 package com.rngad33.ark.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,13 +9,12 @@ import java.io.Serializable;
  * 通用删除请求体
  */
 @Data
-public class DeleteRequest implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class DeleteRequest {
 
     /**
      * id
      */
     private Long id;
-
-    private static final long serialVersionUID = 3191241716373120793L;
 
 }

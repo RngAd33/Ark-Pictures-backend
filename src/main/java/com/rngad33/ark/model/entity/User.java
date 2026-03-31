@@ -1,7 +1,10 @@
 package com.rngad33.ark.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,7 +15,7 @@ import java.util.Date;
  * @TableName user
  */
 @Data
-@TableName(value = "user")
+@Table(value = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
@@ -20,7 +23,7 @@ public class User {
      * 用户 id（主要服务于Mapper）
      * 当前策略为主键自增
      */
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
     private Long id;
 
     /**
@@ -71,7 +74,7 @@ public class User {
     /**
      * 是否删除？ 0-未删，1-已删
      */
-    @TableLogic
+    @Column(isLogicDelete = true)
     private Integer isDelete;
 
 }

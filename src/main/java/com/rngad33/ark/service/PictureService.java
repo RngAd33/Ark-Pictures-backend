@@ -1,8 +1,8 @@
 package com.rngad33.ark.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.service.IService;
 import com.rngad33.ark.model.dto.picture.PictureQueryRequest;
 import com.rngad33.ark.model.dto.picture.PictureReviewRequest;
 import com.rngad33.ark.model.dto.picture.PictureUploadByBatchRequest;
@@ -33,7 +33,7 @@ public interface PictureService extends IService<Picture> {
      * @param pictureQueryRequest
      * @return
      */
-    QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest);
+    QueryWrapper getQueryWrapper(PictureQueryRequest pictureQueryRequest);
 
     /**
      * 校验图片信息
