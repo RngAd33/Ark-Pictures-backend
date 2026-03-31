@@ -84,4 +84,12 @@ public interface PictureService extends IService<Picture> {
      */
     void deletePicture(Picture oldPicture);
 
+    /**
+     * 查询当前用户已经点赞的图片
+     *
+     * @param userId
+     * @return
+     */
+    Page<PictureVO> listThumbPictures(long userId);
+
 }

@@ -376,7 +376,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     /**
      * 查询当前用户已经点赞的图片
+     *
+     * @param userId
+     * @return
      */
+    @Override
     public Page<PictureVO> listThumbPictures(long userId) {
         List<Long> ids = thumbService.listThumbIds(userId);
         Page<Picture> picturePage = this.page(new Page<>(1, 20, ids.size()),
