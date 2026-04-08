@@ -67,8 +67,8 @@ public class MyCacheManager {
      * 数据多级查询
      *
      * @param pictureQueryRequest 查询请求
-     * @param redisKey 缓存的key
-     * @param caffeineKey 缓存的key
+     * @param redisKey 缓存的 key
+     * @param caffeineKey 缓存的 key
      * @param current 当前页
      * @param size 页尺寸
      * @param request HTTP请求

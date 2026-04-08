@@ -31,5 +31,15 @@ public interface ThumbService extends IService<Thumb> {
      */
     long countThumb(long pictureId);
 
+    /**
+     * 判断是否已点赞
+     *
+     * @param pictureId
+     * @param userId
+     * @return
+     */
+    boolean hasThumb(long pictureId, long userId);
+
+
 
 }

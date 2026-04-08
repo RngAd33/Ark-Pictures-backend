@@ -23,6 +23,7 @@ public interface UrlConstant {
     /**
      * Konachan源（二次元图源，存在反爬机制，暂不可用）
      */
+    @Deprecated
     String sourceKonachan = "https://konachan.net/post?tags=%s";
 
     /**
