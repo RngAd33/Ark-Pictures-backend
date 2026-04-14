@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 定时任务
+ * 定时任务：同步点赞信息
  */
 @Component
 public class SyncThumb2DBTasks {
@@ -33,7 +33,7 @@ public class SyncThumb2DBTasks {
     /**
      * 同步点赞信息到数据库
      */
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 60000)
     @Transactional(rollbackFor = Exception.class)
     public void doSynchronize() {
         List<Thumb> thumbsNeedSave = new LinkedList<>();
@@ -56,13 +56,12 @@ public class SyncThumb2DBTasks {
             // - 查找到信息，执行批量保存
             thumbService.saveBatch(thumbsNeedSave);
         }
-
     }
 
     /**
      * 同步取消点赞信息到数据库
      */
-    @Scheduled(fixedRate = 50000)
+    @Scheduled(fixedRate = 600000)
     @Transactional(rollbackFor = Exception.class)
     public void doUnSynchronize() {
         List<Long> thumbIdsNeedRemove = new LinkedList<>();
@@ -85,7 +84,6 @@ public class SyncThumb2DBTasks {
             // - 查找到信息，执行批量删除
             thumbService.removeByIds(thumbIdsNeedRemove);
         }
-
     }
 
 }

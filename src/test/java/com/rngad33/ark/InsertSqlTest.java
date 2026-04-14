@@ -1,6 +1,7 @@
 package com.rngad33.ark;
 
 import cn.hutool.core.date.StopWatch;
+import cn.hutool.core.util.StrUtil;
 import com.rngad33.ark.model.entity.Picture;
 import com.rngad33.ark.model.entity.User;
 import com.rngad33.ark.service.PictureService;
@@ -74,7 +75,7 @@ class InsertSqlTest {
                 Picture picture = new Picture();
                 picture.setOriginUrl("https://636f-codenav-8grj8px727565176-1256524210.tcb.qcloud.la/img/logo.png");
                 picture.setThumbUrl("https://636f-codenav-8grj8px727565176-1256524210.tcb.qcloud.la/img/logo.png");
-                picture.setName("祈");
+                picture.setName("祈" + StrUtil.uuid());
                 picture.setIntroduction("我ら神祖と共に歩む者なり");
                 picture.setCategory("CHUNITHM");
                 picture.setTags("[]");
