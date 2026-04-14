@@ -6,6 +6,4 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 
-public interface ThumbMapper extends BaseMapper<Thumb> {
-    void batchUpdateThumbCount(@Param("countMap") Map<Long, Long> countMap);
-}
+public interface ThumbMapper extends BaseMapper<Thumb> {}
