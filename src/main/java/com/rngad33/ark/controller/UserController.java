@@ -243,6 +243,9 @@ public class UserController {
 
     /**
      * 统计总获赞量
+     *
+     * @param id
+     * @return
      */
     @GetMapping("/thumb/count")
     public BaseResponse<Long> countThumb(@RequestParam("id") long id) {
