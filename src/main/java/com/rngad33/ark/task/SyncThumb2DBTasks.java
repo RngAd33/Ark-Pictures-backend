@@ -115,8 +115,7 @@ public class SyncThumb2DBTasks {
             // 回到上一分钟
             nowDate = DateUtil.offsetMinute(nowDate, -1);
         }
-        String date = DateUtil.format(nowDate, "HH:MM:" + second);
-        return date;
+        return DateUtil.format(nowDate, "HH:MM:" + second);
     }
 
 }
