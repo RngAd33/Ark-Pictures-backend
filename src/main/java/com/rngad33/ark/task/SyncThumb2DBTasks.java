@@ -50,7 +50,8 @@ public class SyncThumb2DBTasks {
     public void doSynchronize() {
         // 扫描 Redis 查找点赞信息
         String date = this.alignTime();
-        Map<Object, Object> thumbMap = redisTemplate.opsForHash().entries(RedisKeyUtils.getTempThumbKey(date));
+        String thumbKey = RedisKeyUtils.getTempThumbKey(date);
+        Map<Object, Object> thumbMap = redisTemplate.opsForHash().entries(thumbKey);
         if (CollUtil.isEmpty(thumbMap)) {
             return;
         }
@@ -78,7 +79,7 @@ public class SyncThumb2DBTasks {
             } else {
                 if (thumbType != ThumbTypeEnum.NON.getValue()) {
                     // - 状态异常
-                    log.error("点赞状态异常：{}", userIdPictureId);
+                    log.warn("数据异常：{}", userId + "," + pictureId + "," + thumbType);
                 }
                 continue;
             }
@@ -96,7 +97,9 @@ public class SyncThumb2DBTasks {
             pictureMapper.batchUpdateThumbCount(thumbCountMap);
         }
         // 异步删除
-
+        Thread.startVirtualThread(() -> {
+            redisTemplate.delete(thumbKey);
+        });
     }
 
     /**
