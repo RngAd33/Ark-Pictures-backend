@@ -22,14 +22,22 @@ public interface ThumbService extends IService<Thumb> {
     boolean unThumb(ThumbRequest thumbRequest);
 
     /**
-     * 查看某用户赞过的图片 id
+     * 查看某用户赞过的图片 ids
      */
     List<Long> listThumbIds(long userId);
 
     /**
+     * 统计某用户的累计获赞量
+     *
+     * @param userId
+     * @return
+     */
+    long countUserThumb(long userId);
+
+    /**
      * 统计某图片的点赞量
      */
-    long countThumb(long pictureId);
+    long countPictureThumb(long pictureId);
 
     /**
      * 判断是否已点赞
@@ -39,7 +47,5 @@ public interface ThumbService extends IService<Thumb> {
      * @return
      */
     boolean hasThumb(long pictureId, long userId);
-
-
 
 }

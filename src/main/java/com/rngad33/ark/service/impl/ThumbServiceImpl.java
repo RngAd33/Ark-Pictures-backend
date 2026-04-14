@@ -5,6 +5,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.constant.ThumbConstant;
 import com.rngad33.ark.exception.MyException;
+import com.rngad33.ark.manager.LockManager;
 import com.rngad33.ark.manager.MyCacheManager;
 import com.rngad33.ark.mapper.ThumbMapper;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
@@ -36,7 +37,7 @@ import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements ThumbService {
 
     @Resource
-    private MyCacheManager myCacheManager;
+    private LockManager lockManager;
 
     @Resource
     private PictureService pictureService;
@@ -59,7 +60,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
         long pictureId = thumbRequest.getPictureId();
         // 加分布式锁，执行操作
         try {
-            boolean hasLocked = myCacheManager.tryLock("doThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
+            boolean hasLocked = lockManager.tryLock("doThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
             if (hasLocked) {
                 // 开启编程式事务
                 return Objects.equals(Boolean.TRUE, transactionTemplate.execute(status -> {
@@ -79,12 +80,9 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
                     Thumb thumb = new Thumb();
                     thumb.setUserId(userId);
                     thumb.setPictureId(pictureId);
-                    boolean success = update && this.save(thumb);
-                    if (success) {
-                        redisTemplate.opsForHash().put(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, thumb.getId());
-                        log.info("点赞成功！");
-                    }
-                    return success;
+                    redisTemplate.opsForHash().put(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, thumb.getId());
+                    log.info("点赞成功！");
+                    return true;
                 }));
             } else {
                 log.error("获取分布式锁失败！");
@@ -92,7 +90,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
             }
         } finally {
             // 不论是否成功都要释放锁
-            myCacheManager.unlock("doThumb:" + userId);
+            lockManager.unlock("doThumb:" + userId);
         }
     }
 
@@ -106,10 +104,9 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
     public boolean unThumb(ThumbRequest thumbRequest) {
         Long userId = thumbRequest.getUserId();
         long pictureId = thumbRequest.getPictureId();
-
         // 加分布式锁，执行操作
         try {
-            boolean hasLocked = myCacheManager.tryLock("unThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
+            boolean hasLocked = lockManager.tryLock("unThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
             if (hasLocked) {
                 // 开启编程式事务
                 return Objects.equals(Boolean.TRUE, transactionTemplate.execute(status -> {
@@ -136,7 +133,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
             }
         } finally {
             // 不论是否成功都要释放锁
-            myCacheManager.unlock("unThumb:" + userId);
+            lockManager.unlock("unThumb:" + userId);
         }
         return true;
     }
@@ -156,16 +153,20 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
     }
 
     /**
-     * 统计某图片的点赞量
+     * 统计某用户的累计获赞量
      *
-     * @param pictureId
+     * @param userId
      * @return
      */
     @Override
-    public long countThumb(long pictureId) {
+    public long countUserThumb(long userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq(THUMB.PICTURE_ID.getName(), pictureId);
         return this.count(queryWrapper);
+    }
+
+    @Override
+    public long countPictureThumb(long pictureId) {
+        return 0;
     }
 
     /**

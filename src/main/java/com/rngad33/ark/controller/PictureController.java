@@ -41,9 +41,6 @@ import java.util.List;
 public class PictureController {
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private UserManager userManager;
 
     @Resource
@@ -51,6 +48,9 @@ public class PictureController {
 
     @Resource
     private PictureService pictureService;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 图片上传（基于文件）
@@ -136,7 +136,7 @@ public class PictureController {
      * @param request
      * @return
      */
-    @PostMapping("/delete")
+    @PostMapping("/del")
     public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new MyException(ErrorCodeEnum.PARAMS_ERROR);
@@ -235,7 +235,7 @@ public class PictureController {
      * @return
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @GetMapping("/getPI")
+    @GetMapping("/get")
     public BaseResponse<Picture> getPictureById(Long id) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAMS_ERROR);
         // 查询数据库
@@ -252,7 +252,7 @@ public class PictureController {
      * @param request
      * @return
      */
-    @GetMapping("/getPI/vo")
+    @GetMapping("/get/vo")
     public BaseResponse<PictureVO> getPictureVOById(Long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCodeEnum.PARAMS_ERROR);
         // 查询数据库
@@ -342,11 +342,11 @@ public class PictureController {
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays
-                .asList("每日推荐", "明日方舟", "终末地", "泡姆泡姆", "纳斯特港");
+                .asList("每日推荐", "明日方舟", "终末地", "泡姆泡姆", "来自星尘", "纳斯特港");
         List<String> nastList = Arrays
                 .asList("碧蓝航线", "异世界风景", "东方Project", "原神", "VOLCALOID", "MISC");
         List<String> categoryList = Arrays
-                .asList("电脑壁纸", "手机壁纸", "名梗弔图", "表情包", "头像系列");
+                .asList("电脑壁纸", "手机壁纸", "名梗弔图", "贴图素材",  "头像系列");
         pictureTagCategory.setTagList(tagList);
         pictureTagCategory.setNastList(nastList);
         pictureTagCategory.setCategoryList(categoryList);

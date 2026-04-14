@@ -10,6 +10,7 @@ import com.rngad33.ark.model.dto.user.*;
 import com.rngad33.ark.model.entity.User;
 import com.rngad33.ark.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.ark.model.vo.UserVO;
+import com.rngad33.ark.service.ThumbService;
 import com.rngad33.ark.service.UserService;
 import com.rngad33.ark.utils.ResultUtils;
 import com.rngad33.ark.utils.ThrowUtils;
@@ -29,10 +30,13 @@ import java.util.List;
 public class UserController {
 
     @Resource
+    private UserManager userManager;
+
+    @Resource
     private UserService userService;
 
     @Resource
-    private UserManager userManager;
+    private ThumbService thumbService;
 
     /**
      * 用户注册
@@ -235,6 +239,15 @@ public class UserController {
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 统计总获赞量
+     */
+    @GetMapping("/thumb/count")
+    public BaseResponse<Long> countThumb(@RequestParam("id") long id) {
+        long count = thumbService.countUserThumb(id);
+        return ResultUtils.success(count);
     }
 
 }
