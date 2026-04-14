@@ -2,7 +2,6 @@ package com.rngad33.ark.manager.jsoup;
 
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import com.rngad33.ark.constant.UrlConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.model.dto.picture.PictureUploadByBatchRequest;
 import com.rngad33.ark.model.dto.picture.PictureUploadRequest;

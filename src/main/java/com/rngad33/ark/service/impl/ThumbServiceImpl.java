@@ -6,7 +6,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.constant.ThumbConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.manager.LockManager;
-import com.rngad33.ark.manager.MyCacheManager;
 import com.rngad33.ark.mapper.ThumbMapper;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
 import com.rngad33.ark.model.entity.Picture;
@@ -14,7 +13,6 @@ import com.rngad33.ark.model.entity.Thumb;
 import com.rngad33.ark.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
-import com.rngad33.ark.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +24,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.rngad33.ark.model.entity.table.PictureTableDef.PICTURE;
 import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 
 /**

@@ -3,8 +3,6 @@ package com.rngad33.ark.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * 通用删除请求体
  */
