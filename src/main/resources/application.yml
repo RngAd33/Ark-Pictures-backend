@@ -26,20 +26,31 @@ spring:
       port: ${sky.spring.redis.port}
       timeout: ${sky.spring.redis.timeout}
 
-mybatis-plus:
+mybatis-flex:
+  mapper-locations: classpath:mapper/*.xml
   configuration:
-    # 是否开启驼峰命名
-    map-underscore-to-camel-case: false
+    # 显示数据库日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 驼峰命名自动映射
+    map-underscore-to-camel-case: true
   global-config:
-    db-config:
-      logic-delete-field: isDelete   # 全局逻辑删除字段名
-      logic-delete-value: 1   # 逻辑已删除字段值
-      logic-not-delete-value: 0   # 逻辑未删除字段值
+    logic-delete-column: isDelete
+    logic-delete-value: 1
+    logic-not-delete-value: 0
 
 sky:
   jwt:
     admin-secret-key: ${sky.jwt.admin-secret-key}
     admin-token-name: ${sky.jwt.admin-token-name}
+
+# 对象存储（需要从腾讯云获取）
+cos:
+  client:
+    host: ${sky.cos.client.host}
+    secretId: ${sky.cos.client.secretId}
+    secretKey: ${sky.cos.client.secretKey}
+    region: ${sky.cos.client.region}
+    bucket: ${sky.cos.client.bucket}
 
 # 接口文档
 knife4j:
@@ -52,12 +63,3 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.rngad33.web.controller
-
-# 对象存储（需要从腾讯云获取）
-cos:
-  client:
-    host: ${sky.cos.client.host}
-    secretId: ${sky.cos.client.secretId}
-    secretKey: ${sky.cos.client.secretKey}
-    region: ${sky.cos.client.region}
-    bucket: ${sky.cos.client.bucket}

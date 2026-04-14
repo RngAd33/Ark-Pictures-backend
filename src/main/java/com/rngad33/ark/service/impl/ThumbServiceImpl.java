@@ -6,6 +6,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.constant.ThumbConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.manager.LockManager;
+import com.rngad33.ark.mapper.PictureMapper;
 import com.rngad33.ark.mapper.ThumbMapper;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
 import com.rngad33.ark.model.entity.Picture;
@@ -37,7 +38,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
     private LockManager lockManager;
 
     @Resource
-    private PictureService pictureService;
+    private PictureMapper pictureMapper;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -70,16 +71,21 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
                         throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION, "你已点赞过该图片！");
                     }
                     // 更新图片点赞数 + 1
-                    Picture picture = pictureService.getById(pictureId);
+                    Picture picture = pictureMapper.selectOneById(pictureId);
                     picture.setThumbCount(picture.getThumbCount() + 1);
-                    boolean update = pictureService.updateById(picture);
-                    // 保存点赞记录到数据库
-                    Thumb thumb = new Thumb();
-                    thumb.setUserId(userId);
-                    thumb.setPictureId(pictureId);
-                    redisTemplate.opsForHash().put(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, thumb.getId());
-                    log.info("点赞成功！");
-                    return true;
+                    int update = pictureMapper.update(picture);
+                    if (update == 1) {
+                        // 保存点赞记录到数据库
+                        Thumb thumb = new Thumb();
+                        thumb.setUserId(userId);
+                        thumb.setPictureId(pictureId);
+                        redisTemplate.opsForHash().put(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, thumb.getId());
+                        log.info("点赞成功！");
+                        return true;
+                    } else {
+                        log.error("点赞量数据未同步！");
+                        return false;
+                    }
                 }));
             } else {
                 log.error("获取分布式锁失败！");
@@ -116,11 +122,11 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
                         throw new MyException(ErrorCodeEnum.USER_LOSE_ACTION, "你还没有点赞过该图片！");
                     }
                     // 更新图片点赞数 - 1
-                    Picture picture = pictureService.getById(pictureId);
+                    Picture picture = pictureMapper.selectOneById(pictureId);
                     picture.setThumbCount(picture.getThumbCount() - 1);
-                    boolean update = pictureService.updateById(picture);
+                    int update = pictureMapper.update(picture);
                     // 删除点赞记录
-                    boolean success = update && this.remove(queryWrapper);
+                    boolean success = (update == 1) && this.remove(queryWrapper);
                     if (success) {
                         redisTemplate.opsForHash().delete(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId);
                         log.info("取消点赞成功！");
