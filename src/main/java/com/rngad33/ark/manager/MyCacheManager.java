@@ -39,6 +39,7 @@ public class MyCacheManager {
     @Resource
     private RedissonClient redissonClient;
 
+    @Resource
     private RBloomFilter<String> bloomFilter;
 
     private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式

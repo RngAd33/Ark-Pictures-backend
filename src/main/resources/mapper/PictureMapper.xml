@@ -6,39 +6,39 @@
 
     <resultMap id="BaseResultMap" type="com.rngad33.ark.model.entity.Picture">
             <id property="id" column="id" />
-            <result property="originUrl" column="originUrl" />
-            <result property="thumbUrl" column="thumbUrl" />
+            <result property="originUrl" column="origin_url" />
+            <result property="thumbUrl" column="thumb_url" />
             <result property="name" column="name" />
             <result property="introduction" column="introduction" />
             <result property="category" column="category" />
             <result property="tags" column="tags" />
-            <result property="picSize" column="picSize" />
-            <result property="picWidth" column="picWidth" />
-            <result property="picHeight" column="picHeight" />
-            <result property="picScale" column="picScale" />
-            <result property="picFormat" column="picFormat" />
-            <result property="userId" column="userId" />
-            <result property="thumbCount" column="thumbCount" />
-            <result property="createTime" column="createTime" />
-            <result property="editTime" column="editTime" />
-            <result property="updateTime" column="updateTime" />
-            <result property="isDelete" column="isDelete" />
-            <result property="reviewStatus" column="reviewStatus" />
-            <result property="reviewMessage" column="reviewMessage" />
-            <result property="reviewerId" column="reviewerId" />
-            <result property="reviewTime" column="reviewTime" />
+            <result property="picSize" column="pic_size" />
+            <result property="picWidth" column="pic_width" />
+            <result property="picHeight" column="pic_height" />
+            <result property="picScale" column="pic_scale" />
+            <result property="picFormat" column="pic_format" />
+            <result property="userId" column="user_id" />
+            <result property="thumbCount" column="thumb_count" />
+            <result property="createTime" column="create_time" />
+            <result property="editTime" column="edit_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="isDelete" column="is_delete" />
+            <result property="reviewStatus" column="review_status" />
+            <result property="reviewMessage" column="review_message" />
+            <result property="reviewerId" column="reviewer_id" />
+            <result property="reviewTime" column="review_time" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,originUrl,thumbUrl,name,introduction,category,tags,
-        picSize,picWidth,picHeight,picScale,picFormat,
-        userId,thumbCount,createTime,editTime,updateTime,isDelete,
-        reviewStatus,reviewMessage,reviewerId,reviewTime
+        id,origin_url,thumb_url,name,introduction,category,tags,
+        pic_size,pic_width,pic_height,pic_scale,pic_format,
+        user_id,thumb_count,create_time,edit_time,update_time,is_delete,
+        review_status,review_message,reviewer_id,review_time
     </sql>
 
     <update id="batchUpdateThumbCount">
-        UPDATE blog
-        SET thumbCount = thumbCount + CASE id
+        UPDATE picture
+        SET thumb_count = thumb_count + CASE id
         <foreach collection="countMap.entrySet()" item="value" index="key">
             WHEN #{key} THEN #{value}
         </foreach>

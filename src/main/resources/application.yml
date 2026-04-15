@@ -6,7 +6,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: ark-picture
+    name: ark-pictures
   servlet:
     multipart:
       max-file-size: ${sky.spring.servlet.multipart.max-file-size}
@@ -34,7 +34,7 @@ mybatis-flex:
     # 驼峰命名自动映射
     map-underscore-to-camel-case: true
   global-config:
-    logic-delete-column: isDelete
+    logic-delete-column: is_delete
     logic-delete-value: 1
     logic-not-delete-value: 0
 

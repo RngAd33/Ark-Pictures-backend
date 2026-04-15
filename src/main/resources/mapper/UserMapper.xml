@@ -6,20 +6,20 @@
 
     <resultMap id="BaseResultMap" type="com.rngad33.ark.model.entity.User">
         <id property="id" column="id" />
-        <result property="userName" column="userName" />
-        <result property="planetCode" column="planetCode" />
+        <result property="userName" column="user_name" />
+        <result property="planetCode" column="planet_code" />
         <result property="role" column="role" />
-        <result property="avatarUrl" column="avatarUrl" />
-        <result property="userPassword" column="userPassword" />
+        <result property="avatarUrl" column="avatar_url" />
+        <result property="userPassword" column="user_password" />
         <result property="phone" column="phone" />
-        <result property="userStatus" column="userStatus" />
-        <result property="createTime" column="createTime" />
-        <result property="updateTime" column="updateTime" />
-        <result property="isDelete" column="isDelete" />
+        <result property="userStatus" column="user_status" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="isDelete" column="is_delete" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userName,planetCode,role,avatarUrl,userPassword,
-        phone,userStatus,createTime,updateTime,isDelete
+        id,user_name,planet_code,role,avatar_url,user_password,
+        phone,user_status,create_time,update_time,is_delete
     </sql>
 </mapper>

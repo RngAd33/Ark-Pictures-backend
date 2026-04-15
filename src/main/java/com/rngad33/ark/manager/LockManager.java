@@ -18,7 +18,6 @@ public class LockManager {
     @Resource
     private RedissonClient redissonClient;
 
-
     /**
      * 尝试获取锁
      *

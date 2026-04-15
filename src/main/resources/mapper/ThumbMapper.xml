@@ -5,13 +5,13 @@
 <mapper namespace="com.rngad33.ark.mapper.ThumbMapper">
     <resultMap id="BaseResultMap" type="com.rngad33.ark.model.entity.Thumb">
         <id property="id" column="id" />
-        <result property="userId" column="userId" />
-        <result property="pictureId" column="pictureId" />
-        <result property="createTime" column="createTime" />
+        <result property="userId" column="user_id" />
+        <result property="pictureId" column="picture_id" />
+        <result property="createTime" column="create_time" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userId,pictureId,createTime
+        id,user_id,picture_id,create_time
     </sql>
 
 </mapper>

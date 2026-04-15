@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * 项目启动入口
  */
 @SpringBootApplication
+@MapperScan("com.rngad33.ark.mapper")
 @EnableAsync
 @EnableScheduling
-@MapperScan("com.rngad33.ark.mapper")
 public class ArkPicturesApplication {
     public static void main(String[] args) {
         SpringApplication.run(ArkPicturesApplication.class, args);
