@@ -29,11 +29,13 @@ public class User {
     /**
      * 用户昵称
      */
+    @Column("user_name")
     private String userName;
 
     /**
      * 星球编号
      */
+    @Column("planet_code")
     private String planetCode;
 
     /**
@@ -44,11 +46,13 @@ public class User {
     /**
      * 头像地址
      */
+    @Column("avatar_url")
     private String avatarUrl;
 
     /**
      * 密码
      */
+    @Column("user_password")
     private String userPassword;
 
     /**
@@ -59,22 +63,25 @@ public class User {
     /**
      * 用户状态：0-正常，1-封禁
      */
+    @Column("user_status")
     private Integer userStatus;
 
     /**
      * 创建时间
      */
+    @Column("create_time")
     private Date createTime;
 
     /**
      * 更新时间
      */
+    @Column("update_time")
     private Date updateTime;
 
     /**
      * 是否删除？ 0-未删，1-已删
      */
-    @Column(isLogicDelete = true)
+    @Column(value = "is_delete", isLogicDelete = true)
     private Integer isDelete;
 
 }

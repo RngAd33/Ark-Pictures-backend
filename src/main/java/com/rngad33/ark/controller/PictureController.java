@@ -338,7 +338,7 @@ public class PictureController {
      *
      * @return
      */
-    @GetMapping("/tag_category")
+    @GetMapping("/tag/category")
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays
