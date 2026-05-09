@@ -36,4 +36,17 @@
         create_time, edit_time, update_time, is_delete
     </sql>
 
+    <update id="batchUpdateThumbCount">
+        UPDATE picture
+        SET thumb_count = thumb_count + CASE id
+        <foreach collection="countMap.entrySet()" item="value" index="key">
+            WHEN #{key} THEN #{value}
+        </foreach>
+        END
+        WHERE id IN
+        <foreach collection="countMap.keySet()" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
 </mapper>

@@ -7,7 +7,6 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.rngad33.ark.mapper.PictureMapper;
 import com.rngad33.ark.model.entity.Thumb;
 import com.rngad33.ark.model.enums.thumb.ThumbTypeEnum;
-import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
 import com.rngad33.ark.utils.RedisKeyUtils;
 import jakarta.annotation.Resource;
@@ -29,6 +28,9 @@ import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 public class SyncThumb2DBTasks {
 
     @Resource
+    private PictureMapper pictureMapper;
+
+    @Resource
     private ThumbService thumbService;
 
     @Resource
@@ -47,7 +49,6 @@ public class SyncThumb2DBTasks {
         if (CollUtil.isEmpty(thumbMap)) {
             return;
         }
-        //
         Map<Long, Long> thumbCountMap = new HashMap<>();
         List<Thumb> thumbs = new ArrayList<>();
         QueryWrapper queryWrapper = new QueryWrapper();
@@ -85,10 +86,10 @@ public class SyncThumb2DBTasks {
         if (needDelete) {
             thumbService.remove(queryWrapper);
         }
-        // todo 批量更新图片点赞量
-//        if (!thumbCountMap.isEmpty()) {
-//
-//        }
+        // 批量更新图片点赞量
+        if (!thumbCountMap.isEmpty()) {
+            pictureMapper.batchUpdateThumbCount(thumbCountMap);
+        }
         // 异步删除
         Thread.startVirtualThread(() -> {
             redisTemplate.delete(thumbKey);
