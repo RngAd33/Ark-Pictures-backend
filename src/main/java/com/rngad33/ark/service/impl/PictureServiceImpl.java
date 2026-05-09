@@ -38,6 +38,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -76,12 +77,15 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     private PictureUploadTemplateImplByUrl pictureUploadTemplateImplByUrl;
 
     @Resource
+    @Lazy
     private JsoupTemplateFromBing jsoupTemplateFromBing;
 
     @Resource
+    @Lazy
     private JsoupTemplateFromSafebooru jsoupTemplateFromSafebooru;
 
     @Resource
+    @Lazy
     private JsoupTemplateFromKonachan jsoupTemplateFromKonachan;
 
     /**
@@ -141,7 +145,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 补充审核参数
         userManager.fillReviewParams(picture, loginUser);
         // 操作数据库
-        boolean result = this.saveOrUpdate(picture);   // 方法来自：MyBatis-Plus
+        boolean result = this.saveOrUpdate(picture);
         ThrowUtils.throwIf(!result, ErrorCodeEnum.USER_LOSE_ACTION, "上传失败！");
         return PictureVO.objToVo(picture);
     }
@@ -375,7 +379,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     /**
-     * 查询当前用户已经点赞的图片
+     * 分页查询当前用户已经点赞的图片
      *
      * @param userId
      * @return
@@ -384,9 +388,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     public Page<PictureVO> listThumbPictures(long userId) {
         List<Long> ids = thumbService.listThumbIds(userId);
         Page<Picture> picturePage = this.page(new Page<>(1, 20, ids.size()),
-                QueryWrapper.create().in("pictureId", ids, !ids.isEmpty()));
+                QueryWrapper.create().in(PICTURE.ID.getName(), ids, !ids.isEmpty()));
         return picturePage.map(PictureVO::objToVo);
     }
-
 
 }

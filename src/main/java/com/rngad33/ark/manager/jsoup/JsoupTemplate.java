@@ -30,7 +30,6 @@ import java.util.Date;
 public abstract class JsoupTemplate {
 
     @Resource
-    @Lazy
     private PictureService pictureService;
 
     /**

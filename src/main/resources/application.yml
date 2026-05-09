@@ -28,15 +28,16 @@ spring:
 
 mybatis-flex:
   mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.rngad33.ark.model.entity
   configuration:
     # 显示数据库日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 驼峰命名自动映射
     map-underscore-to-camel-case: true
   global-config:
-    logic-delete-column: is_delete
-    logic-delete-value: 1
-    logic-not-delete-value: 0
+    logic-delete-column:
+      - isDelete
+      - is_delete
 
 sky:
   jwt:

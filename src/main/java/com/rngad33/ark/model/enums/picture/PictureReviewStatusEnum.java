@@ -22,7 +22,7 @@ public enum PictureReviewStatusEnum {
     }
 
     /**
-     * 根据code获取枚举
+     * 根据 code 获取枚举
      * @param code 审核状态值
      * @return 状态枚举
      */

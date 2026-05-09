@@ -37,9 +37,6 @@ public class MyCacheManager {
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private RedissonClient redissonClient;
-
-    @Resource
     private RBloomFilter<String> bloomFilter;
 
     private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
@@ -52,16 +49,6 @@ public class MyCacheManager {
             .maximumSize(10_000L)   // 最多缓存10000条数据
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
-
-    /**
-     * 初始化布隆过滤器
-     */
-    @PostConstruct
-    public void initBloomFilter() {
-        bloomFilter = redissonClient.getBloomFilter("picture_bloom_filter");
-        // 设置预期插入数量和误判率
-        bloomFilter.tryInit(1000000, 0.01);
-    }
 
     /**
      * 数据多级查询

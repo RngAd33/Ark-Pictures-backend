@@ -1,6 +1,7 @@
 package com.rngad33.ark.config;
 
 import org.redisson.Redisson;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -33,6 +34,20 @@ public class RedissonConfig {
             config.useSingleServer().setPassword(redisProperties.getPassword());
         }
         return Redisson.create(config);
+    }
+
+    /**
+     * 初始化布隆过滤器
+     *
+     * @param redissonClient
+     * @return
+     */
+    @Bean
+    public RBloomFilter<String> bloomFilter(RedissonClient redissonClient) {
+        RBloomFilter<String> bloomFilter = redissonClient.getBloomFilter("picture_bloom_filter");
+        // 设置预期插入数量和误判率
+        bloomFilter.tryInit(1000000, 0.01);
+        return bloomFilter;
     }
 
 }

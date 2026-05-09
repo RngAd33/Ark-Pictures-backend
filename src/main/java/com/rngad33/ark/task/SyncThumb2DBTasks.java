@@ -7,6 +7,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.rngad33.ark.mapper.PictureMapper;
 import com.rngad33.ark.model.entity.Thumb;
 import com.rngad33.ark.model.enums.thumb.ThumbTypeEnum;
+import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
 import com.rngad33.ark.utils.RedisKeyUtils;
 import jakarta.annotation.Resource;
@@ -28,9 +29,6 @@ import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 public class SyncThumb2DBTasks {
 
     @Resource
-    private PictureMapper pictureMapper;
-
-    @Resource
     private ThumbService thumbService;
 
     @Resource
@@ -49,6 +47,7 @@ public class SyncThumb2DBTasks {
         if (CollUtil.isEmpty(thumbMap)) {
             return;
         }
+        //
         Map<Long, Long> thumbCountMap = new HashMap<>();
         List<Thumb> thumbs = new ArrayList<>();
         QueryWrapper queryWrapper = new QueryWrapper();
@@ -69,7 +68,7 @@ public class SyncThumb2DBTasks {
             } else if (thumbType == ThumbTypeEnum.DECR.getValue()) {
                 // - 取消点赞
                 needDelete = true;
-                queryWrapper.or(THUMB.USER_ID.eq(userId)).eq(THUMB.PICTURE_ID.getName(), pictureId);  // todo 可能存在语句错误
+                queryWrapper.or(THUMB.USER_ID.eq(userId)).eq(THUMB.PICTURE_ID.getName(), pictureId);  // todo 可能存在语句错误，需要审计
             } else {
                 if (thumbType != ThumbTypeEnum.NON.getValue()) {
                     // - 状态异常
@@ -86,10 +85,10 @@ public class SyncThumb2DBTasks {
         if (needDelete) {
             thumbService.remove(queryWrapper);
         }
-        // 批量更新图片点赞量
-        if (!thumbCountMap.isEmpty()) {
-            pictureMapper.batchUpdateThumbCount(thumbCountMap);
-        }
+        // todo 批量更新图片点赞量
+//        if (!thumbCountMap.isEmpty()) {
+//
+//        }
         // 异步删除
         Thread.startVirtualThread(() -> {
             redisTemplate.delete(thumbKey);
