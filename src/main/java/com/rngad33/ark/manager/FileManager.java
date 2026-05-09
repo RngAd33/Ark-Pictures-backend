@@ -19,7 +19,7 @@ import com.rngad33.ark.model.enums.misc.ErrorCodeEnum;
 import com.rngad33.ark.utils.ThrowUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -33,7 +33,7 @@ import java.util.List;
  * 通用文件操作（已废弃，改用抽象模板方法）
  */
 @Slf4j
-@Service
+@Component
 @Deprecated
 public class FileManager {
 

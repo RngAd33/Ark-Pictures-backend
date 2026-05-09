@@ -22,18 +22,18 @@
             <result property="createTime" column="create_time" />
             <result property="editTime" column="edit_time" />
             <result property="updateTime" column="update_time" />
-            <result property="isDelete" column="is_delete" />
             <result property="reviewStatus" column="review_status" />
             <result property="reviewMessage" column="review_message" />
             <result property="reviewerId" column="reviewer_id" />
             <result property="reviewTime" column="review_time" />
+            <result property="isDelete" column="is_delete" />
     </resultMap>
 
     <sql id="Base_Column_List">
         id,origin_url,thumb_url,name,introduction,category,tags,
         pic_size,pic_width,pic_height,pic_scale,pic_format,
-        user_id,thumb_count,create_time,edit_time,update_time,is_delete,
-        review_status,review_message,reviewer_id,review_time
+        user_id,thumb_count,create_time,edit_time,update_time,
+        review_status,review_message,reviewer_id,review_time,is_delete
     </sql>
 
     <update id="batchUpdateThumbCount">
