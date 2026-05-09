@@ -13,6 +13,7 @@ public interface UrlConstant {
     /**
      * Unsplash源
      */
+    @Deprecated
     String sourceUnsplash = "https://unsplash.com/s/photos/%s";
 
     /**
@@ -31,6 +32,7 @@ public interface UrlConstant {
      * 使用 Selenium 或 Playwright 模拟浏览器操作
      * 或者调用 Pixiv 官方 API（需要登录、Token 认证）
      */
+    @Deprecated
     String sourcePixiv = "https://www.pixiv.net/ajax/search/artworks/%s?order=date_d&mode=medium&p=1&s_mode=s_tag&type=all&lang=zh";
 
 }

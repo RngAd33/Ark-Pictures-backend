@@ -11,10 +11,7 @@ import com.rngad33.ark.constant.UrlConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.manager.CosManager;
 import com.rngad33.ark.manager.UserManager;
-import com.rngad33.ark.manager.jsoup.JsoupTemplate;
-import com.rngad33.ark.manager.jsoup.JsoupTemplateFromBing;
-import com.rngad33.ark.manager.jsoup.JsoupTemplateFromKonachan;
-import com.rngad33.ark.manager.jsoup.JsoupTemplateFromSafebooru;
+import com.rngad33.ark.manager.jsoup.*;
 import com.rngad33.ark.manager.upload.PictureUploadTemplate;
 import com.rngad33.ark.manager.upload.PictureUploadTemplateImplByFile;
 import com.rngad33.ark.manager.upload.PictureUploadTemplateImplByUrl;
@@ -70,6 +67,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Resource
     private UserService userService;
 
+    // start of abstract
+
     @Resource
     private PictureUploadTemplateImplByFile pictureUploadTemplateImplByFile;
 
@@ -87,6 +86,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     @Resource
     @Lazy
     private JsoupTemplateFromKonachan jsoupTemplateFromKonachan;
+
+    // end of abstract
 
     /**
      * 图片上传
@@ -342,14 +343,16 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 设置图源仓库（默认为Bing图源）
         String library = pictureUploadByBatchRequest.getLibrary();
         JsoupTemplate jsoupTemplate = jsoupTemplateFromBing;
-        if (library.equals(UrlConstant.sourceSafebooru)) {
-            jsoupTemplate = jsoupTemplateFromSafebooru;
-            log.info("已切换到Safebooru源>>>");
-        } else if (library.equals(UrlConstant.sourceKonachan)) {
-            jsoupTemplate = jsoupTemplateFromKonachan;
-            log.info("已切换到Konachan源>>>");
-        } else {
-            log.info("已切换到Bing源>>>");
+        switch (library) {
+            case UrlConstant.sourceSafebooru -> {
+                jsoupTemplate = jsoupTemplateFromSafebooru;
+                log.info("已切换到Safebooru源>>>");
+            }
+            case UrlConstant.sourceKonachan -> {
+                jsoupTemplate = jsoupTemplateFromKonachan;
+                log.info("已切换到Konachan源>>>");
+            }
+            default -> log.warn("未指定图源，默认使用Bing源>>>");
         }
         // 抓取图片
         return jsoupTemplate.executePictures(pictureUploadByBatchRequest, loginUser);
