@@ -22,7 +22,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 通用二级缓存读写策略
+ * 图片二级缓存读写策略
  */
 @Component
 @Slf4j

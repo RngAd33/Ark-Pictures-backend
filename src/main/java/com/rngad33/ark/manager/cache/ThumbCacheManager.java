@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 点赞二级缓存读写策略
+ */
 @Component
 @Slf4j
 public class ThumbCacheManager {
@@ -29,36 +32,50 @@ public class ThumbCacheManager {
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
 
+    /**
+     * 从二级缓存中获取数据
+     *
+     * @param hashKey
+     * @param key
+     * @return
+     */
     public Object get(String hashKey, String key) {
-    // 构造唯一的 composite key
-    String compositeKey = this.buildCacheKey(hashKey, key);
+        // 构造唯一的 composite key
+        String compositeKey = this.buildCacheKey(hashKey, key);
 
-    // 1. 先查本地缓存
-    Object value = LOCAL_CACHE.getIfPresent(compositeKey);
-    if (value != null) {
-        log.info("本地缓存获取到数据 {} = {}", compositeKey, value);
-        // 记录访问次数（每次访问计数 +1）
-        hotKeyDetector.add(key, 1);
-        return value;
+        // 1. 先查本地缓存
+        Object value = LOCAL_CACHE.getIfPresent(compositeKey);
+        if (value != null) {
+            log.info("本地缓存获取到数据 {} = {}", compositeKey, value);
+            // 记录访问次数（每次访问计数 +1）
+            hotKeyDetector.add(key, 1);
+            return value;
+        }
+
+        // 2. 本地缓存未命中，查询 Redis
+        Object redisValue = redisTemplate.opsForHash().get(hashKey, key);
+        if (redisValue == null) {
+            return null;
+        }
+
+        // 3. 记录访问（计数 +1）
+        AddResult addResult = hotKeyDetector.add(key, 1);
+
+        // 4. 如果是热 Key 且不在本地缓存，则缓存数据
+        if (addResult.isHotKey()) {
+            LOCAL_CACHE.put(compositeKey, redisValue);
+        }
+
+        return redisValue;
     }
 
-    // 2. 本地缓存未命中，查询 Redis
-    Object redisValue = redisTemplate.opsForHash().get(hashKey, key);
-    if (redisValue == null) {
-        return null;
-    }
-
-    // 3. 记录访问（计数 +1）
-    AddResult addResult = hotKeyDetector.add(key, 1);
-
-    // 4. 如果是热 Key 且不在本地缓存，则缓存数据
-    if (addResult.isHotKey()) {
-        LOCAL_CACHE.put(compositeKey, redisValue);
-    }
-
-    return redisValue;
-}
-
+    /**
+     * 缓存数据到 Caffeine
+     *
+     * @param hashKey
+     * @param key
+     * @param value
+     */
     public void putIfPresent(String hashKey, String key, Object value) {
         String compositeKey = this.buildCacheKey(hashKey, key);
         Object object = LOCAL_CACHE.getIfPresent(compositeKey);

@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
-import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
-
 /**
  * 点赞业务实现类增强（高并发）
  */
@@ -48,6 +46,7 @@ public class ThumbServiceRedisImpl extends ThumbServiceImpl {
                 Arrays.asList(tempThumbKey, userThumbKey),
                 thumbRequest.getUserId(), thumbRequest.getPictureId());
         ThrowUtils.throwIf(result == LuaStatusEnum.FAIL.getValue(), ErrorCodeEnum.USER_LOSE_ACTION, "点赞失败！");
+
         return result == LuaStatusEnum.SUCCESS.getValue();
     }
 
@@ -71,6 +70,7 @@ public class ThumbServiceRedisImpl extends ThumbServiceImpl {
                 Arrays.asList(tempThumbKey, userThumbKey),
                 thumbRequest.getUserId(), thumbRequest.getPictureId());
         ThrowUtils.throwIf(result == LuaStatusEnum.FAIL.getValue(), ErrorCodeEnum.USER_LOSE_ACTION, "点赞失败！");
+
         return result == LuaStatusEnum.SUCCESS.getValue();
     }
 

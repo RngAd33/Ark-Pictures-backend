@@ -1,5 +1,6 @@
 package com.rngad33.ark.service.impl;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -61,7 +62,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
     @Override
     public boolean doThumb(ThumbRequest thumbRequest) {
         Long userId = thumbRequest.getUserId();
-        long pictureId = thumbRequest.getPictureId();
+        Long pictureId = thumbRequest.getPictureId();
         // 加分布式锁，执行操作
         try {
             boolean hasLocked = lockManager.tryLock("doThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
@@ -85,7 +86,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
                         Thumb thumb = new Thumb();
                         thumb.setUserId(userId);
                         thumb.setPictureId(pictureId);
-                        redisTemplate.opsForHash().put(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, thumb.getId());
+                        thumbCacheManager.putIfPresent(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId.toString(), pictureId);
                         log.info("点赞成功！");
                         return true;
                     } else {
@@ -112,7 +113,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
     @Override
     public boolean unThumb(ThumbRequest thumbRequest) {
         Long userId = thumbRequest.getUserId();
-        long pictureId = thumbRequest.getPictureId();
+        Long pictureId = thumbRequest.getPictureId();
         // 加分布式锁，执行操作
         try {
             boolean hasLocked = lockManager.tryLock("unThumb:" + userId, 30000, 600000 + RandomUtil.randomInt(100000), TimeUnit.MILLISECONDS);
@@ -134,7 +135,10 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
                     // 删除点赞记录
                     boolean success = (update == 1) && this.remove(queryWrapper);
                     if (success) {
+                        // - 写入Redis
                         redisTemplate.opsForHash().delete(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId);
+                        // - 写入Caffeine
+                        thumbCacheManager.putIfPresent(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId.toString(), pictureId);
                         log.info("取消点赞成功！");
                     }
                     return success;
@@ -195,9 +199,14 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
      * @return
      */
     @Override
-    public boolean hasThumb(long pictureId, long userId) {
-//        thumbCacheManager.putIfPresent(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, pictureId);
-        return redisTemplate.opsForHash().hasKey(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId);
+    public boolean hasThumb(Long pictureId, Long userId) {
+//
+        Object thumbIdObj = thumbCacheManager.get(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId.toString());
+        if (ObjUtil.isNull(thumbIdObj)) {
+            return false;
+        }
+        Long thumbId = (Long) thumbIdObj;
+        return !thumbId.equals(ThumbConstant.UN_THUMB_CONSTANT);
     }
 
 }
