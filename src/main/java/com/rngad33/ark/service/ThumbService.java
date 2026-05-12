@@ -36,6 +36,9 @@ public interface ThumbService extends IService<Thumb> {
 
     /**
      * 统计某图片的点赞量
+     *
+     * @param pictureId
+     * @return
      */
     long countPictureThumb(long pictureId);
 

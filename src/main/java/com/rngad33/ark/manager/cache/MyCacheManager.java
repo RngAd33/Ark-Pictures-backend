@@ -1,4 +1,4 @@
-package com.rngad33.ark.manager;
+package com.rngad33.ark.manager.cache;
 
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -11,13 +11,13 @@ import com.rngad33.ark.model.entity.Picture;
 import com.rngad33.ark.model.vo.PictureVO;
 import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.utils.LockUtils;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
-import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -34,21 +34,23 @@ public class MyCacheManager {
     private PictureService pictureService;
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
     private RBloomFilter<String> bloomFilter;
 
-    private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
+    private final TopK hotKeyDetector = new HeavyKeeper(100, 1000, 100, 0.999, 2);
 
     /**
      * 本地缓存构造
      */
-    private final Cache<String, String> LOCAL_CACHE = Caffeine.newBuilder()
+    private final Cache<String, Object> LOCAL_CACHE = Caffeine.newBuilder()
             .initialCapacity(1024)
             .maximumSize(10_000L)   // 最多缓存10000条数据
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
+
+    private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
 
     /**
      * 数据多级查询
@@ -69,15 +71,15 @@ public class MyCacheManager {
             return new Page<>(current, size);
         }
         // 优先查询本地缓存
-        String cachedValue = getCachedFromCaffeine(redisKey);
+        String cachedValue = (String) LOCAL_CACHE.getIfPresent(caffeineKey);
         if (cachedValue == null) {
             // - 本地缓存未命中，查询Redis缓存
-            cachedValue = getCachedFromRedis(caffeineKey);
+            cachedValue = (String) redisTemplate.opsForValue().get(redisKey);
             if (cachedValue == null) {
                 // 双检锁
                 // Object lock = LockUtils.KEY_LOCK.computeIfAbsent(redisKey, k -> new Object());
                 synchronized (LockUtils.getKeyLock(redisKey)) {
-                    cachedValue = getCachedFromRedis(caffeineKey);
+                    cachedValue = (String) redisTemplate.opsForValue().get(redisKey);
                     if (cachedValue == null) {
                         // - 两种缓存均未命中，查询数据库
                         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
@@ -87,60 +89,77 @@ public class MyCacheManager {
                         // 设置 Redis 缓存有效期
                         int cacheExpireTime = 300 + RandomUtil.randomInt(0, 300);   // 预留区间，防止缓存雪崩
                         // 写入二级缓存
-                        this.setCacheToRedis(redisKey, cacheValue, cacheExpireTime);
-                        this.setCacheToCaffeine(caffeineKey, cacheValue);
+                        LOCAL_CACHE.put(caffeineKey, cacheValue);
+                        redisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
                         // 返回数据库查询结果
                         return pictureVOPage;
                     }
                 }
             } else {
                 // - Redis缓存命中，写入本地缓存
-                this.setCacheToCaffeine(caffeineKey, cachedValue);
+                LOCAL_CACHE.put(caffeineKey, cachedValue);
             }
         }
         // 二级缓存命中，返回缓存查询结果
         return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
     }
 
-    /**
-     * 从Redis缓存中获取缓存数据
-     *
-     * @param redisKey 缓存的key
-     * @return cachedValue
-     */
-    private String getCachedFromRedis(String redisKey) {
-        return stringRedisTemplate.opsForValue().get(redisKey);
+    public Object get(String hashKey, String key) {
+        // 构造唯一的 composite key  
+        String compositeKey = this.buildCacheKey(hashKey, key);
+
+        // 1. 先查本地缓存  
+        Object value = LOCAL_CACHE.getIfPresent(compositeKey);
+        if (value != null) {
+            log.info("本地缓存获取到数据 {} = {}", compositeKey, value);
+            // 记录访问次数（每次访问计数 +1）  
+            hotKeyDetector.add(key, 1);
+            return value;
+        }
+
+        // 2. 本地缓存未命中，查询 Redis  
+        Object redisValue = redisTemplate.opsForHash().get(hashKey, key);
+        if (redisValue == null) {
+            return null;
+        }
+
+        // 3. 记录访问（计数 +1）  
+        AddResult addResult = hotKeyDetector.add(key, 1);
+
+        // 4. 如果是热 Key 且不在本地缓存，则缓存数据  
+        if (addResult.isHotKey()) {
+            LOCAL_CACHE.put(compositeKey, redisValue);
+        }
+
+        return redisValue;
+    }
+
+    public void putIfPresent(String hashKey, String key, Object value) {
+        String compositeKey = this.buildCacheKey(hashKey, key);
+        Object object = LOCAL_CACHE.getIfPresent(compositeKey);
+        if (object == null) {
+            return;
+        }
+        LOCAL_CACHE.put(compositeKey, value);
     }
 
     /**
-     * 从本地缓存中获取缓存数据
-     *
-     * @param caffeineKey 缓存的key
-     * @return cachedValue
+     * 定时清理过期的热 Key 检测数据
      */
-    private String getCachedFromCaffeine(String caffeineKey) {
-        return LOCAL_CACHE.getIfPresent(caffeineKey);
+    @Scheduled(fixedRate = 20, timeUnit = TimeUnit.SECONDS)
+    public void cleanHotKeys() {
+        hotKeyDetector.fading();
     }
 
     /**
-     * 将数据写入Redis缓存
+     * 辅助方法：构造复合 key
      *
-     * @param redisKey 缓存的key
-     * @param cacheValue 缓存的数据
-     * @param cacheExpireTime 超时时间
+     * @param hashKey
+     * @param key
+     * @return
      */
-    private void setCacheToRedis(String redisKey, String cacheValue, int cacheExpireTime) {
-        stringRedisTemplate.opsForValue().set(redisKey, cacheValue, cacheExpireTime, TimeUnit.SECONDS);
+    private String buildCacheKey(String hashKey, String key) {
+        return hashKey + ":" + key;
     }
-
-    /**
-     * 将数据写入本地缓存
-     *
-     * @param caffeineKey
-     * @param cacheValue
-     */
-    private void setCacheToCaffeine(String caffeineKey, String cacheValue) {
-        LOCAL_CACHE.put(caffeineKey, cacheValue);
-    }
-
+    
 }

@@ -40,6 +40,8 @@ mybatis-flex:
       - is_delete
 
 sky:
+  concurrency:
+    enable: true
   jwt:
     admin-secret-key: ${sky.jwt.admin-secret-key}
     admin-token-name: ${sky.jwt.admin-token-name}

@@ -17,11 +17,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 
 /**
- * 定时任务：同步点赞信息
+ * 定时任务：从 Redis 同步点赞信息到数据库
  */
 @Component
 @Slf4j
@@ -39,7 +40,7 @@ public class SyncThumb2DBTasks {
     /**
      * 同步点赞信息到数据库
      */
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     @Transactional(rollbackFor = Exception.class)
     public void doSynchronize() {
         // 扫描 Redis 查找点赞信息
@@ -94,6 +95,16 @@ public class SyncThumb2DBTasks {
         Thread.startVirtualThread(() -> {
             redisTemplate.delete(thumbKey);
         });
+    }
+
+    /**
+     * 按指定时间同步点赞信息
+     *
+     * @param date
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void doSynchronizeByDate(String date) {
+        
     }
 
     /**

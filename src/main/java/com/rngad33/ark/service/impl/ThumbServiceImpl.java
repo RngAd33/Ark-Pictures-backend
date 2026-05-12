@@ -16,6 +16,7 @@ import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -25,12 +26,14 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.rngad33.ark.model.entity.table.PictureTableDef.PICTURE;
 import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 
 /**
  * 点赞服务实现类
  */
 @Service
+@ConditionalOnProperty(name="sky.concurrency.enable", havingValue = "false")
 @Slf4j
 public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements ThumbService {
 
@@ -163,13 +166,22 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
      */
     @Override
     public long countUserThumb(long userId) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .eq(THUMB.USER_ID.getName(), userId);
         return this.count(queryWrapper);
     }
 
+    /**
+     * 统计某图片的累计获赞量
+     *
+     * @param pictureId
+     * @return
+     */
     @Override
     public long countPictureThumb(long pictureId) {
-        return 0;
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .eq(THUMB.PICTURE_ID.getName(), pictureId);
+        return this.count(queryWrapper);
     }
 
     /**

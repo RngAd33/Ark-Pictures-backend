@@ -10,6 +10,7 @@ public interface RedisLuaScriptConstant {
 
     /**
      * 点赞 Lua 脚本
+     *
      * KEYS[1]       -- 临时计数键
      * KEYS[2]       -- 用户点赞状态键
      * ARGV[1]       -- 用户 ID
@@ -45,6 +46,7 @@ public interface RedisLuaScriptConstant {
 
     /**
      * 取消点赞 Lua 脚本
+     *
      * 参数同上
      * 返回：
      * -1: 未点赞

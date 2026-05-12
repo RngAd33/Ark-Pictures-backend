@@ -8,7 +8,7 @@ import com.rngad33.ark.common.BaseResponse;
 import com.rngad33.ark.common.DeleteRequest;
 import com.rngad33.ark.constant.UserConstant;
 import com.rngad33.ark.exception.MyException;
-import com.rngad33.ark.manager.MyCacheManager;
+import com.rngad33.ark.manager.cache.MyCacheManager;
 import com.rngad33.ark.manager.UserManager;
 import com.rngad33.ark.model.dto.picture.*;
 import com.rngad33.ark.model.entity.Picture;
