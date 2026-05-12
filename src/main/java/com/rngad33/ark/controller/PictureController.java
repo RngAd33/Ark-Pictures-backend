@@ -8,7 +8,7 @@ import com.rngad33.ark.common.BaseResponse;
 import com.rngad33.ark.common.DeleteRequest;
 import com.rngad33.ark.constant.UserConstant;
 import com.rngad33.ark.exception.MyException;
-import com.rngad33.ark.manager.cache.MyCacheManager;
+import com.rngad33.ark.manager.cache.PictureCacheManager;
 import com.rngad33.ark.manager.UserManager;
 import com.rngad33.ark.model.dto.picture.*;
 import com.rngad33.ark.model.entity.Picture;
@@ -44,7 +44,7 @@ public class PictureController {
     private UserManager userManager;
 
     @Resource
-    private MyCacheManager myCacheManager;
+    private PictureCacheManager pictureCacheManager;
 
     @Resource
     private PictureService pictureService;
@@ -309,7 +309,7 @@ public class PictureController {
         String redisKey = String.format("picture:listPictureVOByPage:vo:%s", hashKey);
         String caffeineKey = String.format("listPictureVOByPage:%s", hashKey);
         // 执行通用二级缓存查询策略（本地缓存优先，没查到就查Redis，还没查到再查数据库）
-        Page<PictureVO> pictureVOPage = myCacheManager.cacheQuery(pictureQueryRequest, redisKey, caffeineKey,
+        Page<PictureVO> pictureVOPage = pictureCacheManager.cacheQuery(pictureQueryRequest, redisKey, caffeineKey,
                 current, size, request);
         // 查询结束，返回封装类
         return ResultUtils.success(pictureVOPage);

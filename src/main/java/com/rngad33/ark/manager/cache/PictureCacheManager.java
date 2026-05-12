@@ -16,8 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -28,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class MyCacheManager {
+public class PictureCacheManager {
 
     @Resource
     private PictureService pictureService;
@@ -39,8 +37,6 @@ public class MyCacheManager {
     @Resource
     private RBloomFilter<String> bloomFilter;
 
-    private final TopK hotKeyDetector = new HeavyKeeper(100, 1000, 100, 0.999, 2);
-
     /**
      * 本地缓存构造
      */
@@ -50,7 +46,7 @@ public class MyCacheManager {
             .expireAfterAccess(Duration.ofMinutes(5))   // 缓存5分钟后清除
             .build();
 
-    private MyCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
+    private PictureCacheManager() {}   // 私有构造函数，防止外部实例化破坏单例模式
 
     /**
      * 数据多级查询
@@ -104,62 +100,4 @@ public class MyCacheManager {
         return JSONUtil.toBean(cachedValue, Page.class);   // 反序列化
     }
 
-    public Object get(String hashKey, String key) {
-        // 构造唯一的 composite key  
-        String compositeKey = this.buildCacheKey(hashKey, key);
-
-        // 1. 先查本地缓存  
-        Object value = LOCAL_CACHE.getIfPresent(compositeKey);
-        if (value != null) {
-            log.info("本地缓存获取到数据 {} = {}", compositeKey, value);
-            // 记录访问次数（每次访问计数 +1）  
-            hotKeyDetector.add(key, 1);
-            return value;
-        }
-
-        // 2. 本地缓存未命中，查询 Redis  
-        Object redisValue = redisTemplate.opsForHash().get(hashKey, key);
-        if (redisValue == null) {
-            return null;
-        }
-
-        // 3. 记录访问（计数 +1）  
-        AddResult addResult = hotKeyDetector.add(key, 1);
-
-        // 4. 如果是热 Key 且不在本地缓存，则缓存数据  
-        if (addResult.isHotKey()) {
-            LOCAL_CACHE.put(compositeKey, redisValue);
-        }
-
-        return redisValue;
-    }
-
-    public void putIfPresent(String hashKey, String key, Object value) {
-        String compositeKey = this.buildCacheKey(hashKey, key);
-        Object object = LOCAL_CACHE.getIfPresent(compositeKey);
-        if (object == null) {
-            return;
-        }
-        LOCAL_CACHE.put(compositeKey, value);
-    }
-
-    /**
-     * 定时清理过期的热 Key 检测数据
-     */
-    @Scheduled(fixedRate = 20, timeUnit = TimeUnit.SECONDS)
-    public void cleanHotKeys() {
-        hotKeyDetector.fading();
-    }
-
-    /**
-     * 辅助方法：构造复合 key
-     *
-     * @param hashKey
-     * @param key
-     * @return
-     */
-    private String buildCacheKey(String hashKey, String key) {
-        return hashKey + ":" + key;
-    }
-    
 }

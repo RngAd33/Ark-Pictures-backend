@@ -6,13 +6,14 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rngad33.ark.constant.ThumbConstant;
 import com.rngad33.ark.exception.MyException;
 import com.rngad33.ark.manager.LockManager;
+import com.rngad33.ark.manager.cache.PictureCacheManager;
+import com.rngad33.ark.manager.cache.ThumbCacheManager;
 import com.rngad33.ark.mapper.PictureMapper;
 import com.rngad33.ark.mapper.ThumbMapper;
 import com.rngad33.ark.model.dto.thumb.ThumbRequest;
 import com.rngad33.ark.model.entity.Picture;
 import com.rngad33.ark.model.entity.Thumb;
 import com.rngad33.ark.model.enums.misc.ErrorCodeEnum;
-import com.rngad33.ark.service.PictureService;
 import com.rngad33.ark.service.ThumbService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.rngad33.ark.model.entity.table.PictureTableDef.PICTURE;
 import static com.rngad33.ark.model.entity.table.ThumbTableDef.THUMB;
 
 /**
@@ -39,6 +39,9 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
 
     @Resource
     private LockManager lockManager;
+
+    @Resource
+    private ThumbCacheManager thumbCacheManager;
 
     @Resource
     private PictureMapper pictureMapper;
@@ -193,6 +196,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
      */
     @Override
     public boolean hasThumb(long pictureId, long userId) {
+//        thumbCacheManager.putIfPresent(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId, pictureId);
         return redisTemplate.opsForHash().hasKey(ThumbConstant.USER_THUMB_KEY_PREFIX + userId, pictureId);
     }
 
