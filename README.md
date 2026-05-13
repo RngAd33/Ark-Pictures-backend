@@ -5,19 +5,20 @@
 
 ## Q：相比于v1.1，这个版本有哪些改进？
 ## A：该版本添加了Jsoup网页解析框架，用于解析图片标签，实现了网页图片自动抓取上传功能；
+## 新增高并发点赞服务；
 
 ## Q：这个项目用到了哪些技术选型？
 ## A：前端部分：
 - Vue3框架
 ## 后端部分：
 - SpringBoot 框架
-- MyBatis + MyBatisPlus 框架
+- MyBatis-Flex 框架
 - Redis + Caffeine 多级缓存
 - 腾讯云COS对象存储 + 数据万象
 - Elasticsearch 分布式搜索
 - Disruptor 无锁并发框架
-- WebSocket 双向通信
 - Jsoup 网页解析框架
+- Jackson 序列化
 - JUnit 单元测试
 - Swagger + Knife4j 接口文档
 
