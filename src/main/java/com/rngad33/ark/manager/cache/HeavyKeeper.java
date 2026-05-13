@@ -1,6 +1,7 @@
 package com.rngad33.ark.manager.cache;
 
 import cn.hutool.core.util.HashUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class HeavyKeeper implements TopK {
     private final int minCount;
 
     /**
-     * 构造函数
+     * 自定义构造函数
      *
      * @param k 监测 top k
      * @param width 宽度
@@ -192,8 +193,10 @@ public class HeavyKeeper implements TopK {
         return HashUtil.murmur32(data);
     }
 }
+
 // 新增返回结果类
 @Data
+@AllArgsConstructor
 class AddResult {
     // 被挤出的 key
     private final String expelledKey;
@@ -201,11 +204,5 @@ class AddResult {
     private final boolean isHotKey;
     // 当前操作的 key
     private final String currentKey;
-
-    public AddResult(String expelledKey, boolean isHotKey, String currentKey) {
-        this.expelledKey = expelledKey;
-        this.isHotKey = isHotKey;
-        this.currentKey = currentKey;
-    }
 
 }
