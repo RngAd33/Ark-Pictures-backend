@@ -30,10 +30,50 @@ class InsertSqlTest {
     @Resource
     private ThumbService thumbService;
 
+    @Resource
+    private UserService userService;
+
     // 自定义线程池
     private final ExecutorService executorService = new ThreadPoolExecutor(60, 1000, 10000,
             TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000));
 
+    /**
+     * 批量插入用户数据
+     */
+    @Test
+    void doInsertUsers() {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        final int INSERT_NUM = 300;
+        int j = 0;
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            List<User> users = new ArrayList<>();
+            do {
+                j++;
+                User user = new User();
+                user.setUserName("RngAd33" + RandomUtil.randomLong());
+                user.setRole(0);
+                user.setAvatarUrl("https://636f-codenav-8grj8px727565176-1256524210.tcb.qcloud.la/img/logo.png");
+                user.setUserPassword("");
+                user.setPhone(RandomUtil.randomNumbers(11));
+                user.setUserStatus(0);
+                user.setCreateTime(new Date());
+            } while (j % INSERT_NUM != 0);
+            // 异步执行
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                userService.saveBatch(users, 100);
+            }, executorService);
+            futures.add(future);
+        }
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[]{})).join();   // 阻塞
+        stopWatch.stop();   // 任务完成后才执行
+        System.out.println(stopWatch.getTotalTimeMillis());
+    }
+
+    /**
+     * 批量插入图片数据
+     */
     @Test
     void doInsertPictures() {
         StopWatch stopWatch = new StopWatch();
@@ -74,6 +114,9 @@ class InsertSqlTest {
         System.out.println(stopWatch.getTotalTimeMillis());
     }
 
+    /**
+     * 批量插入点赞数据
+     */
     @Test
     void doInsertThumbs() {
         StopWatch stopWatch = new StopWatch();
