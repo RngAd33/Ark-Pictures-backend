@@ -8,6 +8,8 @@ import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 点赞实体类
  */
@@ -38,6 +40,6 @@ public class Thumb {
      * 创建时间
      */
     @Column("create_time")
-    private Long createTime;
+    private Date createTime;
 
 }

@@ -35,14 +35,15 @@ CREATE TABLE `picture` (
                            pic_format    varchar(32)                        null comment '图片格式',
                            user_id       bigint                             not null comment '创建用户 id',
                            thumb_count   bigint default 0                   not null comment '点赞量',
-                           reviewStatus  tinyint default 0                  null COMMENT '审核状态',
-                           reviewMessage varchar(512)                       null comment '审核信息',
-                           reviewerId    bigint                             null comment '审核人ID',
+                           review_status  tinyint default 0                  null COMMENT '审核状态',
+                           review_message varchar(512)                       null comment '审核信息',
+                           reviewer_id    bigint                             null comment '审核人ID',
                            create_time   datetime default CURRENT_TIMESTAMP not null comment '创建时间',
                            edit_time     datetime default CURRENT_TIMESTAMP not null comment '最后编辑时间',
                            update_time   datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
                            is_delete     tinyint  default 0                 not null comment '是否删除',
-                           INDEX idx_user_id (user_id)
+                           index idx_user_id (user_id),
+                           index idx_review_status(review_status)
 ) COMMENT '图片' collate = utf8mb4_unicode_ci;
 
 -- 点赞表

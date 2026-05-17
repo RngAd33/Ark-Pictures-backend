@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.rngad33.ark.model.entity.table.UserTableDef.USER;
+
 /**
  * 业务实现
  */
@@ -89,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.info("正在执行信息查重……");
             // - 名称查重
             QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("userName", userName);
+            queryWrapper.eq(USER.USER_NAME.getName(), userName);
             long count = this.count(queryWrapper);
             if (count > 0) {
                 log.error(ErrorConstant.USER_NAME_ALREADY_EXIST_MESSAGE);
@@ -97,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             // - 编号查重
             queryWrapper = new QueryWrapper();
-            queryWrapper.eq("planetCode", planetCode);
+            queryWrapper.eq(USER.PLANET_CODE.getName(), planetCode);
             count = this.count(queryWrapper);
             if (count > 0) {
                 log.error(ErrorConstant.PLANET_CODE_ALREADY_EXIST_MESSAGE);
@@ -154,8 +156,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 3. 连接数据库，核对用户信息
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("userName", userName);
-        queryWrapper.eq("userPassword", encryptedPassword);
+        queryWrapper.eq(USER.USER_NAME.getName(), userName);
+        queryWrapper.eq(USER.USER_PASSWORD.getName(), encryptedPassword);
         User user = this.getOne(queryWrapper);
         // - 判断用户是否存在
         if (user == null) {
@@ -249,12 +251,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String phone = userQueryRequest.getPhone();
         Integer userStatus = userQueryRequest.getUserStatus();
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("id", id, ObjUtil.isNotNull(id));
-        queryWrapper.like("user_name", userName, StrUtil.isNotBlank(userName));
-        queryWrapper.eq("planet_code", planetCode, StrUtil.isNotBlank(planetCode));
-        queryWrapper.eq("role", role, ObjUtil.isNotNull(role));
-        queryWrapper.eq("phone", phone, StrUtil.isNotBlank(phone));
-        queryWrapper.eq("user_status", userStatus, ObjUtil.isNotNull(userStatus));
+        queryWrapper.eq(USER.ID.getName(), id, ObjUtil.isNotNull(id));
+        queryWrapper.like(USER.USER_NAME.getName(), userName, StrUtil.isNotBlank(userName));
+        queryWrapper.eq(USER.PLANET_CODE.getName(), planetCode, StrUtil.isNotBlank(planetCode));
+        queryWrapper.eq(USER.ROLE.getName(), role, ObjUtil.isNotNull(role));
+        queryWrapper.eq(USER.PHONE.getName(), phone, StrUtil.isNotBlank(phone));
+        queryWrapper.eq(USER.USER_STATUS.getName(), userStatus, ObjUtil.isNotNull(userStatus));
         return queryWrapper;
     }
 

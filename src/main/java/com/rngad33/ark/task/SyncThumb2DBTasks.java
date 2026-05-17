@@ -74,7 +74,7 @@ public class SyncThumb2DBTasks {
             } else {
                 if (thumbType != ThumbTypeEnum.NON.getValue()) {
                     // - 状态异常
-                    log.warn("数据异常：{}", userId + "," + pictureId + "," + thumbType);
+                    log.warn("数据异常：{}", userId + ", " + pictureId + ", " + thumbType);
                 }
                 continue;
             }
